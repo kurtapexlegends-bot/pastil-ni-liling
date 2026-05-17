@@ -1,0 +1,9 @@
+# Root-level ignore rules
+.agent/
+scratch/
+.gemini/
+ARCHITECTURE.md
+
+# OS Files
+.DS_Store
+Thumbs.db
