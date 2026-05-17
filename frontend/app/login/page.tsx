@@ -29,9 +29,14 @@ export default function LoginPage() {
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("user", JSON.stringify(data.data));
         
-        const isAdmin = data.data.roles.some((r: any) => r.name === "Admin");
+        const roles = data.data.roles || [];
+        const isAdmin = roles.some((r: any) => r.name === "Admin");
+        const isFranchisee = roles.some((r: any) => r.name === "Franchisee");
+
         if (isAdmin) {
           router.push("/admin");
+        } else if (isFranchisee) {
+          router.push("/franchise/dashboard");
         } else {
           router.push("/menu");
         }

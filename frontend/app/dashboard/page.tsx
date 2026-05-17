@@ -20,7 +20,22 @@ export default function UserDashboard() {
       return;
     }
 
-    setUser(JSON.parse(userData));
+    const parsedUser = JSON.parse(userData);
+    const roles = parsedUser.roles || [];
+    const isAdmin = roles.some((r: any) => r.name === "Admin");
+    const isFranchisee = roles.some((r: any) => r.name === "Franchisee");
+
+    if (isAdmin) {
+      router.push("/admin");
+      return;
+    }
+
+    if (isFranchisee) {
+      router.push("/franchise/dashboard");
+      return;
+    }
+
+    setUser(parsedUser);
 
     fetch("http://127.0.0.1:8000/api/orders", {
       headers: { "Authorization": `Bearer ${token}` }

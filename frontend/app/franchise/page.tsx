@@ -62,139 +62,138 @@ export default function FranchisePage() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-brand-earth">
-      {/* Navigation */}
       <nav className="fixed top-0 z-50 w-full bg-white/70 backdrop-blur-xl border-b border-gray-100">
-        <div className="flex items-center justify-between px-6 h-20 max-w-6xl mx-auto">
+        <div className="flex items-center justify-between px-6 h-16 max-w-6xl mx-auto">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.jpg" alt="Logo" width={40} height={40} className="rounded-full shadow-sm" />
-            <span className="text-sm font-black uppercase tracking-tighter">Franchise Portal</span>
+            <Image src="/logo.jpg" alt="Logo" width={28} height={28} className="rounded-full shadow-sm" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">Franchise Portal</span>
           </Link>
-          <Link href="/" className="text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-all">
+          <Link href="/" className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/40 hover:text-brand-earth transition-colors">
             Back to Home
           </Link>
         </div>
       </nav>
 
-      <main className="pt-32 pb-24 px-6 max-w-6xl mx-auto grid lg:grid-cols-2 gap-20 items-start">
+      <main className="pt-28 pb-20 px-6 max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
         {/* Info Side */}
-        <div className="space-y-12">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/30 border border-brand-yellow text-[9px] font-bold uppercase tracking-widest text-brand-earth">
+        <div className="space-y-8 lg:sticky lg:top-24">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/70">
               Business Opportunity
             </div>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter leading-none">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-brand-earth leading-tight">
               Grow with <br />
               <span className="text-brand-green">Pastil ni Liling.</span>
             </h1>
-            <p className="text-lg text-brand-earth/60 font-medium leading-relaxed max-w-md">
+            <p className="text-sm text-brand-earth/60 font-normal leading-relaxed max-w-md">
               Be part of the Philippines' fastest-growing pastil brand. Low investment, high returns, and a product Filipinos love.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-8">
+          <div className="grid sm:grid-cols-2 gap-6">
             {[
               { title: "Low Capital", desc: "Start your business journey with minimal overhead." },
               { title: "Proven System", desc: "Complete training and operations support provided." },
               { title: "High Demand", desc: "Pastil is a staple favorite that sells 24/7." },
               { title: "Marketing", desc: "Global brand awareness and digital marketing support." },
             ].map((item, i) => (
-              <div key={i} className="space-y-2">
-                <h3 className="text-sm font-black uppercase tracking-widest text-brand-green">{item.title}</h3>
-                <p className="text-xs text-brand-earth/50 font-medium leading-relaxed">{item.desc}</p>
+              <div key={i} className="space-y-1">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-brand-green">{item.title}</h3>
+                <p className="text-[11px] text-brand-earth/50 leading-relaxed font-normal">{item.desc}</p>
               </div>
             ))}
           </div>
 
-          <div className="p-8 bg-brand-earth rounded-[2.5rem] text-white relative overflow-hidden">
+          <div className="p-6 bg-brand-earth rounded-xl text-white relative overflow-hidden shadow-sm">
              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-green/20 blur-3xl rounded-full"></div>
-             <p className="text-3xl font-black tracking-tighter mb-2">50+ Branches</p>
-             <p className="text-xs font-bold uppercase tracking-widest opacity-60">And growing nationwide.</p>
+             <p className="text-2xl font-bold tracking-tight mb-0.5">50+ Branches</p>
+             <p className="text-[9px] font-semibold uppercase tracking-wider opacity-60">And growing nationwide.</p>
           </div>
         </div>
 
         {/* Form Side */}
-        <div className="bg-white rounded-[3rem] border border-gray-100 shadow-2xl shadow-brand-earth/5 p-8 md:p-12">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 md:p-8">
           {submitted ? (
-            <div className="py-20 text-center space-y-6 animate-in fade-in zoom-in">
-              <div className="text-6xl">🎉</div>
-              <h2 className="text-3xl font-black tracking-tighter">Application Received!</h2>
-              <p className="text-brand-earth/60 font-medium max-w-xs mx-auto">
+            <div className="py-16 text-center space-y-4 animate-in fade-in zoom-in">
+              <div className="text-4xl">🎉</div>
+              <h2 className="text-xl font-bold tracking-tight text-brand-earth">Application Received!</h2>
+              <p className="text-xs text-brand-earth/60 font-normal max-w-xs mx-auto leading-relaxed">
                 Thank you for your interest. Our team will review your application and reach out within 3-5 business days.
               </p>
-              <Link href="/" className="inline-block bg-brand-earth text-white px-8 py-4 rounded-full text-[10px] font-black uppercase tracking-widest">
+              <Link href="/" className="inline-block bg-brand-earth text-white px-5 py-2.5 rounded-lg text-[10px] font-semibold uppercase tracking-wider hover:bg-brand-green transition-colors">
                 Return Home
               </Link>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Progress Bar */}
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= i ? "bg-brand-green" : "bg-gray-100"}`}></div>
+                  <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-500 ${step >= i ? "bg-brand-green" : "bg-gray-100"}`}></div>
                 ))}
               </div>
 
               {step === 1 && (
-                <div className="space-y-6 animate-in slide-in-from-right duration-500">
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-black tracking-tighter">Personal Details</h2>
-                    <p className="text-xs font-medium text-brand-earth/40 uppercase tracking-widest">Step 1 of 3</p>
+                <div className="space-y-5 animate-in slide-in-from-right duration-300">
+                  <div className="space-y-0.5">
+                    <h2 className="text-lg font-bold tracking-tight text-brand-earth">Personal Details</h2>
+                    <p className="text-[9px] font-semibold text-brand-earth/40 uppercase tracking-wider">Step 1 of 3</p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">First Name</label>
-                      <input name="first_name" value={formData.first_name} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all" placeholder="Juan" required />
-                      {errors.first_name && <p className="text-[10px] text-red-500 font-bold">{errors.first_name[0]}</p>}
+                    <div className="space-y-1.5">
+                      <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">First Name</label>
+                      <input name="first_name" value={formData.first_name} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="Juan" required />
+                      {errors.first_name && <p className="text-[9px] text-red-500 font-semibold">{errors.first_name[0]}</p>}
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Last Name</label>
-                      <input name="last_name" value={formData.last_name} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all" placeholder="Dela Cruz" required />
-                      {errors.last_name && <p className="text-[10px] text-red-500 font-bold">{errors.last_name[0]}</p>}
+                    <div className="space-y-1.5">
+                      <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">Last Name</label>
+                      <input name="last_name" value={formData.last_name} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="Dela Cruz" required />
+                      {errors.last_name && <p className="text-[9px] text-red-500 font-semibold">{errors.last_name[0]}</p>}
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Email Address</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all" placeholder="juan@example.com" required />
-                    {errors.email && <p className="text-[10px] text-red-500 font-bold">{errors.email[0]}</p>}
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">Email Address</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="juan@example.com" required />
+                    {errors.email && <p className="text-[9px] text-red-500 font-semibold">{errors.email[0]}</p>}
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Phone Number</label>
-                    <input name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all" placeholder="0917 XXX XXXX" required />
-                    {errors.phone && <p className="text-[10px] text-red-500 font-bold">{errors.phone[0]}</p>}
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">Phone Number</label>
+                    <input name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="0917 XXX XXXX" required />
+                    {errors.phone && <p className="text-[9px] text-red-500 font-semibold">{errors.phone[0]}</p>}
                   </div>
-                  <button type="button" onClick={nextStep} className="w-full bg-brand-earth text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-green transition-all shadow-xl shadow-brand-earth/10">
+                  <button type="button" onClick={nextStep} className="w-full bg-brand-earth text-white py-3 rounded-lg text-[10px] font-semibold uppercase tracking-wider hover:bg-brand-green transition-all shadow-sm">
                     Next Step
                   </button>
                 </div>
               )}
 
               {step === 2 && (
-                <div className="space-y-6 animate-in slide-in-from-right duration-500">
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-black tracking-tighter">Business Info</h2>
-                    <p className="text-xs font-medium text-brand-earth/40 uppercase tracking-widest">Step 2 of 3</p>
+                <div className="space-y-5 animate-in slide-in-from-right duration-300">
+                  <div className="space-y-0.5">
+                    <h2 className="text-lg font-bold tracking-tight text-brand-earth">Business Info</h2>
+                    <p className="text-[9px] font-semibold text-brand-earth/40 uppercase tracking-wider">Step 2 of 3</p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Target Location</label>
-                    <input name="target_location" value={formData.target_location} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all" placeholder="e.g. Davao City, Poblacion" required />
-                    {errors.target_location && <p className="text-[10px] text-red-500 font-bold">{errors.target_location[0]}</p>}
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">Target Location</label>
+                    <input name="target_location" value={formData.target_location} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="e.g. Davao City, Poblacion" required />
+                    {errors.target_location && <p className="text-[9px] text-red-500 font-semibold">{errors.target_location[0]}</p>}
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Investment Capacity</label>
-                    <select name="investment_capacity" value={formData.investment_capacity} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all" required>
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">Investment Capacity</label>
+                    <select name="investment_capacity" value={formData.investment_capacity} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" required>
                       <option value="">Select Range</option>
                       <option value="50k-100k">₱50,000 - ₱100,000</option>
                       <option value="100k-200k">₱100,000 - ₱200,000</option>
                       <option value="200k-500k">₱200,000 - ₱500,000</option>
                       <option value="500k+">₱500,000+</option>
                     </select>
-                    {errors.investment_capacity && <p className="text-[10px] text-red-500 font-bold">{errors.investment_capacity[0]}</p>}
+                    {errors.investment_capacity && <p className="text-[9px] text-red-500 font-semibold">{errors.investment_capacity[0]}</p>}
                   </div>
                   <div className="flex gap-4">
-                    <button type="button" onClick={prevStep} className="flex-1 bg-gray-100 text-brand-earth py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all">
+                    <button type="button" onClick={prevStep} className="flex-1 bg-gray-100 text-brand-earth py-3 rounded-lg text-[10px] font-semibold uppercase tracking-wider hover:bg-gray-200 transition-all">
                       Back
                     </button>
-                    <button type="button" onClick={nextStep} className="flex-[2] bg-brand-earth text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-green transition-all shadow-xl shadow-brand-earth/10">
+                    <button type="button" onClick={nextStep} className="flex-[2] bg-brand-earth text-white py-3 rounded-lg text-[10px] font-semibold uppercase tracking-wider hover:bg-brand-green transition-all shadow-sm">
                       Final Step
                     </button>
                   </div>
@@ -202,28 +201,28 @@ export default function FranchisePage() {
               )}
 
               {step === 3 && (
-                <div className="space-y-6 animate-in slide-in-from-right duration-500">
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-black tracking-tighter">Review & Submit</h2>
-                    <p className="text-xs font-medium text-brand-earth/40 uppercase tracking-widest">Step 3 of 3</p>
+                <div className="space-y-5 animate-in slide-in-from-right duration-300">
+                  <div className="space-y-0.5">
+                    <h2 className="text-lg font-bold tracking-tight text-brand-earth">Review & Submit</h2>
+                    <p className="text-[9px] font-semibold text-brand-earth/40 uppercase tracking-wider">Step 3 of 3</p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Business Experience (Optional)</label>
-                    <textarea name="experience_summary" value={formData.experience_summary} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all h-32 resize-none" placeholder="Tell us about your previous ventures..."></textarea>
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">Business Experience (Optional)</label>
+                    <textarea name="experience_summary" value={formData.experience_summary} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all h-28 resize-none text-brand-earth" placeholder="Tell us about your previous ventures..."></textarea>
                   </div>
-                  <div className="p-5 rounded-2xl bg-brand-green/5 border border-brand-green/10 space-y-2">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-brand-green">Confirmation</p>
-                    <p className="text-xs font-medium leading-relaxed">By submitting, you agree to our privacy policy and allow us to contact you regarding franchise opportunities.</p>
+                  <div className="p-4 rounded-xl bg-brand-green/5 border border-brand-green/10 space-y-1">
+                    <p className="text-[8px] font-semibold uppercase tracking-wider text-brand-green">Confirmation</p>
+                    <p className="text-[10px] text-brand-earth/60 font-normal leading-relaxed">By submitting, you agree to our privacy policy and allow us to contact you regarding franchise opportunities.</p>
                   </div>
                   <div className="flex gap-4">
-                    <button type="button" onClick={prevStep} className="flex-1 bg-gray-100 text-brand-earth py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all">
+                    <button type="button" onClick={prevStep} className="flex-1 bg-gray-100 text-brand-earth py-3 rounded-lg text-[10px] font-semibold uppercase tracking-wider hover:bg-gray-200 transition-all">
                       Back
                     </button>
-                    <button type="submit" disabled={loading} className="flex-[2] bg-brand-green text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-brand-green/20 disabled:opacity-50">
+                    <button type="submit" disabled={loading} className="flex-[2] bg-brand-green text-white py-3 rounded-lg text-[10px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm disabled:opacity-50">
                       {loading ? "Submitting..." : "Submit Application"}
                     </button>
                   </div>
-                  {errors.general && <p className="text-[10px] text-red-500 font-bold text-center">{errors.general}</p>}
+                  {errors.general && <p className="text-[9px] text-red-500 font-semibold text-center">{errors.general}</p>}
                 </div>
               )}
             </form>
@@ -231,8 +230,8 @@ export default function FranchisePage() {
         </div>
       </main>
 
-      <footer className="py-12 border-t border-gray-100 text-center">
-        <p className="text-[9px] font-bold uppercase tracking-widest opacity-30">
+      <footer className="py-8 border-t border-gray-100 text-center">
+        <p className="text-[8px] font-semibold uppercase tracking-wider text-brand-earth/30">
           &copy; 2026 Pastil ni Liling Franchise Program.
         </p>
       </footer>

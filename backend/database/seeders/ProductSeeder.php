@@ -21,6 +21,7 @@ class ProductSeeder extends Seeder
                 'price' => 25.00,
                 'category' => 'pastil',
                 'stock' => 100,
+                'image_url' => 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800&auto=format&fit=crop',
             ],
             [
                 'name' => 'Spicy Chicken Pastil',
@@ -28,6 +29,7 @@ class ProductSeeder extends Seeder
                 'price' => 30.00,
                 'category' => 'pastil',
                 'stock' => 100,
+                'image_url' => 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=800&auto=format&fit=crop',
             ],
             [
                 'name' => 'Beef Pastil',
@@ -35,6 +37,7 @@ class ProductSeeder extends Seeder
                 'price' => 45.00,
                 'category' => 'pastil',
                 'stock' => 50,
+                'image_url' => 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?q=80&w=800&auto=format&fit=crop',
             ],
             // Bagoong
             [
@@ -43,6 +46,7 @@ class ProductSeeder extends Seeder
                 'price' => 120.00,
                 'category' => 'bagoong',
                 'stock' => 30,
+                'image_url' => 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=800&auto=format&fit=crop',
             ],
             [
                 'name' => 'Premium Shrimp Bagoong (Spicy)',
@@ -50,6 +54,7 @@ class ProductSeeder extends Seeder
                 'price' => 130.00,
                 'category' => 'bagoong',
                 'stock' => 30,
+                'image_url' => 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop',
             ],
             // Chili Oil
             [
@@ -58,6 +63,7 @@ class ProductSeeder extends Seeder
                 'price' => 99.00,
                 'category' => 'chili_oil',
                 'stock' => 40,
+                'image_url' => 'https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=800&auto=format&fit=crop',
             ],
         ];
 
@@ -70,7 +76,7 @@ class ProductSeeder extends Seeder
                     'price' => $product['price'],
                     'category' => $product['category'],
                     'stock' => $product['stock'],
-                    'image_url' => 'https://images.unsplash.com/photo-1582294158564-925249492167?q=80&w=800&auto=format&fit=crop',
+                    'image_url' => $product['image_url'],
                     'is_active' => true,
                 ]
             );
@@ -86,7 +92,7 @@ class ProductSeeder extends Seeder
                 'wholesale_price' => '2800.00',
                 'category' => 'wholesale',
                 'is_wholesale' => true,
-                'image_url' => 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=800&auto=format&fit=crop',
+                'image_url' => 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?q=80&w=800&auto=format&fit=crop',
                 'is_active' => true,
             ]
         );
@@ -100,7 +106,7 @@ class ProductSeeder extends Seeder
                 'wholesale_price' => '1400.00',
                 'category' => 'wholesale',
                 'is_wholesale' => true,
-                'image_url' => 'https://images.unsplash.com/photo-1512485600893-b08ec1d59b1c?q=80&w=800&auto=format&fit=crop',
+                'image_url' => 'https://images.unsplash.com/photo-1618413998877-4c3116df7325?q=80&w=800&auto=format&fit=crop',
                 'is_active' => true,
             ]
         );
