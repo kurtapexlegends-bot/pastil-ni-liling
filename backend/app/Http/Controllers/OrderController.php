@@ -57,6 +57,9 @@ class OrderController extends Controller
                 $hubId = $request->input('hub_id');
 
                 if ($type === 'wholesale') {
+                    if (!$request->user()->hasRole('Franchisee')) {
+                        throw new \Exception('Access denied. Wholesale orders are restricted to registered Franchise partners.');
+                    }
                     $hub = \App\Models\Hub::where('franchisee_id', $request->user()->id)->first();
                     if (!$hub) {
                         throw new \Exception('No active franchise branch associated with this account.');

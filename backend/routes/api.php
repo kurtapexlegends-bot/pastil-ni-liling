@@ -17,9 +17,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index']);
 
     // Franchisee Branch Inventory and B2C Orders
-    Route::get('/franchise/inventory', [\App\Http\Controllers\FranchiseController::class, 'getInventory']);
-    Route::get('/franchise/orders', [\App\Http\Controllers\FranchiseController::class, 'getHubOrders']);
-    Route::patch('/franchise/orders/{id}', [\App\Http\Controllers\FranchiseController::class, 'updateHubOrderStatus']);
+    Route::middleware('role:Franchisee')->group(function () {
+        Route::get('/franchise/inventory', [\App\Http\Controllers\FranchiseController::class, 'getInventory']);
+        Route::get('/franchise/orders', [\App\Http\Controllers\FranchiseController::class, 'getHubOrders']);
+        Route::patch('/franchise/orders/{id}', [\App\Http\Controllers\FranchiseController::class, 'updateHubOrderStatus']);
+    });
 
     // Order Placement (Authenticated)
     Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store']);

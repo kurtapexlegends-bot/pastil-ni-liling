@@ -81,8 +81,10 @@ class AdminController extends Controller
     /**
      * Update the status of a franchise application.
      */
-    public function updateFranchiseApplicationStatus(Request $request, FranchiseApplication $application)
+    public function updateApplicationStatus(Request $request, $id)
     {
+        $application = FranchiseApplication::findOrFail($id);
+        
         $request->validate([
             'status' => 'required|string|in:pending,reviewed,approved,rejected'
         ]);
