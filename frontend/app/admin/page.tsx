@@ -15,10 +15,13 @@ import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
 import ProductModal from "../../components/admin/ProductModal";
 import HubModal from "../../components/admin/HubModal";
+import EmployeeManager from "../../components/admin/EmployeeManager";
+import QCComplianceManager from "../../components/admin/QCComplianceManager";
+import BranchPayrollManager from "../../components/admin/BranchPayrollManager";
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain'>('applications');
+  const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll'>('applications');
   const [applications, setApplications] = useState<FranchiseApplication[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -416,6 +419,18 @@ export default function AdminDashboard() {
             addRecipe={addRecipe}
             triggerMarkdown={triggerMarkdown}
           />
+        )}
+
+        {activeTab === 'employees' && (
+          <EmployeeManager />
+        )}
+
+        {activeTab === 'compliance' && (
+          <QCComplianceManager />
+        )}
+
+        {activeTab === 'payroll' && (
+          <BranchPayrollManager />
         )}
       </main>
 

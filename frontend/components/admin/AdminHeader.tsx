@@ -1,5 +1,5 @@
 interface AdminHeaderProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain';
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll';
   onAddProduct: () => void;
   onCreateHub: () => void;
 }
@@ -10,7 +10,10 @@ export default function AdminHeader({ activeTab, onAddProduct, onCreateHub }: Ad
     orders: "Order Pipeline",
     products: "Product Catalog",
     hubs: "Physical Franchise Spokes",
-    supply_chain: "Commissary Logistics & Batches"
+    supply_chain: "Commissary Logistics & Batches",
+    employees: "Personnel Access Control",
+    compliance: "Digital QC Audits",
+    payroll: "Branch Payroll & Shift Logs"
   } as const;
 
   const descriptions = {
@@ -18,7 +21,10 @@ export default function AdminHeader({ activeTab, onAddProduct, onCreateHub }: Ad
     orders: "Real-time dispatch and delivery monitoring across hubs",
     products: "HQ Centralized command and live branch sync",
     hubs: "Interactive control of regional operations hubs",
-    supply_chain: "FIFO Batch integrity tracking and recipe formula config"
+    supply_chain: "FIFO Batch integrity tracking and recipe formula config",
+    employees: "Define custom RBAC permission locks and terminate staff credentials",
+    compliance: "Review weekly branch cleanliness logs and recipe standard checks",
+    payroll: "Dry run direct payouts and track cashier 5% POS sales commissions"
   } as const;
 
   return (

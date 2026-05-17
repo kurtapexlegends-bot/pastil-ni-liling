@@ -5,30 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class WorkShift extends Model
 {
-    /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'hub_id',
-        'type',
-        'total_amount',
+        'clock_in',
+        'clock_out',
+        'hourly_rate',
         'status',
-        'shipping_address',
-        'latitude',
-        'longitude',
-        'contact_number',
-        'payment_method',
-        'notes',
-        'cashier_id',
     ];
 
-    public function items()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
+    protected $casts = [
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
+    ];
 
     public function user()
     {

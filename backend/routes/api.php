@@ -58,7 +58,26 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/inventory/ingredients/{id}/restock', [\App\Http\Controllers\InventoryController::class, 'restockIngredient']);
         Route::get('/inventory/recipes', [\App\Http\Controllers\InventoryController::class, 'getRecipes']);
         Route::post('/inventory/recipes', [\App\Http\Controllers\InventoryController::class, 'storeRecipe']);
+
+        // Phase 4: Employee Personnel Controls (Multi-Tier RBAC)
+        Route::get('/employees', [\App\Http\Controllers\EmployeeController::class, 'index']);
+        Route::post('/employees', [\App\Http\Controllers\EmployeeController::class, 'store']);
+        Route::put('/employees/{id}', [\App\Http\Controllers\EmployeeController::class, 'update']);
+        Route::delete('/employees/{id}', [\App\Http\Controllers\EmployeeController::class, 'destroy']);
     });
+
+    // Phase 4: Digital Compliance & QC Audits
+    Route::get('/compliance/audits', [\App\Http\Controllers\ComplianceController::class, 'index']);
+    Route::post('/compliance/audits', [\App\Http\Controllers\ComplianceController::class, 'store']);
+    Route::patch('/compliance/audits/{id}', [\App\Http\Controllers\ComplianceController::class, 'updateStatus']);
+
+    // Phase 4: Cashier Shift Sessions and Direct Payout Commission Ledger
+    Route::post('/payroll/shifts/clock-in', [\App\Http\Controllers\PayrollController::class, 'clockIn']);
+    Route::post('/payroll/shifts/clock-out', [\App\Http\Controllers\PayrollController::class, 'clockOut']);
+    Route::get('/payroll/shifts', [\App\Http\Controllers\PayrollController::class, 'getShifts']);
+    Route::get('/payroll/payouts/calculate', [\App\Http\Controllers\PayrollController::class, 'calculatePayout']);
+    Route::post('/payroll/payouts', [\App\Http\Controllers\PayrollController::class, 'storePayout']);
+    Route::get('/payroll/payouts', [\App\Http\Controllers\PayrollController::class, 'getPayouts']);
 });
 
 // Product Routes

@@ -16,7 +16,9 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create roles
         $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+        $hqOpsRole = Role::firstOrCreate(['name' => 'HQ operations']);
         $franchiseeRole = Role::firstOrCreate(['name' => 'Franchisee']);
+        $cashierRole = Role::firstOrCreate(['name' => 'Branch Cashier']);
         $customerRole = Role::firstOrCreate(['name' => 'Customer']);
 
         // Create initial Admin user
@@ -29,6 +31,16 @@ class RolesAndPermissionsSeeder extends Seeder
         );
         $admin->assignRole($adminRole);
 
+        // Create initial HQ operations user
+        $hqOps = User::updateOrCreate(
+            ['email' => 'hq_ops@pastilnililing.com'],
+            [
+                'name' => 'Liling HQ Operations Director',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $hqOps->assignRole($hqOpsRole);
+
         // Create initial Franchisee user
         $franchisee = User::updateOrCreate(
             ['email' => 'franchise@pastilnililing.com'],
@@ -38,5 +50,15 @@ class RolesAndPermissionsSeeder extends Seeder
             ]
         );
         $franchisee->assignRole($franchiseeRole);
+
+        // Create initial Branch Cashier user
+        $cashier = User::updateOrCreate(
+            ['email' => 'cashier@pastilnililing.com'],
+            [
+                'name' => 'Liling Diliman Cashier',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $cashier->assignRole($cashierRole);
     }
 }

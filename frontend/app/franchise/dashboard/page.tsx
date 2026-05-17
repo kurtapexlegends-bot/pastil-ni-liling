@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import CartDrawer from "@/components/CartDrawer";
 import { Product, CartItem } from "@/types";
+import QCComplianceManager from "@/components/admin/QCComplianceManager";
+import BranchPayrollManager from "@/components/admin/BranchPayrollManager";
 
 export default function FranchiseDashboard() {
   const router = useRouter();
@@ -22,7 +24,7 @@ export default function FranchiseDashboard() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   // POS State
-  const [activePortalTab, setActivePortalTab] = useState<'logistics' | 'pos'>('logistics');
+  const [activePortalTab, setActivePortalTab] = useState<'logistics' | 'pos' | 'compliance' | 'payroll'>('logistics');
   const [posCart, setPosCart] = useState<any[]>([]);
   const [posPaymentMethod, setPosPaymentMethod] = useState<string>("cash");
   const [offlineQueue, setOfflineQueue] = useState<any[]>([]);
@@ -437,7 +439,7 @@ export default function FranchiseDashboard() {
                 : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
             }`}
           >
-            🚚 Logistics & Restocking
+            🚚 Logistics
           </button>
           <button
             onClick={() => setActivePortalTab('pos')}
@@ -447,16 +449,36 @@ export default function FranchiseDashboard() {
                 : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
             }`}
           >
-            🏪 Point of Sale (POS)
+            🏪 POS Cashier
             {offlineQueue.length > 0 && (
               <span className="bg-brand-yellow text-brand-earth text-[8px] font-bold px-2 py-0.5 rounded-full animate-pulse shadow-sm">
-                {offlineQueue.length} unsynced
+                {offlineQueue.length}
               </span>
             )}
           </button>
+          <button
+            onClick={() => setActivePortalTab('compliance')}
+            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
+              activePortalTab === 'compliance'
+                ? 'border-brand-green text-brand-green'
+                : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
+            }`}
+          >
+            📋 QC Compliance
+          </button>
+          <button
+            onClick={() => setActivePortalTab('payroll')}
+            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
+              activePortalTab === 'payroll'
+                ? 'border-brand-green text-brand-green'
+                : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
+            }`}
+          >
+            💰 Shifts & Payroll
+          </button>
         </div>
 
-        {activePortalTab === 'logistics' ? (
+        {activePortalTab === 'logistics' && (
           <>
             {/* Live Retail Orders Section */}
             <section className="space-y-4">
@@ -610,7 +632,9 @@ export default function FranchiseDashboard() {
                </div>
             </section>
           </>
-        ) : (
+        )}
+
+        {activePortalTab === 'pos' && (
           <div className="grid lg:grid-cols-3 gap-12 pt-4">
             {/* Cashier Menu Grid */}
             <div className="lg:col-span-2 space-y-6">
@@ -787,6 +811,73 @@ export default function FranchiseDashboard() {
                 )}
               </div>
             </div>
+          </div>
+        )}
+
+        {activePortalTab === 'compliance' && (
+          <QCComplianceManager />
+        )}
+
+        {activePortalTab === 'payroll' && (
+          <div className="space-y-6 pt-4">
+            {/* Cashier Attendance Console */}
+            <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-4">
+              <div>
+                <h3 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Cashier Attendance Console</h3>
+                <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Clock in to register shift hours and qualify for POS commissions.</p>
+              </div>
+
+              <div className="flex gap-4 items-center">
+                <button
+                  onClick={async () => {
+                    const token = localStorage.getItem("token");
+                    if (!token) return;
+                    try {
+                      const res = await fetch("http://127.0.0.1:8000/api/payroll/shifts/clock-in", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          "Authorization": `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ hub_id: hub?.id || 1 })
+                      });
+                      const data = await res.json();
+                      alert(data.message);
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  }}
+                  className="bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-lg transition-all shadow-sm"
+                >
+                  Clock In Shift
+                </button>
+
+                <button
+                  onClick={async () => {
+                    const token = localStorage.getItem("token");
+                    if (!token) return;
+                    try {
+                      const res = await fetch("http://127.0.0.1:8000/api/payroll/shifts/clock-out", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          "Authorization": `Bearer ${token}`
+                        }
+                      });
+                      const data = await res.json();
+                      alert(data.message);
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  }}
+                  className="bg-red-500 hover:bg-red-600 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-lg transition-all shadow-sm"
+                >
+                  Clock Out Shift
+                </button>
+              </div>
+            </div>
+
+            <BranchPayrollManager />
           </div>
         )}
       </main>

@@ -1,6 +1,6 @@
 interface AdminSidebarProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain';
-  setActiveTab: (tab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain') => void;
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll';
+  setActiveTab: (tab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll') => void;
   handleLogout: () => void;
 }
 
@@ -10,7 +10,10 @@ export default function AdminSidebar({ activeTab, setActiveTab, handleLogout }: 
     { id: 'orders', label: 'Order Management' },
     { id: 'products', label: 'Product Catalog' },
     { id: 'hubs', label: 'Franchise Branches' },
-    { id: 'supply_chain', label: 'Supply Chain & Batches' }
+    { id: 'supply_chain', label: 'Supply Chain & Batches' },
+    { id: 'employees', label: 'Personnel Controls' },
+    { id: 'compliance', label: 'Digital QC Audits' },
+    { id: 'payroll', label: 'Branch Payroll' }
   ] as const;
 
   return (

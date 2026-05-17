@@ -5,30 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class Payout extends Model
 {
-    /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'hub_id',
-        'type',
-        'total_amount',
+        'start_date',
+        'end_date',
+        'base_pay',
+        'commission_pay',
+        'total_pay',
         'status',
-        'shipping_address',
-        'latitude',
-        'longitude',
-        'contact_number',
-        'payment_method',
-        'notes',
-        'cashier_id',
     ];
-
-    public function items()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
 
     public function user()
     {

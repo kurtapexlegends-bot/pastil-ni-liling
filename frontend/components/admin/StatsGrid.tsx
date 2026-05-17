@@ -1,7 +1,7 @@
 import { FranchiseApplication, Order, Product, Hub } from "../../app/admin/types";
 
 interface StatsGridProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain';
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll';
   applications: FranchiseApplication[];
   orders: Order[];
   products: Product[];
@@ -11,6 +11,75 @@ interface StatsGridProps {
 }
 
 export default function StatsGrid({ activeTab, applications, orders, products, hubs, ingredients = [], batches = [] }: StatsGridProps) {
+  if (activeTab === 'employees') {
+    return (
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Total Staff Active</p>
+          <p className="text-xl font-bold text-brand-earth">12 Personnel</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">HQ Operations Directors</p>
+          <p className="text-xl font-bold text-brand-green">2 Members</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Franchise Owners</p>
+          <p className="text-xl font-bold text-brand-earth">4 Active Partners</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Branch Cashiers</p>
+          <p className="text-xl font-bold text-brand-earth">6 Cashiers</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (activeTab === 'compliance') {
+    return (
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Total Audits Logged</p>
+          <p className="text-xl font-bold text-brand-earth">8 Audits</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Hygiene Average</p>
+          <p className="text-xl font-bold text-brand-green">96.8% Score</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Recipe Adherence</p>
+          <p className="text-xl font-bold text-brand-earth">98.5% Taste Adherence</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Violations Flagged</p>
+          <p className="text-xl font-bold text-red-500">0 Violations</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (activeTab === 'payroll') {
+    return (
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Work Shifts Logged</p>
+          <p className="text-xl font-bold text-brand-earth">24 Completed Shifts</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Active cashiers online</p>
+          <p className="text-xl font-bold text-brand-green">2 Live Shifts</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Commission pay disbursed</p>
+          <p className="text-xl font-bold text-brand-earth">₱ 8,420.00 Comm</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Gross Payroll Ledger</p>
+          <p className="text-xl font-bold text-brand-earth">₱ 48,200.00 Gross</p>
+        </div>
+      </div>
+    );
+  }
+
   if (activeTab === 'applications') {
     return (
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
