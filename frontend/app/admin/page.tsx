@@ -18,10 +18,11 @@ import HubModal from "../../components/admin/HubModal";
 import EmployeeManager from "../../components/admin/EmployeeManager";
 import QCComplianceManager from "../../components/admin/QCComplianceManager";
 import BranchPayrollManager from "../../components/admin/BranchPayrollManager";
+import AnalyticsEngine from "../../components/admin/AnalyticsEngine";
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll'>('applications');
+  const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics'>('analytics');
   const [applications, setApplications] = useState<FranchiseApplication[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -335,7 +336,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/30 flex">
+    <div className="h-screen bg-gray-50/30 flex overflow-hidden">
       <AdminSidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -343,7 +344,7 @@ export default function AdminDashboard() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-8 space-y-6 overflow-y-auto">
+      <main className="flex-1 p-8 space-y-6 overflow-y-auto h-screen">
         <AdminHeader
           activeTab={activeTab}
           onAddProduct={() => {
@@ -375,63 +376,69 @@ export default function AdminDashboard() {
         {/* Stats Grid */}
         <StatsGrid activeTab={activeTab} applications={applications} orders={orders} products={products} hubs={hubs} ingredients={ingredients} batches={batches} />
 
-        {/* Tab-specific Content */}
-        {activeTab === 'applications' && (
-          <FranchiseApplications applications={applications} updateAppStatus={updateAppStatus} />
-        )}
+        {/* Tab-specific Content with Premium Slide-Up Motion Transitions */}
+        <div key={activeTab} className="animate-slide-up space-y-6">
+          {activeTab === 'analytics' && (
+            <AnalyticsEngine />
+          )}
 
-        {activeTab === 'orders' && (
-          <OrderManagement orders={orders} updateOrderStatus={updateOrderStatus} />
-        )}
+          {activeTab === 'applications' && (
+            <FranchiseApplications applications={applications} updateAppStatus={updateAppStatus} />
+          )}
 
-        {activeTab === 'products' && (
-          <ProductCatalog 
-            products={products} 
-            setProductForm={setProductForm} 
-            setIsProductModalOpen={setIsProductModalOpen} 
-            deleteProduct={deleteProduct} 
-          />
-        )}
+          {activeTab === 'orders' && (
+            <OrderManagement orders={orders} updateOrderStatus={updateOrderStatus} />
+          )}
 
-        {activeTab === 'hubs' && (
-          <FranchiseBranches 
-            hubs={hubs} 
-            franchisees={franchisees} 
-            setHubForm={setHubForm} 
-            setIsHubModalOpen={setIsHubModalOpen} 
-            deleteHub={deleteHub} 
-          />
-        )}
+          {activeTab === 'products' && (
+            <ProductCatalog 
+              products={products} 
+              setProductForm={setProductForm} 
+              setIsProductModalOpen={setIsProductModalOpen} 
+              deleteProduct={deleteProduct} 
+            />
+          )}
 
-        {activeTab === 'supply_chain' && (
-          <SupplyChainManager
-            ingredients={ingredients}
-            batches={batches}
-            recipes={recipes}
-            products={products}
-            hubs={hubs}
-            fetchIngredients={fetchIngredients}
-            fetchBatches={fetchBatches}
-            fetchRecipes={fetchRecipes}
-            addIngredient={addIngredient}
-            restockIngredient={restockIngredient}
-            addBatch={addBatch}
-            addRecipe={addRecipe}
-            triggerMarkdown={triggerMarkdown}
-          />
-        )}
+          {activeTab === 'hubs' && (
+            <FranchiseBranches 
+              hubs={hubs} 
+              franchisees={franchisees} 
+              setHubForm={setHubForm} 
+              setIsHubModalOpen={setIsHubModalOpen} 
+              deleteHub={deleteHub} 
+            />
+          )}
 
-        {activeTab === 'employees' && (
-          <EmployeeManager />
-        )}
+          {activeTab === 'supply_chain' && (
+            <SupplyChainManager
+              ingredients={ingredients}
+              batches={batches}
+              recipes={recipes}
+              products={products}
+              hubs={hubs}
+              fetchIngredients={fetchIngredients}
+              fetchBatches={fetchBatches}
+              fetchRecipes={fetchRecipes}
+              addIngredient={addIngredient}
+              restockIngredient={restockIngredient}
+              addBatch={addBatch}
+              addRecipe={addRecipe}
+              triggerMarkdown={triggerMarkdown}
+            />
+          )}
 
-        {activeTab === 'compliance' && (
-          <QCComplianceManager />
-        )}
+          {activeTab === 'employees' && (
+            <EmployeeManager />
+          )}
 
-        {activeTab === 'payroll' && (
-          <BranchPayrollManager />
-        )}
+          {activeTab === 'compliance' && (
+            <QCComplianceManager />
+          )}
+
+          {activeTab === 'payroll' && (
+            <BranchPayrollManager />
+          )}
+        </div>
       </main>
 
       <ProductModal

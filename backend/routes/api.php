@@ -78,6 +78,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/payroll/payouts/calculate', [\App\Http\Controllers\PayrollController::class, 'calculatePayout']);
     Route::post('/payroll/payouts', [\App\Http\Controllers\PayrollController::class, 'storePayout']);
     Route::get('/payroll/payouts', [\App\Http\Controllers\PayrollController::class, 'getPayouts']);
+
+    // Phase 5: Business Intelligence & Predictive Analytics Engine
+    Route::get('/analytics/summary', [\App\Http\Controllers\AnalyticsController::class, 'getSummary']);
 });
 
 // Product Routes

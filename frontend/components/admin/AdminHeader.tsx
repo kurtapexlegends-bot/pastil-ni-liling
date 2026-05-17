@@ -1,11 +1,12 @@
 interface AdminHeaderProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll';
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics';
   onAddProduct: () => void;
   onCreateHub: () => void;
 }
 
 export default function AdminHeader({ activeTab, onAddProduct, onCreateHub }: AdminHeaderProps) {
   const titles = {
+    analytics: "Enterprise Business Intelligence",
     applications: "Franchise Partnerships",
     orders: "Order Pipeline",
     products: "Product Catalog",
@@ -17,6 +18,7 @@ export default function AdminHeader({ activeTab, onAddProduct, onCreateHub }: Ad
   } as const;
 
   const descriptions = {
+    analytics: "Real-time gross margins, comparative spoke performance, and flavor forecaster",
     applications: "Review investment capabilities and applicant targets",
     orders: "Real-time dispatch and delivery monitoring across hubs",
     products: "HQ Centralized command and live branch sync",

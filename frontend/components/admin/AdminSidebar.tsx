@@ -1,11 +1,12 @@
 interface AdminSidebarProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll';
-  setActiveTab: (tab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll') => void;
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics';
+  setActiveTab: (tab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics') => void;
   handleLogout: () => void;
 }
 
 export default function AdminSidebar({ activeTab, setActiveTab, handleLogout }: AdminSidebarProps) {
   const tabs = [
+    { id: 'analytics', label: '📊 BI Analytics & Trends' },
     { id: 'applications', label: 'Partner Applications' },
     { id: 'orders', label: 'Order Management' },
     { id: 'products', label: 'Product Catalog' },
@@ -17,7 +18,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, handleLogout }: 
   ] as const;
 
   return (
-    <aside className="w-64 border-r border-gray-100 bg-white flex flex-col justify-between p-6 select-none shrink-0">
+    <aside className="w-64 border-r border-gray-100 bg-white flex flex-col justify-between p-6 select-none shrink-0 h-screen sticky top-0 overflow-y-auto">
       <div className="space-y-8">
         <div className="flex items-center gap-2.5 px-2">
           <div className="w-8 h-8 rounded-full bg-brand-green/10 flex items-center justify-center border border-brand-green/20">

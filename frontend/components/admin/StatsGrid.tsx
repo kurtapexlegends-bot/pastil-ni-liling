@@ -1,7 +1,7 @@
 import { FranchiseApplication, Order, Product, Hub } from "../../app/admin/types";
 
 interface StatsGridProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll';
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics';
   applications: FranchiseApplication[];
   orders: Order[];
   products: Product[];
@@ -11,6 +11,29 @@ interface StatsGridProps {
 }
 
 export default function StatsGrid({ activeTab, applications, orders, products, hubs, ingredients = [], batches = [] }: StatsGridProps) {
+  if (activeTab === 'analytics') {
+    return (
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Total Sales Revenue</p>
+          <p className="text-xl font-bold text-brand-earth">₱ 342,850.00</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Average Profit Margin</p>
+          <p className="text-xl font-bold text-brand-green">52.8%</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Food Waste Ratio</p>
+          <p className="text-xl font-bold text-red-500">2.1%</p>
+        </div>
+        <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Franchise Spokes</p>
+          <p className="text-xl font-bold text-brand-earth">3 Active Branches</p>
+        </div>
+      </div>
+    );
+  }
+
   if (activeTab === 'employees') {
     return (
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
