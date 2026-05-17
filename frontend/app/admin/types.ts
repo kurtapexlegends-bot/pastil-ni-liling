@@ -73,6 +73,7 @@ export interface Ingredient {
   unit: string;
   stock: number;
   min_stock: number;
+  unit_cost?: number;
   created_at?: string;
   updated_at?: string;
 }

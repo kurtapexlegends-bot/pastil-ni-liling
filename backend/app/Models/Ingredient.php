@@ -14,5 +14,6 @@ class Ingredient extends Model
         'unit',
         'stock',
         'min_stock',
+        'unit_cost',
     ];
 }

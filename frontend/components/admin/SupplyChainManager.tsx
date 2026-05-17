@@ -41,7 +41,7 @@ export default function SupplyChainManager({
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
 
   // Form states
-  const [ingredientForm, setIngredientForm] = useState({ name: "", unit: "kg", stock: 0, min_stock: 10 });
+  const [ingredientForm, setIngredientForm] = useState({ name: "", unit: "kg", stock: 0, min_stock: 10, unit_cost: 0 });
   const [selectedIngredientId, setSelectedIngredientId] = useState<number | null>(null);
   const [restockQty, setRestockQty] = useState(0);
   const [batchForm, setBatchForm] = useState({
@@ -67,7 +67,7 @@ export default function SupplyChainManager({
       await addIngredient(ingredientForm);
       setSuccessMsg("Raw ingredient type added successfully!");
       setIsIngredientModalOpen(false);
-      setIngredientForm({ name: "", unit: "kg", stock: 0, min_stock: 10 });
+      setIngredientForm({ name: "", unit: "kg", stock: 0, min_stock: 10, unit_cost: 0 });
       await fetchIngredients();
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to add ingredient.");
@@ -270,6 +270,7 @@ export default function SupplyChainManager({
                   <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Ingredient Name</th>
                   <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Current Stock</th>
                   <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Depletion Limit</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Unit Cost</th>
                   <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Status</th>
                   <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Commissary Spoke</th>
                 </tr>
@@ -277,7 +278,7 @@ export default function SupplyChainManager({
               <tbody>
                 {ingredients.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-xs text-brand-earth/40 font-normal">
+                    <td colSpan={6} className="px-6 py-12 text-center text-xs text-brand-earth/40 font-normal">
                       No raw ingredients registered. Click "Add Ingredient Type" to begin.
                     </td>
                   </tr>
@@ -294,6 +295,9 @@ export default function SupplyChainManager({
                         </td>
                         <td className="px-6 py-4 border-b border-gray-100 text-xs font-medium text-brand-earth/40">
                           {Number(ingredient.min_stock).toFixed(2)} {ingredient.unit}
+                        </td>
+                        <td className="px-6 py-4 border-b border-gray-100 text-xs font-semibold text-brand-green">
+                          ₱ {Number(ingredient.unit_cost || 0).toFixed(2)}
                         </td>
                         <td className="px-6 py-4 border-b border-gray-100">
                           <span className={`px-2 py-0.5 rounded-lg text-[8px] font-bold uppercase tracking-wider ${
@@ -470,16 +474,29 @@ export default function SupplyChainManager({
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Low-Stock Alert Level</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  required
-                  value={ingredientForm.min_stock}
-                  onChange={(e) => setIngredientForm({ ...ingredientForm, min_stock: parseFloat(e.target.value) || 0 })}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Low-Stock Alert Level</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={ingredientForm.min_stock}
+                    onChange={(e) => setIngredientForm({ ...ingredientForm, min_stock: parseFloat(e.target.value) || 0 })}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Unit Cost (PHP)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={ingredientForm.unit_cost}
+                    onChange={(e) => setIngredientForm({ ...ingredientForm, unit_cost: parseFloat(e.target.value) || 0 })}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
+                  />
+                </div>
               </div>
 
               <div className="flex gap-2 pt-2">

@@ -30,7 +30,7 @@ class AnalyticsController extends Controller
             ], 401);
         }
 
-        if ($user->role !== 'super_admin' && $user->role !== 'hq_operations') {
+        if (!$user->hasRole('Admin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Restricted personnel access locks triggered.'

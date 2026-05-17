@@ -77,7 +77,8 @@ class InventoryController extends Controller
             'name' => 'required|string|unique:ingredients,name',
             'unit' => 'required|string',
             'stock' => 'required|numeric|min:0',
-            'min_stock' => 'required|numeric|min:0'
+            'min_stock' => 'required|numeric|min:0',
+            'unit_cost' => 'nullable|numeric|min:0'
         ]);
 
         $ingredient = Ingredient::create($data);

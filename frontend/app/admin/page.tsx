@@ -56,39 +56,55 @@ export default function AdminDashboard() {
   });
   const [isHubModalOpen, setIsHubModalOpen] = useState(false);
 
+  const [hasToken, setHasToken] = useState(false);
+
   const fetchAll = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     try {
-      const [appRes, orderRes, prodRes, hubRes, franRes, ingRes, batchRes, recipeRes] = await Promise.all([
-        fetch("http://127.0.0.1:8000/api/admin/applications", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/orders", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/products", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/hubs", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/franchisees", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/inventory/ingredients", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/inventory/batches", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/inventory/recipes", { headers: { "Authorization": `Bearer ${token}` } })
+      const fetchApp = fetch("http://127.0.0.1:8000/api/admin/applications", { headers: { "Authorization": `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => { if (data.success) setApplications(data.data); });
+
+      const fetchOrders = fetch("http://127.0.0.1:8000/api/admin/orders", { headers: { "Authorization": `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => { if (data.success) setOrders(data.data); });
+
+      const fetchProducts = fetch("http://127.0.0.1:8000/api/admin/products", { headers: { "Authorization": `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => { if (data.success) setProducts(data.data); });
+
+      const fetchHubs = fetch("http://127.0.0.1:8000/api/admin/hubs", { headers: { "Authorization": `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => { if (data.success) setHubs(data.data); });
+
+      const fetchFranchisees = fetch("http://127.0.0.1:8000/api/admin/franchisees", { headers: { "Authorization": `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => { if (data.success) setFranchisees(data.data); });
+
+      const fetchIngredients = fetch("http://127.0.0.1:8000/api/admin/inventory/ingredients", { headers: { "Authorization": `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => { if (data.success) setIngredients(data.data); });
+
+      const fetchBatches = fetch("http://127.0.0.1:8000/api/admin/inventory/batches", { headers: { "Authorization": `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => { if (data.success) setBatches(data.data); });
+
+      const fetchRecipes = fetch("http://127.0.0.1:8000/api/admin/inventory/recipes", { headers: { "Authorization": `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => { if (data.success) setRecipes(data.data); });
+
+      await Promise.allSettled([
+        fetchApp,
+        fetchOrders,
+        fetchProducts,
+        fetchHubs,
+        fetchFranchisees,
+        fetchIngredients,
+        fetchBatches,
+        fetchRecipes
       ]);
-
-      const appData = await appRes.json();
-      const orderData = await orderRes.json();
-      const prodData = await prodRes.json();
-      const hubData = await hubRes.json();
-      const franData = await franRes.json();
-      const ingData = await ingRes.json();
-      const batchData = await batchRes.json();
-      const recipeData = await recipeRes.json();
-
-      if (appData.success) setApplications(appData.data);
-      if (orderData.success) setOrders(orderData.data);
-      if (prodData.success) setProducts(prodData.data);
-      if (hubData.success) setHubs(hubData.data);
-      if (franData.success) setFranchisees(franData.data);
-      if (ingData.success) setIngredients(ingData.data);
-      if (batchData.success) setBatches(batchData.data);
-      if (recipeData.success) setRecipes(recipeData.data);
     } catch (err) {
       console.error("Fetch failed", err);
     } finally {
@@ -102,6 +118,7 @@ export default function AdminDashboard() {
       router.push("/login");
       return;
     }
+    setHasToken(true);
     fetchAll();
   }, [router]);
 
@@ -326,17 +343,12 @@ export default function AdminDashboard() {
     router.push("/login");
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50/50 flex flex-col items-center justify-center space-y-4">
-        <div className="w-10 h-10 border-2 border-brand-earth border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-brand-earth/40">Syncing HQ Console...</p>
-      </div>
-    );
+  if (!hasToken) {
+    return null;
   }
 
   return (
-    <div className="h-screen bg-gray-50/30 flex overflow-hidden">
+    <div className="h-screen bg-gray-50/30 flex overflow-hidden relative">
       <AdminSidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -344,7 +356,12 @@ export default function AdminDashboard() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-8 space-y-6 overflow-y-auto h-screen">
+      <main className="flex-1 p-8 space-y-6 overflow-y-auto h-screen relative">
+        {loading && (
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-brand-green/20 overflow-hidden z-50">
+            <div className="h-full bg-brand-green animate-pulse w-1/3 rounded-full"></div>
+          </div>
+        )}
         <AdminHeader
           activeTab={activeTab}
           onAddProduct={() => {

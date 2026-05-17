@@ -171,9 +171,30 @@ class HQControlsTest extends TestCase
             'commission_pay' => 250,
             'total_pay' => 490,
         ]);
-
         $response->assertStatus(201)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.status', 'paid');
+    }
+
+    /** @test */
+    public function test_only_admins_can_access_business_intelligence_analytics()
+    {
+        // 1. Admin accesses BI analytics (Authorized)
+        $response = $this->actingAs($this->admin, 'sanctum')->getJson('/api/analytics/summary');
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'gross_margins',
+                    'branches',
+                    'food_waste',
+                    'trends'
+                ]
+            ]);
+
+        // 2. Lead Cashier attempts to access corporate financial intelligence (Forbidden)
+        $response = $this->actingAs($this->cashier, 'sanctum')->getJson('/api/analytics/summary');
+        $response->assertStatus(403);
     }
 }
