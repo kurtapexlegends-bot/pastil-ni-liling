@@ -62,41 +62,47 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($products as $product) {
-            Product::create([
-                'name' => $product['name'],
-                'slug' => Str::slug($product['name']),
-                'description' => $product['description'],
-                'price' => $product['price'],
-                'category' => $product['category'],
-                'stock' => $product['stock'],
-                'image_url' => 'https://images.unsplash.com/photo-1582294158564-925249492167?q=80&w=800&auto=format&fit=crop',
-                'is_active' => true,
-            ]);
+            Product::updateOrCreate(
+                ['slug' => Str::slug($product['name'])],
+                [
+                    'name' => $product['name'],
+                    'description' => $product['description'],
+                    'price' => $product['price'],
+                    'category' => $product['category'],
+                    'stock' => $product['stock'],
+                    'image_url' => 'https://images.unsplash.com/photo-1582294158564-925249492167?q=80&w=800&auto=format&fit=crop',
+                    'is_active' => true,
+                ]
+            );
         }
 
         // Wholesale Supplies
-        Product::create([
-            'name' => 'Wholesale Pastil Jar (Bulk 24pcs)',
-            'slug' => 'wholesale-pastil-jar-bulk',
-            'description' => 'A bulk pack of 24 premium pastil jars for franchisee distribution.',
-            'price' => '3600.00',
-            'wholesale_price' => '2800.00',
-            'category' => 'wholesale',
-            'is_wholesale' => true,
-            'image_url' => 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=800&auto=format&fit=crop',
-            'is_active' => true,
-        ]);
+        Product::updateOrCreate(
+            ['slug' => 'wholesale-pastil-jar-bulk'],
+            [
+                'name' => 'Wholesale Pastil Jar (Bulk 24pcs)',
+                'description' => 'A bulk pack of 24 premium pastil jars for franchisee distribution.',
+                'price' => '3600.00',
+                'wholesale_price' => '2800.00',
+                'category' => 'wholesale',
+                'is_wholesale' => true,
+                'image_url' => 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=800&auto=format&fit=crop',
+                'is_active' => true,
+            ]
+        );
 
-        Product::create([
-            'name' => 'Premium Chili Oil (Bulk 12pcs)',
-            'slug' => 'wholesale-chili-oil-bulk',
-            'description' => '12 jars of our signature spicy chili oil for wholesale distribution.',
-            'price' => '1800.00',
-            'wholesale_price' => '1400.00',
-            'category' => 'wholesale',
-            'is_wholesale' => true,
-            'image_url' => 'https://images.unsplash.com/photo-1512485600893-b08ec1d59b1c?q=80&w=800&auto=format&fit=crop',
-            'is_active' => true,
-        ]);
+        Product::updateOrCreate(
+            ['slug' => 'wholesale-chili-oil-bulk'],
+            [
+                'name' => 'Premium Chili Oil (Bulk 12pcs)',
+                'description' => '12 jars of our signature spicy chili oil for wholesale distribution.',
+                'price' => '1800.00',
+                'wholesale_price' => '1400.00',
+                'category' => 'wholesale',
+                'is_wholesale' => true,
+                'image_url' => 'https://images.unsplash.com/photo-1512485600893-b08ec1d59b1c?q=80&w=800&auto=format&fit=crop',
+                'is_active' => true,
+            ]
+        );
     }
 }

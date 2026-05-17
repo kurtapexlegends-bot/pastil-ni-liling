@@ -16,6 +16,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // User Order History
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index']);
 
+    // Franchisee Branch Inventory and B2C Orders
+    Route::get('/franchise/inventory', [\App\Http\Controllers\FranchiseController::class, 'getInventory']);
+    Route::get('/franchise/orders', [\App\Http\Controllers\FranchiseController::class, 'getHubOrders']);
+    Route::patch('/franchise/orders/{id}', [\App\Http\Controllers\FranchiseController::class, 'updateHubOrderStatus']);
+
+    // Order Placement (Authenticated)
+    Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store']);
+
     // Admin Routes
     Route::middleware('role:Admin')->prefix('admin')->group(function () {
         Route::get('/applications', [\App\Http\Controllers\AdminController::class, 'getFranchiseApplications']);
@@ -31,8 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{product:slug}', [ProductController::class, 'show']);
 
-// Order Routes (Allowing guest for now, but will use user_id if authenticated)
-Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store']);
-
 // Franchise Routes
 Route::post('/franchise/apply', [\App\Http\Controllers\FranchiseApplicationController::class, 'store']);
+
+// Hub Public Routes
+Route::get('/hubs', [\App\Http\Controllers\HubController::class, 'index']);

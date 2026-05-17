@@ -9,6 +9,8 @@ import { CartItem } from "@/types";
 export default function CheckoutPage() {
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
+  const [hubs, setHubs] = useState<any[]>([]);
+  const [selectedHubId, setSelectedHubId] = useState<string>("");
   const [formData, setFormData] = useState({
     shipping_address: "",
     contact_number: "",
@@ -23,6 +25,19 @@ export default function CheckoutPage() {
     if (saved) {
       setItems(JSON.parse(saved));
     }
+
+    // Fetch active fulfillment hubs
+    fetch("http://127.0.0.1:8000/api/hubs")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setHubs(data.data);
+          if (data.data.length > 0) {
+            setSelectedHubId(data.data[0].id.toString());
+          }
+        }
+      })
+      .catch(err => console.error("Error loading hubs", err));
   }, []);
 
   const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
@@ -38,6 +53,7 @@ export default function CheckoutPage() {
 
     const payload = {
       ...formData,
+      hub_id: selectedHubId ? parseInt(selectedHubId) : null,
       total_amount: total,
       items: items.map(item => ({
         product_id: item.id,
@@ -63,7 +79,7 @@ export default function CheckoutPage() {
         localStorage.removeItem("cart");
         router.push("/checkout/success");
       } else {
-        setError("Failed to place order. Please check your details.");
+        setError(data.message || "Failed to place order. Please check your details.");
       }
     } catch (err) {
       setError("Server error. Please try again later.");
@@ -73,61 +89,80 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth">
-      <nav className="h-20 bg-white border-b border-gray-100 flex items-center px-6">
+    <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
+      <nav className="h-16 bg-white border-b border-gray-100 flex items-center px-6">
         <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
-          <Link href="/menu" className="flex items-center gap-3">
-            <span className="text-xl">←</span>
-            <span className="text-[10px] font-black uppercase tracking-widest">Back to Menu</span>
+          <Link href="/menu" className="flex items-center gap-2 group">
+            <span className="text-sm text-brand-earth/60 group-hover:text-brand-earth transition-colors">←</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/60 group-hover:text-brand-earth transition-colors">Back to Menu</span>
           </Link>
           <div className="flex items-center gap-2">
-            <Image src="/logo.jpg" alt="Logo" width={32} height={32} className="rounded-full" />
-            <span className="text-xs font-black uppercase tracking-tighter">Pastil ni Liling</span>
+            <Image src="/logo.jpg" alt="Logo" width={24} height={24} className="rounded-full" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">Pastil ni Liling</span>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-6 py-12 grid lg:grid-cols-2 gap-16">
+      <main className="max-w-6xl mx-auto px-6 py-10 grid lg:grid-cols-2 gap-12 w-full flex-1">
         {/* Form Section */}
-        <section className="space-y-12">
-          <header className="space-y-4">
-            <h1 className="text-4xl font-black tracking-tighter">Checkout.</h1>
-            <p className="text-xs font-bold uppercase tracking-widest text-brand-earth/40">Provide your delivery details</p>
+        <section className="space-y-8">
+          <header className="space-y-1">
+            <h1 className="text-3xl font-bold tracking-tight text-brand-earth">Checkout</h1>
+            <p className="text-xs text-brand-earth/50">Provide your delivery details below</p>
           </header>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-6">
-               <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Delivery Address</label>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-5">
+               <div className="space-y-1.5">
+                 <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Fulfilling Spoke Hub (Branch)</label>
+                 <select
+                   required
+                   value={selectedHubId}
+                   onChange={(e) => setSelectedHubId(e.target.value)}
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green outline-none transition-colors shadow-sm"
+                 >
+                   {hubs.length === 0 ? (
+                     <option value="">No active hubs available</option>
+                   ) : (
+                     hubs.map((hub) => (
+                       <option key={hub.id} value={hub.id}>
+                         {hub.name} — {hub.address}
+                       </option>
+                     ))
+                   )}
+                 </select>
+               </div>
+               <div className="space-y-1.5">
+                 <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Delivery Address</label>
                  <textarea 
                    required
-                   className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all h-24 resize-none shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green outline-none transition-colors h-20 resize-none shadow-sm"
                    placeholder="Street, Barangay, City, Landmark"
                    value={formData.shipping_address}
                    onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
                  />
                </div>
-               <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Contact Number</label>
+               <div className="space-y-1.5">
+                 <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Contact Number</label>
                  <input 
                    required
-                   className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green outline-none transition-colors shadow-sm"
                    placeholder="0917 XXX XXXX"
                    value={formData.contact_number}
                    onChange={(e) => setFormData({...formData, contact_number: e.target.value})}
                  />
                </div>
-               <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Payment Method</label>
-                 <div className="grid grid-cols-3 gap-3">
+               <div className="space-y-1.5">
+                 <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Payment Method</label>
+                 <div className="grid grid-cols-3 gap-2">
                     {['gcash', 'paymaya', 'cod'].map((method) => (
                       <button
                         key={method}
                         type="button"
                         onClick={() => setFormData({...formData, payment_method: method})}
-                        className={`py-4 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
+                        className={`py-2 rounded-lg border text-[9px] font-semibold uppercase tracking-wider transition-colors ${
                           formData.payment_method === method 
-                            ? 'bg-brand-earth text-white border-brand-earth shadow-lg' 
+                            ? 'bg-brand-earth text-white border-brand-earth shadow-sm' 
                             : 'bg-white border-gray-100 text-brand-earth/40 hover:border-brand-green'
                         }`}
                       >
@@ -141,49 +176,49 @@ export default function CheckoutPage() {
             <button 
               type="submit" 
               disabled={loading || items.length === 0}
-              className="w-full bg-brand-green text-white py-6 rounded-[2rem] text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-brand-green/20 disabled:opacity-30"
+              className="w-full bg-brand-green text-white py-3 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:bg-brand-green/90 transition-colors shadow-sm disabled:opacity-30"
             >
               {loading ? "Processing..." : `Place Order (₱${total.toFixed(2)})`}
             </button>
-            {error && <p className="text-xs font-bold text-red-500 text-center">{error}</p>}
+            {error && <p className="text-xs font-medium text-red-500 text-center">{error}</p>}
           </form>
         </section>
 
         {/* Summary Section */}
-        <aside className="bg-white rounded-[3rem] border border-gray-100 shadow-2xl shadow-brand-earth/5 p-12 h-fit space-y-8 lg:sticky lg:top-32">
-          <h2 className="text-xl font-black tracking-tighter">Order Summary</h2>
+        <aside className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 h-fit space-y-6 lg:sticky lg:top-24">
+          <h2 className="text-base font-bold tracking-tight text-brand-earth">Order Summary</h2>
           
-          <div className="space-y-6 max-h-64 overflow-y-auto pr-4">
+          <div className="space-y-4 max-h-52 overflow-y-auto pr-2">
             {items.map((item) => (
               <div key={item.id} className="flex justify-between items-center">
-                <div className="flex gap-4">
-                  <span className="text-[10px] font-black text-brand-green bg-brand-green/10 w-6 h-6 rounded-md flex items-center justify-center">{item.quantity}x</span>
-                  <span className="text-xs font-bold text-brand-earth/70">{item.name}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-[9px] font-semibold text-brand-green bg-brand-green/10 w-5 h-5 rounded-md flex items-center justify-center">{item.quantity}x</span>
+                  <span className="text-xs font-medium text-brand-earth/80">{item.name}</span>
                 </div>
-                <span className="text-xs font-black">₱{(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
+                <span className="text-xs font-semibold text-brand-earth">₱{(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
               </div>
             ))}
           </div>
 
-          <div className="pt-8 border-t border-gray-100 space-y-3">
-             <div className="flex justify-between text-xs font-bold text-brand-earth/40">
+          <div className="pt-5 border-t border-gray-100 space-y-2.5">
+             <div className="flex justify-between text-[11px] text-brand-earth/40">
                 <span>Subtotal</span>
-                <span>₱{subtotal.toFixed(2)}</span>
+                <span className="font-semibold text-brand-earth/60">₱{subtotal.toFixed(2)}</span>
              </div>
-             <div className="flex justify-between text-xs font-bold text-brand-earth/40">
+             <div className="flex justify-between text-[11px] text-brand-earth/40">
                 <span>Delivery Fee</span>
-                <span>₱{deliveryFee.toFixed(2)}</span>
+                <span className="font-semibold text-brand-earth/60">₱{deliveryFee.toFixed(2)}</span>
              </div>
-             <div className="flex justify-between pt-4">
-                <span className="text-xs font-black uppercase tracking-widest">Total</span>
-                <span className="text-2xl font-black tracking-tighter">₱{total.toFixed(2)}</span>
+             <div className="flex justify-between pt-3 border-t border-gray-50 items-center">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Total</span>
+                <span className="text-lg font-bold text-brand-earth">₱{total.toFixed(2)}</span>
              </div>
           </div>
 
-          <div className="p-6 bg-brand-yellow/10 rounded-2xl border border-brand-yellow/20 flex gap-4 items-start">
-            <span className="text-xl">📍</span>
-            <p className="text-[10px] font-bold leading-relaxed text-brand-earth/70">
-              Orders are typically delivered within <span className="text-brand-earth">30-45 minutes</span> depending on your distance from our nearest hub.
+          <div className="p-4 bg-brand-yellow/10 rounded-xl border border-brand-yellow/20 flex gap-3 items-start">
+            <span className="text-base leading-none">📍</span>
+            <p className="text-[10px] leading-relaxed text-brand-earth/60">
+              Orders are typically delivered within <span className="font-semibold text-brand-earth">30-45 minutes</span> depending on your distance from our nearest hub.
             </p>
           </div>
         </aside>

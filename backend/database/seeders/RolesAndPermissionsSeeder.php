@@ -27,7 +27,16 @@ class RolesAndPermissionsSeeder extends Seeder
                 'password' => Hash::make('password'),
             ]
         );
-
         $admin->assignRole($adminRole);
+
+        // Create initial Franchisee user
+        $franchisee = User::updateOrCreate(
+            ['email' => 'franchise@pastilnililing.com'],
+            [
+                'name' => 'Liling Manila Franchisee',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $franchisee->assignRole($franchiseeRole);
     }
 }

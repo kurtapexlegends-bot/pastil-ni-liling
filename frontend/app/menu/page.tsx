@@ -81,7 +81,7 @@ export default function MenuPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth">
+    <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
       {/* Cart Drawer */}
       <CartDrawer 
         isOpen={isCartOpen} 
@@ -93,31 +93,31 @@ export default function MenuPage() {
 
       {/* Selected Product Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-brand-earth/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-4xl rounded-[3rem] overflow-hidden shadow-2xl grid md:grid-cols-2 animate-in zoom-in slide-in-from-bottom-8 duration-500">
-            <div className="relative aspect-square bg-gray-50">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-earth/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-xl grid md:grid-cols-2 animate-in zoom-in-95 duration-200">
+            <div className="relative aspect-square bg-gray-50 md:h-full">
               <Image src={selectedProduct.image_url || "/hero.png"} alt={selectedProduct.name} fill className="object-cover" />
               <button 
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-6 left-6 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform text-xl"
+                className="absolute top-4 left-4 w-8 h-8 bg-white/95 rounded-full flex items-center justify-center shadow-sm hover:bg-white transition-colors text-xs text-brand-earth/70"
               >
                 ✕
               </button>
             </div>
-            <div className="p-12 flex flex-col justify-between">
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green/10 text-[10px] font-black uppercase tracking-widest text-brand-green">
+            <div className="p-6 md:p-8 flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-brand-green/10 text-[9px] font-semibold uppercase tracking-wider text-brand-green">
                   {selectedProduct.category.replace('_', ' ')}
                 </div>
-                <h2 className="text-4xl font-black tracking-tighter leading-tight">{selectedProduct.name}</h2>
-                <p className="text-brand-earth/60 font-medium leading-relaxed">{selectedProduct.description}</p>
-                <div className="text-4xl font-black text-brand-earth">₱{selectedProduct.price}</div>
+                <h2 className="text-xl font-bold tracking-tight text-brand-earth leading-tight">{selectedProduct.name}</h2>
+                <p className="text-xs text-brand-earth/60 leading-relaxed font-normal">{selectedProduct.description}</p>
+                <div className="text-xl font-bold text-brand-earth">₱{selectedProduct.price}</div>
               </div>
 
-              <div className="pt-12 flex gap-4">
+              <div className="pt-4">
                 <button 
                   onClick={() => handleAddToCart(selectedProduct)}
-                  className="flex-1 bg-brand-earth text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-green transition-all shadow-xl shadow-brand-earth/10"
+                  className="w-full bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-colors"
                 >
                   Add to Cart
                 </button>
@@ -127,44 +127,44 @@ export default function MenuPage() {
         </div>
       )}
 
-      <nav className="fixed top-0 z-50 w-full bg-white/70 backdrop-blur-xl border-b border-gray-100">
+      <nav className="fixed top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="flex items-center justify-between px-6 h-16 max-w-6xl mx-auto">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.jpg" alt="Logo" width={32} height={32} className="rounded-full" />
-            <span className="text-xs font-black uppercase tracking-tighter">Pastil ni Liling</span>
+            <Image src="/logo.jpg" alt="Logo" width={24} height={24} className="rounded-full" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">Pastil ni Liling</span>
           </Link>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <div 
               onClick={() => setIsCartOpen(true)}
-              className="relative cursor-pointer group"
+              className="relative cursor-pointer group p-1"
             >
-              <span className="text-xl">🛒</span>
+              <span className="text-lg">🛒</span>
               {cartItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-brand-green text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center animate-in zoom-in">
+                <span className="absolute -top-1 -right-1 bg-brand-green text-white text-[8px] font-semibold w-3.5 h-3.5 rounded-full flex items-center justify-center animate-in zoom-in">
                   {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
                 </span>
               )}
             </div>
-            <Link href="/" className="text-[10px] font-black uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity">
+            <Link href="/" className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50 hover:text-brand-earth transition-colors">
               Back to Home
             </Link>
           </div>
         </div>
       </nav>
 
-      <main className="pt-24 pb-20 px-6 max-w-6xl mx-auto">
-        <header className="space-y-6 mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/30 border border-brand-yellow text-[9px] font-bold uppercase tracking-widest text-brand-earth">
+      <main className="pt-24 pb-16 px-6 max-w-6xl mx-auto w-full flex-1">
+        <header className="space-y-4 mb-10">
+          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-brand-yellow/10 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">
             Our Full Menu
           </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-brand-earth leading-tight">
             Swak sa Bulsa, <br />
             <span className="text-brand-green">Sarap na Babalik-balikan.</span>
           </h1>
 
           {/* Categories */}
-          <div className="flex flex-wrap gap-2 pt-4">
+          <div className="flex flex-wrap gap-2 pt-2">
             {[
               { id: "all", label: "All Items" },
               { id: "pastil", label: "Pastil Variants" },
@@ -174,9 +174,9 @@ export default function MenuPage() {
               <button
                 key={cat.id}
                 onClick={() => setFilter(cat.id)}
-                className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                className={`px-4 py-2 rounded-lg text-[9px] font-semibold uppercase tracking-wider transition-colors ${
                   filter === cat.id 
-                    ? "bg-brand-earth text-white shadow-xl shadow-brand-earth/20" 
+                    ? "bg-brand-earth text-white" 
                     : "bg-white border border-gray-100 hover:border-brand-green text-brand-earth/50"
                 }`}
               >
@@ -187,13 +187,13 @@ export default function MenuPage() {
         </header>
 
         {loading ? (
-          <div className="grid md:grid-cols-3 gap-8 animate-pulse">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="bg-gray-100 aspect-square rounded-[2rem]"></div>
+              <div key={i} className="bg-gray-100 aspect-square rounded-2xl"></div>
             ))}
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map((product) => (
               <ProductCard 
                 key={product.id} 
@@ -206,16 +206,16 @@ export default function MenuPage() {
         )}
 
         {!loading && filteredProducts.length === 0 && (
-          <div className="py-20 text-center space-y-4">
-            <div className="text-4xl">🍃</div>
-            <p className="text-sm font-bold text-brand-earth/40 uppercase tracking-widest">No products found in this category.</p>
+          <div className="py-16 text-center space-y-3">
+            <div className="text-3xl">🍃</div>
+            <p className="text-xs font-semibold text-brand-earth/40 uppercase tracking-wider">No products found in this category.</p>
           </div>
         )}
       </main>
 
       {/* Footer Lite */}
-      <footer className="py-12 border-t border-gray-100 text-center">
-        <p className="text-[9px] font-bold uppercase tracking-widest opacity-30">
+      <footer className="py-8 border-t border-gray-100 text-center bg-white mt-auto">
+        <p className="text-[8px] font-medium uppercase tracking-wider text-brand-earth/30">
           &copy; 2026 Pastil ni Liling. All rights reserved.
         </p>
       </footer>

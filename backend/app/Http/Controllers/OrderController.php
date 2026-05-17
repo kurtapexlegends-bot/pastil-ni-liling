@@ -32,6 +32,8 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'type' => 'nullable|string|in:retail,wholesale',
+            'hub_id' => 'nullable|exists:hubs,id',
             'total_amount' => 'required|numeric',
             'shipping_address' => 'required|string',
             'contact_number' => 'required|string',
@@ -51,8 +53,54 @@ class OrderController extends Controller
 
         try {
             return DB::transaction(function () use ($request) {
+                $type = $request->input('type', 'retail');
+                $hubId = $request->input('hub_id');
+
+                if ($type === 'wholesale') {
+                    $hub = \App\Models\Hub::where('franchisee_id', $request->user()->id)->first();
+                    if (!$hub) {
+                        throw new \Exception('No active franchise branch associated with this account.');
+                    }
+                    $hubId = $hub->id;
+                } else {
+                    if (!$hubId) {
+                        throw new \Exception('Please select a branch to fulfill your order.');
+                    }
+                    
+                    $hub = \App\Models\Hub::where('id', $hubId)->where('status', 'active')->first();
+                    if (!$hub) {
+                        throw new \Exception('The selected branch is currently unavailable.');
+                    }
+                }
+
+                // Verify stock for retail B2C orders
+                if ($type === 'retail') {
+                    foreach ($request->items as $item) {
+                        $product = \App\Models\Product::findOrFail($item['product_id']);
+                        $inventory = \App\Models\HubInventory::where('hub_id', $hubId)
+                            ->where('product_id', $item['product_id'])
+                            ->first();
+
+                        if (!$inventory || $inventory->stock_quantity < $item['quantity']) {
+                            $available = $inventory ? $inventory->stock_quantity : 0;
+                            throw new \Exception("Sorry, {$product->name} is out of stock at this branch. (Available: {$available} units)");
+                        }
+                    }
+                    
+                    // Deduct stock
+                    foreach ($request->items as $item) {
+                        $inventory = \App\Models\HubInventory::where('hub_id', $hubId)
+                            ->where('product_id', $item['product_id'])
+                            ->first();
+                        $inventory->stock_quantity -= $item['quantity'];
+                        $inventory->save();
+                    }
+                }
+
                 $order = Order::create([
                     'user_id' => $request->user()?->id,
+                    'hub_id' => $hubId,
+                    'type' => $type,
                     'total_amount' => $request->total_amount,
                     'status' => 'pending',
                     'shipping_address' => $request->shipping_address,

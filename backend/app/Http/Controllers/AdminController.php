@@ -28,8 +28,48 @@ class AdminController extends Controller
 
     public function updateOrderStatus(Request $request, $id)
     {
-        $order = \App\Models\Order::findOrFail($id);
+        $order = \App\Models\Order::with('items.product')->findOrFail($id);
+        $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
+
+        if ($order->type === 'wholesale' && $request->status === 'delivered' && $oldStatus !== 'delivered') {
+            if ($order->hub_id) {
+                foreach ($order->items as $item) {
+                    $product = $item->product;
+                    if (!$product) continue;
+
+                    $targetProductSlug = null;
+                    $multiplier = 1;
+
+                    if ($product->slug === 'wholesale-pastil-jar-bulk') {
+                        $targetProductSlug = 'original-chicken-pastil';
+                        $multiplier = 24;
+                    } elseif ($product->slug === 'wholesale-chili-oil-bulk') {
+                        $targetProductSlug = 'lilings-signature-chili-garlic-oil';
+                        $multiplier = 12;
+                    }
+
+                    $targetProductId = null;
+                    if ($targetProductSlug) {
+                        $retailProduct = \App\Models\Product::where('slug', $targetProductSlug)->first();
+                        if ($retailProduct) {
+                            $targetProductId = $retailProduct->id;
+                        }
+                    } else {
+                        $targetProductId = $product->id;
+                    }
+
+                    if ($targetProductId) {
+                        $inventory = \App\Models\HubInventory::firstOrNew([
+                            'hub_id' => $order->hub_id,
+                            'product_id' => $targetProductId,
+                        ]);
+                        $inventory->stock_quantity += ($item->quantity * $multiplier);
+                        $inventory->save();
+                    }
+                }
+            }
+        }
 
         return response()->json([
             'success' => true,
