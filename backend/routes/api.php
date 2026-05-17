@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/franchise/inventory', [\App\Http\Controllers\FranchiseController::class, 'getInventory']);
         Route::get('/franchise/orders', [\App\Http\Controllers\FranchiseController::class, 'getHubOrders']);
         Route::patch('/franchise/orders/{id}', [\App\Http\Controllers\FranchiseController::class, 'updateHubOrderStatus']);
+        Route::post('/pos/sync', [\App\Http\Controllers\OrderController::class, 'syncPOSOrders']);
     });
 
     // Order Placement (Authenticated)

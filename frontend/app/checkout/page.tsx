@@ -11,6 +11,8 @@ export default function CheckoutPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [hubs, setHubs] = useState<any[]>([]);
   const [selectedHubId, setSelectedHubId] = useState<string>("");
+  const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [geoStatus, setGeoStatus] = useState<string>("idle"); // idle, requested, success, denied
   const [formData, setFormData] = useState({
     shipping_address: "",
     contact_number: "",
@@ -24,6 +26,25 @@ export default function CheckoutPage() {
     const saved = localStorage.getItem("cart");
     if (saved) {
       setItems(JSON.parse(saved));
+    }
+
+    // Request customer coordinates to auto-match the nearest hub
+    if (navigator.geolocation) {
+      setGeoStatus("requested");
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCoordinates({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+          setGeoStatus("success");
+        },
+        (err) => {
+          console.warn("Geolocation request denied or timed out.", err);
+          setGeoStatus("denied");
+        },
+        { timeout: 10000 }
+      );
     }
 
     // Fetch active fulfillment hubs
@@ -54,6 +75,8 @@ export default function CheckoutPage() {
     const payload = {
       ...formData,
       hub_id: selectedHubId ? parseInt(selectedHubId) : null,
+      latitude: coordinates?.latitude || null,
+      longitude: coordinates?.longitude || null,
       total_amount: total,
       items: items.map(item => ({
         product_id: item.id,
@@ -114,7 +137,15 @@ export default function CheckoutPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-5">
                <div className="space-y-1.5">
-                 <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Fulfilling Spoke Hub (Branch)</label>
+                 <div className="flex justify-between items-center">
+                   <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Fulfilling Spoke Hub (Branch)</label>
+                   {geoStatus === "success" && (
+                     <span className="text-[8px] bg-brand-green/15 text-brand-green border border-brand-green/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">📍 Auto-Routing Active</span>
+                   )}
+                   {geoStatus === "requested" && (
+                     <span className="text-[8px] bg-brand-yellow/15 text-brand-yellow border border-brand-yellow/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider animate-pulse">🛰 Locating...</span>
+                   )}
+                 </div>
                  <select
                    required
                    value={selectedHubId}

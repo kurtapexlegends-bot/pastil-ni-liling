@@ -13,6 +13,8 @@ class Hub extends Model
         'franchisee_id',
         'name',
         'address',
+        'latitude',
+        'longitude',
         'status',
     ];
 

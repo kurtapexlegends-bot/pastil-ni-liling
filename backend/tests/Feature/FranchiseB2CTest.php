@@ -47,7 +47,7 @@ class FranchiseB2CTest extends TestCase
         $response->assertJson([
             'success' => false,
             'message' => 'Failed to place order.',
-            'error' => 'Please select a branch to fulfill your order.'
+            'error' => 'Could not determine nearest branch hub with sufficient inventory. Please select branch manually.'
         ]);
     }
 

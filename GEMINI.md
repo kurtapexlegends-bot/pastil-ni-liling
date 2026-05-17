@@ -7,6 +7,7 @@
 - **Naming:** Use strict functional/semantic naming. No redundant suffixes (e.g., use `inventory` not `inventory_module`).
 - **Structure (Backend):** Maintain logical separation of concerns (routes, controllers, services, models). Encapsulate complex business logic in dedicated `App\Services` or `App\Actions`, keeping Controllers strictly as slim request/response orchestrators.
 - **Structure (Frontend):** Enforce strict modular componentization. Avoid large monolithic files (e.g., pages exceeding 500 lines). Decompose dashboard views and large page templates into granular, focused UI and state components inside `components/` grouped by feature/domain for maximum maintainability and testing scope.
+- **Componentization (Reusability):** Decompose structural UI elements (e.g., Sidebars, Headers, Modules) into unified, global reusable components. Never bundle these layout concerns directly in page templates; maintain them as single, independent files so they can be reused and edited separately.
 
 ## 2. Security & Authentication
 - **Access Control:** Implement robust RBAC from day one.
@@ -21,6 +22,7 @@
 
 ## 4. Code Quality & Best Practices
 - **Clean Code:** DRY and SOLID. Single responsibility functions.
+- **Fail-Fast:** Implement defensive programming via guard clauses and early returns. Validate pre-conditions immediately and exit functions early to eliminate deep nesting and high cognitive load.
 - **Error Handling:** Global error handling. Log appropriately, return sanitized responses.
 - **Typing:** Enforce strict typing. Avoid `any`.
 
