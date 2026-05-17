@@ -5,7 +5,8 @@
 ## 1. Architecture & Scalability
 - **System Design:** Prioritize high cohesion and loose coupling suitable for integrated platforms.
 - **Naming:** Use strict functional/semantic naming. No redundant suffixes (e.g., use `inventory` not `inventory_module`).
-- **Structure:** Maintain logical separation of concerns (routes, controllers, services).
+- **Structure (Backend):** Maintain logical separation of concerns (routes, controllers, services, models). Encapsulate complex business logic in dedicated `App\Services` or `App\Actions`, keeping Controllers strictly as slim request/response orchestrators.
+- **Structure (Frontend):** Enforce strict modular componentization. Avoid large monolithic files (e.g., pages exceeding 500 lines). Decompose dashboard views and large page templates into granular, focused UI and state components inside `components/` grouped by feature/domain for maximum maintainability and testing scope.
 
 ## 2. Security & Authentication
 - **Access Control:** Implement robust RBAC from day one.

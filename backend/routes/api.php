@@ -34,6 +34,29 @@ Route::middleware('auth:sanctum')->group(function () {
         // Admin Order Management
         Route::get('/orders', [\App\Http\Controllers\AdminController::class, 'getOrders']);
         Route::patch('/orders/{id}', [\App\Http\Controllers\AdminController::class, 'updateOrderStatus']);
+
+        // Product Catalog Management
+        Route::get('/products', [\App\Http\Controllers\AdminController::class, 'getProducts']);
+        Route::post('/products', [\App\Http\Controllers\AdminController::class, 'storeProduct']);
+        Route::put('/products/{id}', [\App\Http\Controllers\AdminController::class, 'updateProduct']);
+        Route::delete('/products/{id}', [\App\Http\Controllers\AdminController::class, 'destroyProduct']);
+
+        // Franchise Branch Management
+        Route::get('/hubs', [\App\Http\Controllers\AdminController::class, 'getHubs']);
+        Route::post('/hubs', [\App\Http\Controllers\AdminController::class, 'storeHub']);
+        Route::put('/hubs/{id}', [\App\Http\Controllers\AdminController::class, 'updateHub']);
+        Route::delete('/hubs/{id}', [\App\Http\Controllers\AdminController::class, 'destroyHub']);
+        Route::get('/franchisees', [\App\Http\Controllers\AdminController::class, 'getFranchisees']);
+
+        // Supply Chain & Batch Integrity Management
+        Route::get('/inventory/batches', [\App\Http\Controllers\InventoryController::class, 'getBatches']);
+        Route::post('/inventory/batches', [\App\Http\Controllers\InventoryController::class, 'storeBatch']);
+        Route::post('/inventory/batches/markdown', [\App\Http\Controllers\InventoryController::class, 'triggerMarkdown']);
+        Route::get('/inventory/ingredients', [\App\Http\Controllers\InventoryController::class, 'getIngredients']);
+        Route::post('/inventory/ingredients', [\App\Http\Controllers\InventoryController::class, 'storeIngredient']);
+        Route::post('/inventory/ingredients/{id}/restock', [\App\Http\Controllers\InventoryController::class, 'restockIngredient']);
+        Route::get('/inventory/recipes', [\App\Http\Controllers\InventoryController::class, 'getRecipes']);
+        Route::post('/inventory/recipes', [\App\Http\Controllers\InventoryController::class, 'storeRecipe']);
     });
 });
 

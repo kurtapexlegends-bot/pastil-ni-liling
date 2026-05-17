@@ -90,13 +90,10 @@ class OrderController extends Controller
                         }
                     }
                     
-                    // Deduct stock
+                    // Deduct stock using FIFO batches
+                    $batchService = app(\App\Services\InventoryBatchService::class);
                     foreach ($request->items as $item) {
-                        $inventory = \App\Models\HubInventory::where('hub_id', $hubId)
-                            ->where('product_id', $item['product_id'])
-                            ->first();
-                        $inventory->stock_quantity -= $item['quantity'];
-                        $inventory->save();
+                        $batchService->deductStockFIFO($item['product_id'], $hubId, $item['quantity']);
                     }
                 }
 

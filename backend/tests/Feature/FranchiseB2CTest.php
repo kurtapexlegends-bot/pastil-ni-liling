@@ -127,6 +127,16 @@ class FranchiseB2CTest extends TestCase
             'stock_quantity' => 10
         ]);
 
+        \App\Models\InventoryBatch::create([
+            'batch_number' => 'BATCH-TEST-CHECKOUT',
+            'product_id' => $product->id,
+            'hub_id' => $hub->id,
+            'quantity' => 10,
+            'initial_quantity' => 10,
+            'manufacture_date' => now()->toDateString(),
+            'expiry_date' => now()->addDays(30)->toDateString()
+        ]);
+
         $response = $this->postJson('/api/orders', [
             'type' => 'retail',
             'hub_id' => $hub->id,

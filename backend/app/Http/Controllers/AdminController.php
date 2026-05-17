@@ -22,55 +22,15 @@ class AdminController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => \App\Models\Order::with(['items.product', 'user'])->latest()->get()
+            'data' => \App\Models\Order::with(['items.product', 'user', 'hub'])->latest()->get()
         ]);
     }
 
-    public function updateOrderStatus(Request $request, $id)
+    public function updateOrderStatus(Request $request, $id, \App\Services\OrderFulfillmentService $fulfillmentService)
     {
         $order = \App\Models\Order::with('items.product')->findOrFail($id);
-        $oldStatus = $order->status;
-        $order->update(['status' => $request->status]);
-
-        if ($order->type === 'wholesale' && $request->status === 'delivered' && $oldStatus !== 'delivered') {
-            if ($order->hub_id) {
-                foreach ($order->items as $item) {
-                    $product = $item->product;
-                    if (!$product) continue;
-
-                    $targetProductSlug = null;
-                    $multiplier = 1;
-
-                    if ($product->slug === 'wholesale-pastil-jar-bulk') {
-                        $targetProductSlug = 'original-chicken-pastil';
-                        $multiplier = 24;
-                    } elseif ($product->slug === 'wholesale-chili-oil-bulk') {
-                        $targetProductSlug = 'lilings-signature-chili-garlic-oil';
-                        $multiplier = 12;
-                    }
-
-                    $targetProductId = null;
-                    if ($targetProductSlug) {
-                        $retailProduct = \App\Models\Product::where('slug', $targetProductSlug)->first();
-                        if ($retailProduct) {
-                            $targetProductId = $retailProduct->id;
-                        }
-                    } else {
-                        $targetProductId = $product->id;
-                    }
-
-                    if ($targetProductId) {
-                        $inventory = \App\Models\HubInventory::firstOrNew([
-                            'hub_id' => $order->hub_id,
-                            'product_id' => $targetProductId,
-                        ]);
-                        $inventory->stock_quantity += ($item->quantity * $multiplier);
-                        $inventory->save();
-                    }
-                }
-            }
-        }
-
+        $order = $fulfillmentService->fulfillOrder($order, $request->status);
+        
         return response()->json([
             'success' => true,
             'message' => 'Order status updated successfully!',
@@ -97,6 +57,181 @@ class AdminController extends Controller
             'success' => true,
             'message' => 'Status updated successfully',
             'data' => $application
+        ]);
+    }
+
+    /**
+     * Get all products in catalog.
+     */
+    public function getProducts()
+    {
+        return response()->json([
+            'success' => true,
+            'data' => \App\Models\Product::latest()->get()
+        ]);
+    }
+
+    /**
+     * Store a new product.
+     */
+    public function storeProduct(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'category' => 'required|string|max:255',
+            'stock' => 'required|integer|min:0',
+            'is_active' => 'required|boolean',
+            'is_wholesale' => 'required|boolean',
+            'wholesale_price' => 'nullable|numeric|min:0',
+            'image_url' => 'nullable|string',
+        ]);
+
+        $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
+        
+        $originalSlug = $data['slug'];
+        $count = 1;
+        while (\App\Models\Product::where('slug', $data['slug'])->exists()) {
+            $data['slug'] = $originalSlug . '-' . $count++;
+        }
+
+        $product = \App\Models\Product::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product created successfully!',
+            'data' => $product
+        ], 201);
+    }
+
+    /**
+     * Update an existing product.
+     */
+    public function updateProduct(Request $request, $id)
+    {
+        $product = \App\Models\Product::findOrFail($id);
+        
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'category' => 'required|string|max:255',
+            'stock' => 'required|integer|min:0',
+            'is_active' => 'required|boolean',
+            'is_wholesale' => 'required|boolean',
+            'wholesale_price' => 'nullable|numeric|min:0',
+            'image_url' => 'nullable|string',
+        ]);
+
+        $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
+        $originalSlug = $data['slug'];
+        $count = 1;
+        while (\App\Models\Product::where('slug', $data['slug'])->where('id', '!=', $id)->exists()) {
+            $data['slug'] = $originalSlug . '-' . $count++;
+        }
+
+        $product->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product updated successfully!',
+            'data' => $product
+        ]);
+    }
+
+    /**
+     * Delete a product.
+     */
+    public function destroyProduct($id)
+    {
+        $product = \App\Models\Product::findOrFail($id);
+        $product->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product deleted successfully!'
+        ]);
+    }
+
+    /**
+     * Get all franchise hubs.
+     */
+    public function getHubs()
+    {
+        return response()->json([
+            'success' => true,
+            'data' => \App\Models\Hub::with('franchisee')->latest()->get()
+        ]);
+    }
+
+    /**
+     * Create a new franchise hub.
+     */
+    public function storeHub(Request $request)
+    {
+        $data = $request->validate([
+            'franchisee_id' => 'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'status' => 'required|string|in:active,inactive'
+        ]);
+
+        $hub = \App\Models\Hub::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Franchise branch created successfully!',
+            'data' => $hub->load('franchisee')
+        ], 201);
+    }
+
+    /**
+     * Update a franchise hub.
+     */
+    public function updateHub(Request $request, $id)
+    {
+        $hub = \App\Models\Hub::findOrFail($id);
+
+        $data = $request->validate([
+            'franchisee_id' => 'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'status' => 'required|string|in:active,inactive'
+        ]);
+
+        $hub->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Franchise branch updated successfully!',
+            'data' => $hub->load('franchisee')
+        ]);
+    }
+
+    /**
+     * Delete a franchise hub.
+     */
+    public function destroyHub($id)
+    {
+        $hub = \App\Models\Hub::findOrFail($id);
+        $hub->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Franchise branch deleted successfully!'
+        ]);
+    }
+
+    /**
+     * Get all users holding the Franchisee role.
+     */
+    public function getFranchisees()
+    {
+        $franchisees = \App\Models\User::role('Franchisee')->get();
+        return response()->json([
+            'success' => true,
+            'data' => $franchisees
         ]);
     }
 }
