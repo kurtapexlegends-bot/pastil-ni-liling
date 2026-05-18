@@ -140,7 +140,7 @@ class InventoryBatchTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonPath('success', false);
         $response->assertJsonFragment([
-            'message' => 'Insufficient raw ingredient stock: Chicken Breast. Required: 10kg, Available: 5kg'
+            'message' => 'Insufficient raw ingredient stock: Chicken Breast. Required: 10kg, Available: 5.00kg'
         ]);
     }
 
