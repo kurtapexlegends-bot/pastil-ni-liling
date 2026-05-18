@@ -1,37 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth selection:bg-brand-yellow/30">
       {/* Navigation - Minimal & Elegant */}
-      <nav className="fixed top-0 z-50 w-full bg-white/70 backdrop-blur-xl border-b border-gray-200/50">
-        <div className="flex items-center justify-between px-6 h-20 max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="relative">
-              <div className="absolute inset-0 bg-brand-green/20 rounded-full blur-md group-hover:bg-brand-green/40 transition-all"></div>
-              <Image src="/logo.jpg" alt="Logo" width={42} height={42} className="relative rounded-full shadow-sm" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold leading-none tracking-tight uppercase">Pastil ni Liling</span>
-              <span className="text-[9px] font-medium text-brand-green uppercase tracking-[0.2em] mt-1">Authentic Mindanao</span>
-            </div>
-          </div>
-          
-          <div className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-widest text-brand-earth/60">
-            <Link href="/menu" className="hover:text-brand-green transition-colors">Retail Menu</Link>
-            <Link href="/franchise" className="hover:text-brand-green transition-colors">Franchise</Link>
-            <Link href="/about" className="hover:text-brand-green transition-colors">Our Story</Link>
-          </div>
-
-          <div className="flex items-center gap-5">
-            <Link href="/login" className="hidden sm:block text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100">Sign In</Link>
-            <Link href="/menu" className="bg-brand-earth text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-brand-earth/10 hover:bg-brand-green transition-all active:scale-95">
-              Order Online
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar variant="landing" />
 
       {/* Hero Section - Balanced & Focused */}
       <main className="pt-24 pb-20 md:pt-32 md:pb-32 px-6">

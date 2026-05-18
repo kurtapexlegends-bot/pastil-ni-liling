@@ -26,7 +26,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function updateOrderStatus(Request $request, $id, \App\Services\OrderFulfillmentService $fulfillmentService)
+    public function updateOrderStatus(Request $request, int $id, \App\Services\OrderFulfillmentService $fulfillmentService)
     {
         $order = \App\Models\Order::with('items.product')->findOrFail($id);
         $order = $fulfillmentService->fulfillOrder($order, $request->status);
@@ -41,7 +41,7 @@ class AdminController extends Controller
     /**
      * Update the status of a franchise application.
      */
-    public function updateApplicationStatus(Request $request, $id)
+    public function updateApplicationStatus(Request $request, int $id)
     {
         $application = FranchiseApplication::findOrFail($id);
         
@@ -108,7 +108,7 @@ class AdminController extends Controller
     /**
      * Update an existing product.
      */
-    public function updateProduct(Request $request, $id)
+    public function updateProduct(Request $request, int $id)
     {
         $product = \App\Models\Product::findOrFail($id);
         
@@ -143,7 +143,7 @@ class AdminController extends Controller
     /**
      * Delete a product.
      */
-    public function destroyProduct($id)
+    public function destroyProduct(int $id)
     {
         $product = \App\Models\Product::findOrFail($id);
         $product->delete();
@@ -191,7 +191,7 @@ class AdminController extends Controller
     /**
      * Update a franchise hub.
      */
-    public function updateHub(Request $request, $id)
+    public function updateHub(Request $request, int $id)
     {
         $hub = \App\Models\Hub::findOrFail($id);
 
@@ -216,7 +216,7 @@ class AdminController extends Controller
     /**
      * Delete a franchise hub.
      */
-    public function destroyHub($id)
+    public function destroyHub(int $id)
     {
         $hub = \App\Models\Hub::findOrFail($id);
         $hub->delete();

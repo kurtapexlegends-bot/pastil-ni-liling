@@ -24,6 +24,7 @@ class InventoryBatchService
     public function deductStockFIFO(int $productId, ?int $hubId, int $quantityToDeduct): void
     {
         DB::transaction(function () use ($productId, $hubId, $quantityToDeduct) {
+            /** @var \Illuminate\Database\Eloquent\Collection<\App\Models\InventoryBatch> $batches */
             $batches = InventoryBatch::where('product_id', $productId)
                 ->where('hub_id', $hubId)
                 ->where('quantity', '>', 0)
@@ -40,6 +41,7 @@ class InventoryBatchService
 
             $remaining = $quantityToDeduct;
 
+            /** @var InventoryBatch $batch */
             foreach ($batches as $batch) {
                 if ($remaining <= 0) break;
 
@@ -150,6 +152,7 @@ class InventoryBatchService
     public function triggerCloseToExpiryDiscounts(): int
     {
         return DB::transaction(function () {
+            /** @var \Illuminate\Database\Eloquent\Collection<\App\Models\InventoryBatch> $batches */
             $batches = InventoryBatch::where('quantity', '>', 0)
                 ->where('expiry_date', '<=', now()->addDays(3)->toDateString())
                 ->where('expiry_date', '>=', now()->toDateString())
@@ -157,6 +160,7 @@ class InventoryBatchService
                 ->lockForUpdate()
                 ->get();
 
+            /** @var InventoryBatch $batch */
             foreach ($batches as $batch) {
                 $batch->discount_triggered = true;
                 $batch->save();

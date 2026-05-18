@@ -16,9 +16,9 @@ class InventoryBatchTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $admin;
-    protected $product;
-    protected $batchService;
+    protected User $admin;
+    protected Product $product;
+    protected InventoryBatchService $batchService;
 
     protected function setUp(): void
     {

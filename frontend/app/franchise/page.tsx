@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 export default function FranchisePage() {
   const [step, setStep] = useState(1);
@@ -62,17 +63,7 @@ export default function FranchisePage() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-brand-earth">
-      <nav className="fixed top-0 z-50 w-full bg-white/70 backdrop-blur-xl border-b border-gray-100">
-        <div className="flex items-center justify-between px-6 h-16 max-w-6xl mx-auto">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.jpg" alt="Logo" width={28} height={28} className="rounded-full shadow-sm" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">Franchise Portal</span>
-          </Link>
-          <Link href="/" className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/40 hover:text-brand-earth transition-colors">
-            Back to Home
-          </Link>
-        </div>
-      </nav>
+      <Navbar variant="franchise" />
 
       <main className="pt-28 pb-20 px-6 max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
         {/* Info Side */}

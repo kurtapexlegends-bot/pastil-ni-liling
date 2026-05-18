@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/Navbar";
 
 export default function UserDashboard() {
   const router = useRouter();
@@ -67,20 +68,9 @@ export default function UserDashboard() {
 
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
-      <nav className="h-20 bg-white border-b border-gray-100 flex items-center px-8 shrink-0">
-        <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.jpg" alt="Logo" width={32} height={32} className="rounded-full" />
-            <span className="text-xs font-black uppercase tracking-tighter">Liling Dashboard</span>
-          </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/menu" className="text-[10px] font-black uppercase tracking-widest hover:text-brand-green">Order More</Link>
-            <button onClick={handleLogout} className="text-[10px] font-black uppercase tracking-widest text-red-500">Logout</button>
-          </div>
-        </div>
-      </nav>
+      <Navbar variant="dashboard" onLogout={handleLogout} />
 
-      <main className="max-w-6xl mx-auto w-full px-8 py-12 flex-1 grid lg:grid-cols-3 gap-12">
+      <main className="max-w-6xl mx-auto w-full px-8 pt-28 pb-12 flex-1 grid lg:grid-cols-3 gap-12">
         {/* User Sidebar */}
         <aside className="space-y-8">
           <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-6">

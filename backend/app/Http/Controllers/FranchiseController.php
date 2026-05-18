@@ -62,7 +62,7 @@ class FranchiseController extends Controller
     /**
      * Update status of a retail order routed to the franchisee's hub.
      */
-    public function updateHubOrderStatus(Request $request, $id)
+    public function updateHubOrderStatus(Request $request, int $id)
     {
         $hub = Hub::where('franchisee_id', $request->user()->id)->first();
 

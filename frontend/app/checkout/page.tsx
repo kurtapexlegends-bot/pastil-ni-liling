@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/Navbar";
 import { CartItem } from "@/types";
 
 export default function CheckoutPage() {
@@ -113,20 +114,9 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
-      <nav className="h-16 bg-white border-b border-gray-100 flex items-center px-6">
-        <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
-          <Link href="/menu" className="flex items-center gap-2 group">
-            <span className="text-sm text-brand-earth/60 group-hover:text-brand-earth transition-colors">←</span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/60 group-hover:text-brand-earth transition-colors">Back to Menu</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <Image src="/logo.jpg" alt="Logo" width={24} height={24} className="rounded-full" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">Pastil ni Liling</span>
-          </div>
-        </div>
-      </nav>
+      <Navbar variant="checkout" />
 
-      <main className="max-w-6xl mx-auto px-6 py-10 grid lg:grid-cols-2 gap-12 w-full flex-1">
+      <main className="max-w-6xl mx-auto px-6 pt-24 pb-10 grid lg:grid-cols-2 gap-12 w-full flex-1">
         {/* Form Section */}
         <section className="space-y-8">
           <header className="space-y-1">

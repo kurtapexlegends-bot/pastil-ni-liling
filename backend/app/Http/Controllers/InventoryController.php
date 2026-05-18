@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
-    protected $batchService;
+    protected InventoryBatchService $batchService;
 
     public function __construct(InventoryBatchService $batchService)
     {
@@ -89,7 +89,7 @@ class InventoryController extends Controller
         ], 201);
     }
 
-    public function restockIngredient(Request $request, $id)
+    public function restockIngredient(Request $request, int $id)
     {
         $request->validate([
             'quantity' => 'required|numeric|min:0.01'

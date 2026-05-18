@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import CartDrawer from "@/components/CartDrawer";
+import Navbar from "@/components/Navbar";
 import { Product, CartItem } from "@/types";
 
 export default function MenuPage() {
@@ -127,31 +128,11 @@ export default function MenuPage() {
         </div>
       )}
 
-      <nav className="fixed top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="flex items-center justify-between px-6 h-16 max-w-6xl mx-auto">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.jpg" alt="Logo" width={24} height={24} className="rounded-full" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">Pastil ni Liling</span>
-          </Link>
-          
-          <div className="flex items-center gap-4">
-            <div 
-              onClick={() => setIsCartOpen(true)}
-              className="relative cursor-pointer group p-1"
-            >
-              <span className="text-lg">🛒</span>
-              {cartItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-brand-green text-white text-[8px] font-semibold w-3.5 h-3.5 rounded-full flex items-center justify-center animate-in zoom-in">
-                  {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
-                </span>
-              )}
-            </div>
-            <Link href="/" className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50 hover:text-brand-earth transition-colors">
-              Back to Home
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar
+        variant="menu"
+        cartCount={cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+        onCartClick={() => setIsCartOpen(true)}
+      />
 
       <main className="pt-24 pb-16 px-6 max-w-6xl mx-auto w-full flex-1">
         <header className="space-y-4 mb-10">
