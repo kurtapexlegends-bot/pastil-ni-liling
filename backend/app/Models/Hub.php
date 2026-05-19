@@ -32,4 +32,9 @@ class Hub extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
 }

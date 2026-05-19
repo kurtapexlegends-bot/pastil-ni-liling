@@ -10,6 +10,7 @@ interface MarginData {
   cogs: number;
   labor_cost: number;
   waste_cost: number;
+  expenses_cost: number;
   gross_profit: number;
   margin_percent: number;
 }

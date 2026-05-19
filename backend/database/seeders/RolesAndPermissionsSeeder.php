@@ -26,7 +26,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ['email' => 'admin@pastilnililing.com'],
             [
                 'name' => 'Pastil Admin',
-                'password' => Hash::make('password'),
+                'password' => 'password',
             ]
         );
         $admin->assignRole($adminRole);
@@ -36,7 +36,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ['email' => 'hq_ops@pastilnililing.com'],
             [
                 'name' => 'Liling HQ Operations Director',
-                'password' => Hash::make('password'),
+                'password' => 'password',
             ]
         );
         $hqOps->assignRole($hqOpsRole);
@@ -46,7 +46,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ['email' => 'franchise@pastilnililing.com'],
             [
                 'name' => 'Liling Manila Franchisee',
-                'password' => Hash::make('password'),
+                'password' => 'password',
             ]
         );
         $franchisee->assignRole($franchiseeRole);
@@ -56,7 +56,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ['email' => 'cashier@pastilnililing.com'],
             [
                 'name' => 'Liling Diliman Cashier',
-                'password' => Hash::make('password'),
+                'password' => 'password',
             ]
         );
         $cashier->assignRole($cashierRole);

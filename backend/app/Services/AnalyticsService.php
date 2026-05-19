@@ -67,8 +67,9 @@ class AnalyticsService
             $foodWasteCost += $batch->quantity * (float)$recipeCost;
         }
 
-        // Net Gross Profit Calculation
-        $grossProfit = $totalRevenue - ($cogs + $totalLaborCost + $foodWasteCost);
+        // Net Gross Profit Calculation (Dynamic Expenses subtraction)
+        $expensesCost = \App\Models\Expense::sum('amount') ?? 0.0;
+        $grossProfit = $totalRevenue - ($cogs + $totalLaborCost + $foodWasteCost + $expensesCost);
         $profitMarginPercent = $totalRevenue > 0 ? ($grossProfit / $totalRevenue) * 100 : 0.0;
 
         // 2. Comparative Branch (Hub) Performance (Dynamic Ranks)
@@ -200,6 +201,7 @@ class AnalyticsService
                 'cogs' => (float)$cogs,
                 'labor_cost' => (float)$totalLaborCost,
                 'waste_cost' => (float)$foodWasteCost,
+                'expenses_cost' => (float)$expensesCost,
                 'gross_profit' => (float)$grossProfit,
                 'margin_percent' => round((float)$profitMarginPercent, 2)
             ],

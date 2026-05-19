@@ -9,6 +9,7 @@ import CartDrawer from "@/components/CartDrawer";
 import { Product, CartItem } from "@/types";
 import QCComplianceManager from "@/components/admin/QCComplianceManager";
 import BranchPayrollManager from "@/components/admin/BranchPayrollManager";
+import ExpenseTracker from "@/components/admin/ExpenseTracker";
 
 export default function FranchiseDashboard() {
   const router = useRouter();
@@ -24,9 +25,10 @@ export default function FranchiseDashboard() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   // POS State
-  const [activePortalTab, setActivePortalTab] = useState<'logistics' | 'pos' | 'compliance' | 'payroll'>('logistics');
+  const [activePortalTab, setActivePortalTab] = useState<'logistics' | 'pos' | 'compliance' | 'payroll' | 'expenses'>('logistics');
   const [posCart, setPosCart] = useState<any[]>([]);
   const [posPaymentMethod, setPosPaymentMethod] = useState<string>("cash");
+  const [posChannel, setPosChannel] = useState<string>("walk_in");
   const [offlineQueue, setOfflineQueue] = useState<any[]>([]);
   const [isOnline, setIsOnline] = useState<boolean>(true);
 
@@ -172,7 +174,7 @@ export default function FranchiseDashboard() {
           item.id === prod.product_id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      return [...prev, { id: prod.product.id, name: prod.product.name, price: prod.product.price, quantity: 1, maxStock: prod.stock_quantity }];
+      return [...prev, { id: prod.product.id, name: prod.product.name, price: prod.product.price, quantity: 1, maxStock: prod.stock_quantity, flavor_modifier: "Original" }];
     });
   };
 
@@ -185,6 +187,15 @@ export default function FranchiseDashboard() {
           return item;
         }
         return { ...item, quantity: Math.max(1, newQty) };
+      }
+      return item;
+    }));
+  };
+
+  const updatePOSCartFlavor = (id: number, flavor: string) => {
+    setPosCart(prev => prev.map(item => {
+      if (item.id === id) {
+        return { ...item, flavor_modifier: flavor };
       }
       return item;
     }));
@@ -203,10 +214,12 @@ export default function FranchiseDashboard() {
       offline_id: offlineId,
       total_amount: totalAmount,
       payment_method: posPaymentMethod,
+      channel: posChannel,
       items: posCart.map(item => ({
         product_id: item.id,
         quantity: item.quantity,
-        price: parseFloat(item.price)
+        price: parseFloat(item.price),
+        flavor_modifier: item.flavor_modifier || "Original"
       }))
     };
 
@@ -476,6 +489,16 @@ export default function FranchiseDashboard() {
           >
             💰 Shifts & Payroll
           </button>
+          <button
+            onClick={() => setActivePortalTab('expenses')}
+            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
+              activePortalTab === 'expenses'
+                ? 'border-brand-green text-brand-green'
+                : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
+            }`}
+          >
+            Expenses
+          </button>
         </div>
 
         {activePortalTab === 'logistics' && (
@@ -736,7 +759,19 @@ export default function FranchiseDashboard() {
                         <div key={item.id} className="flex justify-between items-center text-xs py-1 border-b border-gray-50/50">
                           <div className="space-y-0.5">
                             <p className="font-semibold text-brand-earth">{item.name}</p>
-                            <p className="text-[10px] text-brand-earth/40">₱{parseFloat(item.price).toFixed(2)} each</p>
+                            <div className="flex gap-2 items-center">
+                              <p className="text-[10px] text-brand-earth/40">₱{parseFloat(item.price).toFixed(2)} each</p>
+                              <span className="text-[9px] text-brand-earth/30">|</span>
+                              <select
+                                value={item.flavor_modifier || "Original"}
+                                onChange={(e) => updatePOSCartFlavor(item.id, e.target.value)}
+                                className="text-[9px] font-semibold text-brand-green bg-transparent border-none outline-none focus:ring-0 p-0 cursor-pointer"
+                              >
+                                <option value="Original">Original</option>
+                                <option value="Spicy">Spicy</option>
+                                <option value="Toasted">Toasted</option>
+                              </select>
+                            </div>
                           </div>
                           <div className="flex items-center gap-3">
                             <div className="flex items-center border border-gray-100 rounded-lg overflow-hidden bg-gray-50/50 shadow-sm">
@@ -770,6 +805,33 @@ export default function FranchiseDashboard() {
                     </div>
 
                     <div className="pt-4 border-t border-gray-50 space-y-4">
+                      {/* POS Sales Channel Selector */}
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-brand-earth/40">POS Sales Channel</span>
+                        <div className="grid grid-cols-3 gap-2">
+                          {[
+                            { value: "walk_in", label: "Walk-in" },
+                            { value: "grab", label: "Grab" },
+                            { value: "foodpanda", label: "Foodpanda" },
+                            { value: "shopee", label: "Shopee" },
+                            { value: "tiktok", label: "TikTok" }
+                          ].map((ch) => (
+                            <button
+                              key={ch.value}
+                              type="button"
+                              onClick={() => setPosChannel(ch.value)}
+                              className={`py-1.5 rounded-lg border text-[9px] font-semibold uppercase tracking-wider transition-colors ${
+                                posChannel === ch.value 
+                                  ? 'bg-brand-earth text-white border-brand-earth shadow-sm' 
+                                  : 'bg-white border-gray-100 text-brand-earth/40 hover:border-brand-green'
+                              }`}
+                            >
+                              {ch.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
                       {/* Payment Selector */}
                       <div className="space-y-1.5">
                         <span className="text-[9px] font-bold uppercase tracking-wider text-brand-earth/40">Booths Payment Type</span>
@@ -879,6 +941,10 @@ export default function FranchiseDashboard() {
 
             <BranchPayrollManager />
           </div>
+        )}
+
+        {activePortalTab === 'expenses' && (
+          <ExpenseTracker />
         )}
       </main>
     </div>

@@ -7,6 +7,7 @@ interface MarginData {
   cogs: number;
   labor_cost: number;
   waste_cost: number;
+  expenses_cost: number;
   gross_profit: number;
   margin_percent: number;
 }
@@ -256,6 +257,13 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
             />
             <div
               style={{
+                width: `${((grossMargins.expenses_cost || 0) / Math.max(1, grossMargins.total_revenue)) * 100}%`,
+              }}
+              className="bg-orange-400 h-full"
+              title="Operational Expenses"
+            />
+            <div
+              style={{
                 width: `${(grossMargins.gross_profit / Math.max(1, grossMargins.total_revenue)) * 100}%`,
               }}
               className="bg-brand-green h-full"
@@ -294,6 +302,17 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
               <span className="text-red-500">
                 ₱
                 {grossMargins.waste_cost.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                })}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-[10px] font-bold">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded bg-orange-400"></span> Branch Expenses
+              </span>
+              <span className="text-orange-600">
+                ₱
+                {(grossMargins.expenses_cost || 0).toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                 })}
               </span>

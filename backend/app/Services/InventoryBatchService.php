@@ -97,7 +97,9 @@ class InventoryBatchService
                 $totalNeeded = $recipe->quantity_required * $quantityManufactured;
 
                 if ($ingredient->stock < $totalNeeded) {
-                    throw new Exception("Insufficient raw ingredient stock: {$ingredient->name}. Required: {$totalNeeded}{$ingredient->unit}, Available: {$ingredient->stock}{$ingredient->unit}");
+                    $req = (float) $totalNeeded;
+                    $av = (float) $ingredient->stock;
+                    throw new Exception("Insufficient raw ingredient stock: {$ingredient->name}. Required: {$req}{$ingredient->unit}, Available: {$av}{$ingredient->unit}");
                 }
 
                 $ingredient->stock -= $totalNeeded;

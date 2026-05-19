@@ -13,6 +13,7 @@ class Order extends Model
         'user_id',
         'hub_id',
         'type',
+        'channel',
         'total_amount',
         'status',
         'shipping_address',

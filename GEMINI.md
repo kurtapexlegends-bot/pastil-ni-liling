@@ -16,6 +16,8 @@
 ## 3. UI/UX Design (Anti- "AI Slop")
 - **Aesthetic:** Clean, minimalist design. No decorative clutter.
 - **Visuals:** Prioritize whitespace, visual hierarchy, and clear typography. Default to refined, earthy palettes.
+- **No Emojis:** Do not use decorative or inline emojis in the system (e.g. in headers, UI labels, sidebars, buttons, notifications) unless explicitly stated or requested by the user. Prefer clean SVG/React icon packages (such as Phosphor/Lucide).
+- **Anti- "AI Slop" Visuals:** Never use multi-color gradient border accents or gradient top stripes on card interfaces or modals (e.g., horizontal lines transitioning through yellow, green, and brown). They look like generic, automated AI template styles ("AI slop") and detract from a premium, custom-built feel.
 - **Components:** Modular, reusable. Ensure clear focus, hover, and error states.
 - **Mobile-First:** Prioritize responsive layouts. All UI must be optimized for mobile touch-points first, then scaled for desktop.
 - **Balanced Proportions:** Avoid oversized typography or elements that feel overwhelming ("slapping the user"). Maintain a sophisticated balance between whitespace and content.

@@ -1,4 +1,7 @@
-import { Hub, FranchiseeUser } from "../../app/admin/types";
+'use client';
+
+import { Hub, FranchiseeUser } from '../../app/admin/types';
+import Modal from '../ui/Modal';
 
 interface HubModalProps {
   isOpen: boolean;
@@ -15,96 +18,107 @@ export default function HubModal({
   hubForm,
   setHubForm,
   franchisees,
-  saveHub
+  saveHub,
 }: HubModalProps) {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-brand-earth/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl border border-gray-100 max-w-md w-full p-6 shadow-xl space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-brand-earth">
-            {hubForm.id ? "Edit Franchise Hub" : "Create Franchise Hub"}
-          </h3>
-          <button 
-            onClick={onClose}
-            className="text-brand-earth/40 hover:text-brand-earth text-lg font-bold"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={hubForm.id ? 'Edit Franchise Branch' : 'Create Franchise Branch'}
+    >
+      <form onSubmit={saveHub} className="space-y-4">
+        {/* Branch Name Input */}
+        <div className="space-y-1.5">
+          <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">
+            Branch Name
+          </label>
+          <input
+            type="text"
+            value={hubForm.name}
+            onChange={(e) =>
+              setHubForm((prev) => ({ ...prev, name: e.target.value }))
+            }
+            required
+            placeholder="e.g., Liling Manila North Hub"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+          />
+        </div>
+
+        {/* Assigned Franchise Partner Select */}
+        <div className="space-y-1.5">
+          <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">
+            Franchise Partner
+          </label>
+          <select
+            value={hubForm.franchisee_id}
+            onChange={(e) =>
+              setHubForm((prev) => ({ ...prev, franchisee_id: e.target.value }))
+            }
+            required
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
           >
-            &times;
+            <option value="" disabled>
+              Select a Franchisee
+            </option>
+            {franchisees.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name} ({user.email})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Physical Address Input */}
+        <div className="space-y-1.5">
+          <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">
+            Physical Address
+          </label>
+          <input
+            type="text"
+            value={hubForm.address}
+            onChange={(e) =>
+              setHubForm((prev) => ({ ...prev, address: e.target.value }))
+            }
+            required
+            placeholder="e.g., 102 Taft Avenue, Manila City"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+          />
+        </div>
+
+        {/* Hub Status Select */}
+        <div className="space-y-1.5">
+          <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">
+            Operating Status
+          </label>
+          <select
+            value={hubForm.status}
+            onChange={(e) =>
+              setHubForm((prev) => ({ ...prev, status: e.target.value }))
+            }
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        {/* Actions Footer */}
+        <div className="flex gap-3 pt-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-earth/10"
+          >
+            Save Branch
           </button>
         </div>
-        
-        <form onSubmit={saveHub} className="space-y-3.5">
-          <div className="space-y-1">
-            <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/50">Hub Branch Name</label>
-            <input 
-              type="text" 
-              value={hubForm.name}
-              onChange={(e) => setHubForm(prev => ({ ...prev, name: e.target.value }))}
-              required
-              placeholder="e.g., Liling Manila North Hub"
-              className="w-full text-xs border border-gray-200 rounded-lg p-2.5 outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/50">Assigned Franchise Partner</label>
-            <select 
-              value={hubForm.franchisee_id}
-              onChange={(e) => setHubForm(prev => ({ ...prev, franchisee_id: e.target.value }))}
-              required
-              className="w-full text-xs border border-gray-200 rounded-lg p-2.5 outline-none bg-white focus:ring-1 focus:ring-brand-green text-brand-earth"
-            >
-              <option value="" disabled>Select a Franchisee</option>
-              {franchisees.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name} ({user.email})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/50">Physical Address</label>
-            <input 
-              type="text" 
-              value={hubForm.address}
-              onChange={(e) => setHubForm(prev => ({ ...prev, address: e.target.value }))}
-              required
-              placeholder="e.g., 102 Taft Avenue, Manila City"
-              className="w-full text-xs border border-gray-200 rounded-lg p-2.5 outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/50">Hub Status</label>
-            <select 
-              value={hubForm.status}
-              onChange={(e) => setHubForm(prev => ({ ...prev, status: e.target.value }))}
-              className="w-full text-xs border border-gray-200 rounded-lg p-2.5 outline-none bg-white focus:ring-1 focus:ring-brand-green text-brand-earth"
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-
-          <div className="flex gap-2 pt-2 justify-end">
-            <button 
-              type="button" 
-              onClick={onClose}
-              className="border border-gray-100 px-4 py-2 rounded-lg text-[9px] font-semibold uppercase tracking-wider hover:bg-gray-50 transition-colors text-brand-earth"
-            >
-              Cancel
-            </button>
-            <button 
-              type="submit" 
-              className="bg-brand-earth hover:bg-brand-green text-white px-4 py-2 rounded-lg text-[9px] font-semibold uppercase tracking-wider transition-colors shadow-sm"
-            >
-              Save Hub
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }

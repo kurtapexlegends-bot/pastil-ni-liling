@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -13,6 +14,8 @@ export default function RegisterPage() {
     password: "",
     password_confirmation: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<any>({});
 
@@ -128,25 +131,43 @@ export default function RegisterPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Password</label>
-                <input 
-                  type="password" 
-                  required
-                  className={`w-full bg-white border ${errors.password ? 'border-red-500' : 'border-gray-100'} rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green outline-none transition-all shadow-sm`}
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
-                />
+                <div className="relative">
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    required
+                    className={`w-full bg-white border ${errors.password ? 'border-red-500' : 'border-gray-100'} rounded-2xl pl-5 pr-12 py-4 text-sm font-bold text-brand-earth focus:border-brand-green outline-none transition-all shadow-sm`}
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-earth/30 hover:text-brand-green transition-colors focus:outline-none cursor-pointer flex items-center justify-center"
+                  >
+                    {showPassword ? <EyeSlash size={18} weight="bold" /> : <Eye size={18} weight="bold" />}
+                  </button>
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Confirm</label>
-                <input 
-                  type="password" 
-                  required
-                  className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green outline-none transition-all shadow-sm"
-                  placeholder="••••••••"
-                  value={formData.password_confirmation}
-                  onChange={(e) => setFormData({...formData, password_confirmation: e.target.value})}
-                />
+                <div className="relative">
+                  <input 
+                    type={showConfirmPassword ? "text" : "password"} 
+                    required
+                    className="w-full bg-white border border-gray-100 rounded-2xl pl-5 pr-12 py-4 text-sm font-bold text-brand-earth focus:border-brand-green outline-none transition-all shadow-sm"
+                    placeholder="••••••••"
+                    value={formData.password_confirmation}
+                    onChange={(e) => setFormData({...formData, password_confirmation: e.target.value})}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-earth/30 hover:text-brand-green transition-colors focus:outline-none cursor-pointer flex items-center justify-center"
+                  >
+                    {showConfirmPassword ? <EyeSlash size={18} weight="bold" /> : <Eye size={18} weight="bold" />}
+                  </button>
+                </div>
               </div>
               {errors.password && <p className="text-[10px] text-red-500 font-bold col-span-2">{errors.password[0]}</p>}
             </div>

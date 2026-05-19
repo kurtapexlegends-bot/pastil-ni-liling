@@ -79,6 +79,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payroll/payouts', [\App\Http\Controllers\PayrollController::class, 'storePayout']);
     Route::get('/payroll/payouts', [\App\Http\Controllers\PayrollController::class, 'getPayouts']);
 
+    // Branch Operational Expenses
+    Route::get('/expenses', [\App\Http\Controllers\ExpenseController::class, 'index']);
+    Route::post('/expenses', [\App\Http\Controllers\ExpenseController::class, 'store']);
+    Route::delete('/expenses/{id}', [\App\Http\Controllers\ExpenseController::class, 'destroy']);
+
     // Phase 5: Business Intelligence & Predictive Analytics Engine
     Route::get('/analytics/summary', [\App\Http\Controllers\AnalyticsController::class, 'getSummary']);
 });

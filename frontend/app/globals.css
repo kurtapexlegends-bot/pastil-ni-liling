@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --brand-green: #89B837;
-  --brand-yellow: #F4E04D;
-  --brand-earth: #2D4A22;
+  --background: #fcfaf6; /* Steamed Jasmine White */
+  --foreground: #171211; /* Mindanao Charcoal */
+  --brand-green: #7ca33a; /* Young Sprout Lime */
+  --brand-yellow: #d1a340; /* Toasted Garlic Gold */
+  --brand-earth: #1b2d16; /* Banana Leaf Dark */
 }
 
 @theme inline {
@@ -14,16 +14,18 @@
   --color-brand-green: var(--brand-green);
   --color-brand-yellow: var(--brand-yellow);
   --color-brand-earth: var(--brand-earth);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-plus-jakarta-sans), sans-serif;
+  --font-display: var(--font-outfit), sans-serif;
 }
-
-
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-plus-jakarta-sans), Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-outfit), Georgia, serif;
 }
 
 @keyframes fadeIn {
@@ -58,3 +60,14 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
+.warm-glass {
+  background: rgba(252, 250, 246, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.premium-shadow {
+  box-shadow: 0 10px 40px -10px rgba(27, 45, 22, 0.04), 
+              0 2px 8px -2px rgba(27, 45, 22, 0.02);
+}

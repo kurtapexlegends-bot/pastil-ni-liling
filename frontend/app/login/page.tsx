@@ -4,10 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 
 export default function LoginPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -112,24 +114,43 @@ export default function LoginPage() {
                 type="email" 
                 required
                 className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green outline-none transition-all shadow-sm"
-                placeholder="admin@pastilnililing.com"
+                placeholder="example@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
               />
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Password</label>
-                <Link href="#" className="text-[9px] font-black uppercase tracking-widest text-brand-green hover:underline">Forgot?</Link>
+              <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Password</label>
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  required
+                  className="w-full bg-white border border-gray-100 rounded-2xl pl-5 pr-12 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all shadow-sm text-brand-earth"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-earth/30 hover:text-brand-green transition-colors focus:outline-none cursor-pointer flex items-center justify-center"
+                >
+                  {showPassword ? <EyeSlash size={18} weight="bold" /> : <Eye size={18} weight="bold" />}
+                </button>
               </div>
-              <input 
-                type="password" 
-                required
-                className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all shadow-sm"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-              />
+            </div>
+
+            <div className="flex justify-between items-center px-1">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input 
+                  type="checkbox" 
+                  className="w-4 h-4 accent-brand-green rounded border-gray-100 text-brand-green cursor-pointer"
+                />
+                <span className="text-[9px] font-black uppercase tracking-widest text-brand-earth/50">Remember Me</span>
+              </label>
+              <Link href="#" className="text-[9px] font-black uppercase tracking-widest text-brand-green hover:underline">
+                Forgot?
+              </Link>
             </div>
 
             {error && <p className="text-xs font-bold text-red-500 text-center">{error}</p>}

@@ -97,6 +97,7 @@ class OrderService
                     'user_id' => $user->id, // Franchisee acting as cashier
                     'hub_id' => $hubId,
                     'type' => 'pos',
+                    'channel' => $orderData['channel'] ?? 'walk_in',
                     'total_amount' => $orderData['total_amount'],
                     'status' => 'completed',
                     'shipping_address' => 'Walk-in Stall Customer',
@@ -111,6 +112,7 @@ class OrderService
                         'product_id' => $item['product_id'],
                         'quantity' => $item['quantity'],
                         'price' => $item['price'],
+                        'flavor_modifier' => $item['flavor_modifier'] ?? null,
                     ]);
                 }
 

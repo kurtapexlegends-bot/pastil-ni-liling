@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Modal from "../ui/Modal";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 
 interface Employee {
   id: number;
@@ -21,6 +23,7 @@ export default function EmployeeManager() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("Branch Cashier");
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const fetchEmployees = async () => {
     const token = localStorage.getItem("token");
@@ -212,99 +215,96 @@ export default function EmployeeManager() {
         </div>
       )}
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-earth/40 backdrop-blur-xs">
-          <div className="bg-white border border-gray-100 w-full max-w-md p-6 rounded-2xl shadow-xl space-y-4">
-            <div className="flex justify-between items-center border-b border-gray-50 pb-3">
-              <h3 className="text-xs font-bold text-brand-earth uppercase tracking-wider">
-                {editingId ? "Update Employee Details" : "Register New Employee"}
-              </h3>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="text-brand-earth/30 hover:text-brand-earth font-bold text-sm"
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title={editingId ? "Update Employee Details" : "Register New Employee"}
+      >
+        {error && (
+          <div className="p-3 mb-4 bg-red-50 border border-red-100 rounded-lg text-[9px] font-semibold text-red-600 uppercase tracking-wide">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Name</label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              placeholder="e.g. Juan dela Cruz"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Email Address</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              placeholder="e.g. juan@pastilnililing.com"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">
+              {editingId ? "New Password (Optional)" : "Password"}
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                required={!editingId}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border border-gray-100 rounded-2xl pl-4 pr-10 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+                placeholder="Minimum 8 characters"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-earth/30 hover:text-brand-green transition-colors focus:outline-none cursor-pointer flex items-center justify-center"
               >
-                ✕
+                {showPassword ? <EyeSlash size={16} weight="bold" /> : <Eye size={16} weight="bold" />}
               </button>
             </div>
-
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-[9px] font-semibold text-red-600 uppercase tracking-wide">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">Name</label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full border border-gray-100 rounded-xl px-3 py-2 text-[10px] font-medium text-brand-earth focus:border-brand-earth/30 outline-none transition-all"
-                  placeholder="e.g. Juan dela Cruz"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">Email Address</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-100 rounded-xl px-3 py-2 text-[10px] font-medium text-brand-earth focus:border-brand-earth/30 outline-none transition-all"
-                  placeholder="e.g. juan@pastilnililing.com"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">
-                  {editingId ? "New Password (Optional)" : "Password"}
-                </label>
-                <input
-                  type="password"
-                  required={!editingId}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-gray-100 rounded-xl px-3 py-2 text-[10px] font-medium text-brand-earth focus:border-brand-earth/30 outline-none transition-all"
-                  placeholder="Minimum 8 characters"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">Permission Level (RBAC Role)</label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full border border-gray-100 rounded-xl px-3 py-2 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all"
-                >
-                  <option value="Admin">Super Admin</option>
-                  <option value="HQ operations">HQ Operations Director</option>
-                  <option value="Franchisee">Franchise Partner</option>
-                  <option value="Branch Cashier">Branch Cashier</option>
-                </select>
-              </div>
-
-              <div className="flex gap-3 pt-3">
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
-                >
-                  Save Personnel
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
-      )}
+
+          <div className="space-y-1.5">
+            <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Permission Level (RBAC Role)</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+            >
+              <option value="Admin">Super Admin</option>
+              <option value="HQ operations">HQ Operations Director</option>
+              <option value="Franchisee">Franchise Partner</option>
+              <option value="Branch Cashier">Branch Cashier</option>
+            </select>
+          </div>
+
+          <div className="flex gap-3 pt-3">
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-earth/10"
+            >
+              Save Personnel
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }
