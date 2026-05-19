@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import ProductCard from "@/components/ProductCard";
 import CartDrawer from "@/components/CartDrawer";
 import Navbar from "@/components/Navbar";
@@ -187,8 +188,8 @@ export default function MenuPage() {
         )}
 
         {!loading && filteredProducts.length === 0 && (
-          <div className="py-16 text-center space-y-3">
-            <div className="text-3xl">🍃</div>
+          <div className="py-16 text-center space-y-3 flex flex-col items-center justify-center">
+            <MagnifyingGlass size={36} className="text-brand-earth/30" />
             <p className="text-xs font-semibold text-brand-earth/40 uppercase tracking-wider">No products found in this category.</p>
           </div>
         )}

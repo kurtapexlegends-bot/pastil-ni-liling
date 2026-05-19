@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { CartItem } from "@/types";
+import { MapPin, Compass } from "@phosphor-icons/react";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -130,10 +131,16 @@ export default function CheckoutPage() {
                  <div className="flex justify-between items-center">
                    <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Fulfilling Spoke Hub (Branch)</label>
                    {geoStatus === "success" && (
-                     <span className="text-[8px] bg-brand-green/15 text-brand-green border border-brand-green/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">📍 Auto-Routing Active</span>
+                     <span className="text-[8px] bg-brand-green/15 text-brand-green border border-brand-green/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider flex items-center gap-1">
+                        <MapPin size={10} weight="bold" />
+                        Auto-Routing Active
+                      </span>
                    )}
                    {geoStatus === "requested" && (
-                     <span className="text-[8px] bg-brand-yellow/15 text-brand-yellow border border-brand-yellow/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider animate-pulse">🛰 Locating...</span>
+                     <span className="text-[8px] bg-brand-yellow/15 text-brand-yellow border border-brand-yellow/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider animate-pulse flex items-center gap-1">
+                        <Compass size={10} weight="bold" className="animate-spin" style={{ animationDuration: '3s' }} />
+                        Locating...
+                      </span>
                    )}
                  </div>
                  <select
@@ -237,7 +244,7 @@ export default function CheckoutPage() {
           </div>
 
           <div className="p-4 bg-brand-yellow/10 rounded-xl border border-brand-yellow/20 flex gap-3 items-start">
-            <span className="text-base leading-none">📍</span>
+            <MapPin size={16} className="text-brand-yellow shrink-0 mt-0.5" />
             <p className="text-[10px] leading-relaxed text-brand-earth/60">
               Orders are typically delivered within <span className="font-semibold text-brand-earth">30-45 minutes</span> depending on your distance from our nearest hub.
             </p>

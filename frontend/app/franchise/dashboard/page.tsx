@@ -430,13 +430,13 @@ export default function FranchiseDashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto w-full px-6 py-10 space-y-10">
-        <header className="flex justify-between items-center pb-4 border-b border-gray-50">
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-50">
            <div className="space-y-1">
               <h1 className="text-3xl font-bold tracking-tight text-brand-earth">Salamat, <span className="text-brand-green">{user?.name?.split(' ')[0]}</span></h1>
               <p className="text-xs text-brand-earth/50">Manage your branch inventory, B2C live checkouts, and terminal sales</p>
            </div>
-           <div>
-              <div className="bg-white border border-gray-100 p-4 rounded-xl text-right space-y-0.5 shadow-sm">
+           <div className="w-full sm:w-auto">
+              <div className="bg-white border border-gray-100 p-4 rounded-xl text-left sm:text-right space-y-0.5 shadow-sm">
                  <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Active Wholesale Orders</p>
                  <p className="text-lg font-bold text-brand-earth">{orders.filter(o => o.status !== 'delivered').length}</p>
               </div>
@@ -444,7 +444,7 @@ export default function FranchiseDashboard() {
         </header>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-gray-100 gap-6">
+        <div className="flex border-b border-gray-100 gap-6 overflow-x-auto scrollbar-none whitespace-nowrap pb-px">
           <button
             onClick={() => setActivePortalTab('logistics')}
             className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
@@ -743,7 +743,7 @@ export default function FranchiseDashboard() {
 
             {/* Live Receipt Drawer */}
             <div className="space-y-6">
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6 lg:sticky lg:top-24">
+              <div id="pos-receipt-drawer" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6 lg:sticky lg:top-24 scroll-mt-6">
                 <div className="flex justify-between items-center pb-3 border-b border-gray-50">
                   <h2 className="text-sm font-bold uppercase tracking-wider text-brand-earth/80">Active Receipt</h2>
                   <span className="text-[9px] font-semibold bg-brand-green/10 text-brand-green px-2 py-0.5 rounded-full">
@@ -752,8 +752,8 @@ export default function FranchiseDashboard() {
                 </div>
 
                 {posCart.length === 0 ? (
-                  <div className="py-12 text-center space-y-1.5">
-                    <span className="text-2xl">🛒</span>
+                  <div className="py-12 text-center space-y-1.5 flex flex-col items-center justify-center">
+                    <Package size={28} className="text-brand-earth/30" />
                     <p className="text-xs font-medium text-brand-earth/40">Receipt is empty</p>
                     <p className="text-[9px] text-brand-earth/30">Tap products on the left to build order receipt</p>
                   </div>
@@ -783,7 +783,7 @@ export default function FranchiseDashboard() {
                               <button 
                                 type="button" 
                                 onClick={() => updatePOSCartQuantity(item.id, -1)}
-                                className="px-2 py-1 hover:bg-gray-100 text-brand-earth/60 font-semibold"
+                                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 text-brand-earth/60 font-bold transition-colors"
                               >
                                 -
                               </button>
@@ -791,7 +791,7 @@ export default function FranchiseDashboard() {
                               <button 
                                 type="button" 
                                 onClick={() => updatePOSCartQuantity(item.id, 1)}
-                                className="px-2 py-1 hover:bg-gray-100 text-brand-earth/60 font-semibold"
+                                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 text-brand-earth/60 font-bold transition-colors"
                               >
                                 +
                               </button>
@@ -800,7 +800,7 @@ export default function FranchiseDashboard() {
                             <button 
                               type="button" 
                               onClick={() => removeFromPOSCart(item.id)}
-                              className="text-red-400 hover:text-red-600 font-bold ml-1"
+                              className="w-8 h-8 flex items-center justify-center text-red-400 hover:text-red-600 font-bold text-sm transition-colors rounded-full hover:bg-red-50"
                             >
                               ×
                             </button>
@@ -952,6 +952,24 @@ export default function FranchiseDashboard() {
           <ExpenseTracker />
         )}
       </main>
+
+      {/* Floating Bottom Receipt Review Dock for Mobile POS */}
+      {activePortalTab === 'pos' && posCart.length > 0 && (
+        <div className="fixed bottom-6 right-6 left-6 z-50 lg:hidden animate-in slide-in-from-bottom duration-300">
+          <button
+            onClick={() => {
+              const element = document.getElementById("pos-receipt-drawer");
+              if (element) {
+                element.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+            className="w-full bg-brand-green text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-2xl flex items-center justify-center gap-2 active:scale-95 hover:bg-brand-green/90 transition-all border border-brand-green/10"
+          >
+            <Package size={16} weight="bold" />
+            Review Order Receipt ({posCart.reduce((sum, item) => sum + item.quantity, 0)} items)
+          </button>
+        </div>
+      )}
     </div>
   );
 }

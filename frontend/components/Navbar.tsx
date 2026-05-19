@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { ShoppingCart } from '@phosphor-icons/react';
 
 interface NavbarProps {
   variant?: 'landing' | 'menu' | 'checkout' | 'franchise' | 'dashboard';
@@ -90,10 +91,10 @@ export default function Navbar({
         {/* 2. Menu Page Navigation */}
         {variant === 'menu' && (
           <div className="flex items-center gap-6">
-            <div onClick={onCartClick} className="relative cursor-pointer group p-2 select-none">
-              <span className="text-xl filter hover:brightness-95 transition-all">🛒</span>
+            <div onClick={onCartClick} className="relative cursor-pointer group p-2 select-none flex items-center">
+              <ShoppingCart size={22} className="text-brand-earth hover:text-brand-green transition-colors" />
               {cartCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 bg-brand-green text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-in zoom-in">
+                <span className="absolute -top-0.5 -right-0.5 bg-brand-green text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-in zoom-in">
                   {cartCount}
                 </span>
               )}
