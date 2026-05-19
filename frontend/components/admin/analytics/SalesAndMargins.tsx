@@ -60,10 +60,10 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-xs font-black uppercase tracking-wider text-brand-earth">
-                Sales Velocity Timeline
+                Sales Performance
               </h3>
               <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">
-                Dual-channel revenue velocity trends with interactive point analysis
+                Daily revenue tracking across retail POS, wholesale spokes, and delivery channels
               </p>
             </div>
             <div className="flex gap-3 text-[8px] font-bold uppercase tracking-wider">
@@ -71,7 +71,7 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
                 <span className="w-2 h-2 rounded bg-brand-green"></span> Retail / POS
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded bg-brand-earth/40"></span> Wholesale Spoke
+                <span className="w-2 h-2 rounded bg-brand-earth/40"></span> Wholesale
               </span>
             </div>
           </div>
@@ -225,113 +225,113 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
       <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-6">
         <div>
           <h3 className="text-xs font-black uppercase tracking-wider">
-            Margin Structure Allocation
+            Revenue & Cost Breakdown
           </h3>
           <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">
-            Corporate breakdown of revenue into capital operations vs net profit
+            Allocation of sales revenue towards ingredients, labor, waste, and expenses
           </p>
         </div>
 
-        <div className="space-y-4">
-          <div className="h-6 w-full rounded-xl overflow-hidden flex shadow-inner border border-gray-100">
-            <div
-              style={{
-                width: `${(grossMargins.cogs / Math.max(1, grossMargins.total_revenue)) * 100}%`,
-              }}
-              className="bg-brand-earth/30 h-full"
-              title="COGS"
-            />
-            <div
-              style={{
-                width: `${(grossMargins.labor_cost / Math.max(1, grossMargins.total_revenue)) * 100}%`,
-              }}
-              className="bg-brand-yellow/60 h-full"
-              title="Labor & Commissions"
-            />
-            <div
-              style={{
-                width: `${(grossMargins.waste_cost / Math.max(1, grossMargins.total_revenue)) * 100}%`,
-              }}
-              className="bg-red-400/80 h-full"
-              title="Wasted Inventory"
-            />
-            <div
-              style={{
-                width: `${((grossMargins.expenses_cost || 0) / Math.max(1, grossMargins.total_revenue)) * 100}%`,
-              }}
-              className="bg-orange-400 h-full"
-              title="Operational Expenses"
-            />
-            <div
-              style={{
-                width: `${(grossMargins.gross_profit / Math.max(1, grossMargins.total_revenue)) * 100}%`,
-              }}
-              className="bg-brand-green h-full"
-              title="Profit margin"
-            />
-          </div>
+        {(() => {
+          const totalRev = Math.max(1, grossMargins.total_revenue);
+          const cogsPct = (grossMargins.cogs / totalRev) * 100;
+          const laborPct = (grossMargins.labor_cost / totalRev) * 100;
+          const wastePct = (grossMargins.waste_cost / totalRev) * 100;
+          const expensesPct = ((grossMargins.expenses_cost || 0) / totalRev) * 100;
+          
+          return (
+            <div className="space-y-4">
+              <div className="h-6 w-full rounded-xl overflow-hidden flex shadow-inner border border-gray-100">
+                <div
+                  style={{ width: `${cogsPct}%` }}
+                  className="bg-brand-earth/30 h-full"
+                  title={`COGS: ${cogsPct.toFixed(1)}%`}
+                />
+                <div
+                  style={{ width: `${laborPct}%` }}
+                  className="bg-brand-yellow/60 h-full"
+                  title={`Labor & Commissions: ${laborPct.toFixed(1)}%`}
+                />
+                <div
+                  style={{ width: `${wastePct}%` }}
+                  className="bg-red-400/80 h-full"
+                  title={`Wasted Inventory: ${wastePct.toFixed(1)}%`}
+                />
+                <div
+                  style={{ width: `${expensesPct}%` }}
+                  className="bg-orange-400 h-full"
+                  title={`Operational Expenses: ${expensesPct.toFixed(1)}%`}
+                />
+                <div
+                  style={{
+                    width: `${(grossMargins.gross_profit / totalRev) * 100}%`,
+                  }}
+                  className="bg-brand-green h-full"
+                  title={`Net Profit: ${grossMargins.margin_percent.toFixed(1)}%`}
+                />
+              </div>
 
-          <div className="space-y-2.5 pt-1">
-            <div className="flex justify-between items-center text-[10px] font-bold">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-brand-earth/30"></span> COGS (42%)
-              </span>
-              <span>
-                ₱
-                {grossMargins.cogs.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                })}
-              </span>
+              <div className="space-y-2.5 pt-1">
+                <div className="flex justify-between items-center text-[10px] font-bold">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded bg-brand-earth/30"></span> Ingredients / COGS ({cogsPct.toFixed(0)}%)
+                  </span>
+                  <span>
+                    ₱
+                    {grossMargins.cogs.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-bold">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded bg-brand-yellow/60"></span> Labor & Comm ({laborPct.toFixed(0)}%)
+                  </span>
+                  <span>
+                    ₱
+                    {grossMargins.labor_cost.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-bold">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded bg-red-400/80"></span> Food Waste Cost ({wastePct.toFixed(0)}%)
+                  </span>
+                  <span className="text-red-500">
+                    ₱
+                    {grossMargins.waste_cost.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-bold">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded bg-orange-400"></span> Operating Expenses ({expensesPct.toFixed(0)}%)
+                  </span>
+                  <span className="text-orange-600">
+                    ₱
+                    {(grossMargins.expenses_cost || 0).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+                <div className="h-px bg-gray-50 my-1"></div>
+                <div className="flex justify-between items-center text-xs font-black text-brand-green">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded bg-brand-green"></span> Net Profit Margin ({grossMargins.margin_percent.toFixed(1)}%)
+                  </span>
+                  <span>
+                    ₱
+                    {grossMargins.gross_profit.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between items-center text-[10px] font-bold">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-brand-yellow/60"></span> Labor &
-                Comm
-              </span>
-              <span>
-                ₱
-                {grossMargins.labor_cost.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                })}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-[10px] font-bold">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-red-400/80"></span> Expired / Wasted
-              </span>
-              <span className="text-red-500">
-                ₱
-                {grossMargins.waste_cost.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                })}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-[10px] font-bold">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-orange-400"></span> Branch Expenses
-              </span>
-              <span className="text-orange-600">
-                ₱
-                {(grossMargins.expenses_cost || 0).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                })}
-              </span>
-            </div>
-            <div className="h-px bg-gray-50 my-1"></div>
-            <div className="flex justify-between items-center text-xs font-black text-brand-green">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-brand-green"></span> Net Gross Margin
-                ({grossMargins.margin_percent.toFixed(1)}%)
-              </span>
-              <span>
-                ₱
-                {grossMargins.gross_profit.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                })}
-              </span>
-            </div>
-          </div>
-        </div>
+          );
+        })()}
       </div>
     </div>
   );

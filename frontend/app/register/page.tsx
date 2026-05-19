@@ -15,7 +15,6 @@ export default function RegisterPage() {
     password_confirmation: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<any>({});
 
@@ -153,7 +152,7 @@ export default function RegisterPage() {
                 <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Confirm</label>
                 <div className="relative">
                   <input 
-                    type={showConfirmPassword ? "text" : "password"} 
+                    type={showPassword ? "text" : "password"} 
                     required
                     className="w-full bg-white border border-gray-100 rounded-2xl pl-5 pr-12 py-4 text-sm font-bold text-brand-earth focus:border-brand-green outline-none transition-all shadow-sm"
                     placeholder="••••••••"
@@ -162,10 +161,10 @@ export default function RegisterPage() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-earth/30 hover:text-brand-green transition-colors focus:outline-none cursor-pointer flex items-center justify-center"
                   >
-                    {showConfirmPassword ? <EyeSlash size={18} weight="bold" /> : <Eye size={18} weight="bold" />}
+                    {showPassword ? <EyeSlash size={18} weight="bold" /> : <Eye size={18} weight="bold" />}
                   </button>
                 </div>
               </div>

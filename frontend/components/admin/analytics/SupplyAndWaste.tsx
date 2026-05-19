@@ -30,10 +30,10 @@ export default function SupplyAndWaste({ ingredientsSafety, foodWaste }: SupplyA
       <div className="lg:col-span-2 bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-4">
         <div>
           <h3 className="text-xs font-black uppercase tracking-wider text-brand-earth">
-            Supply Chain Stock-to-Safety Index
+            Ingredient Stock Levels
           </h3>
           <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">
-            Comparing active commissary raw inventory against critical reserve thresholds
+            Monitoring current stock vs minimum safe reserve limits at HQ commissary
           </p>
         </div>
 
@@ -110,10 +110,10 @@ export default function SupplyAndWaste({ ingredientsSafety, foodWaste }: SupplyA
       <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-6">
         <div>
           <h3 className="text-xs font-black uppercase tracking-wider">
-            FIFO Food Waste Tracker
+            Food Waste Tracker
           </h3>
           <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">
-            Automated batch shelf-life audit and raw materials depreciation valuation
+            Expired batches and total cost of discarded pastil jars
           </p>
         </div>
 

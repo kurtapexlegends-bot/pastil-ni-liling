@@ -106,7 +106,7 @@ export default function AnalyticsEngine() {
       <div className="bg-white border border-gray-100 p-12 rounded-2xl text-center space-y-3 shadow-sm">
         <div className="w-8 h-8 rounded-full border-2 border-brand-green border-t-transparent animate-spin mx-auto"></div>
         <p className="text-xs text-brand-earth/50 font-medium uppercase tracking-wider animate-pulse">
-          Running advanced BI predictive algorithms...
+          Loading analytics...
         </p>
       </div>
     );
@@ -116,10 +116,10 @@ export default function AnalyticsEngine() {
     return (
       <div className="bg-white border border-red-100 p-8 rounded-2xl text-center space-y-2 shadow-sm">
         <p className="text-xs font-bold text-red-500 uppercase tracking-wider">
-          Intelligence System Offline
+          Analytics Offline
         </p>
         <p className="text-[10px] text-brand-earth/50 leading-relaxed max-w-md mx-auto">
-          {error || 'Could not retrieve corporate intelligence parameters.'}
+          {error || 'Could not load analytics summary.'}
         </p>
       </div>
     );

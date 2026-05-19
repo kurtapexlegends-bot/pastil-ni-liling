@@ -35,14 +35,14 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-xs font-black uppercase tracking-wider text-brand-earth">
-                Spoke Quality vs Sales Correlation Matrix
+                Branch Performance
               </h3>
               <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">
-                Corporate ranking grid correlating financial velocity (X-Axis) against QC compliance (Y-Axis)
+                Comparing branch sales (horizontal axis) against compliance score (vertical axis)
               </p>
             </div>
             <span className="bg-brand-earth/5 border border-brand-earth/10 px-2 py-0.5 rounded text-[8px] font-bold text-brand-earth uppercase tracking-widest">
-              Real-Time Spoke Mapping
+              Franchise Status Mapped
             </span>
           </div>
         </div>
@@ -52,22 +52,22 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
           <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 opacity-[0.03] pointer-events-none p-5">
             <div className="border-r border-b border-dashed border-brand-earth flex items-start p-2">
               <span className="text-[8px] font-black uppercase tracking-widest text-brand-earth">
-                QC Elite (Low Vol / High compliance)
+                High Quality / Lower Sales
               </span>
             </div>
             <div className="border-b border-dashed border-brand-earth flex items-start justify-end p-2">
               <span className="text-[8px] font-black uppercase tracking-widest text-brand-green">
-                Champions (High Vol / High compliance)
+                Top Performers
               </span>
             </div>
             <div className="border-r border-dashed border-brand-earth flex items-end p-2">
               <span className="text-[8px] font-black uppercase tracking-widest text-red-500">
-                Critical Attention (Low Vol / Low compliance)
+                Underperforming
               </span>
             </div>
             <div className="flex items-end justify-end p-2">
               <span className="text-[8px] font-black uppercase tracking-widest text-amber-600">
-                Operational Risk (High Vol / Low compliance)
+                High Sales / Needs Improvement
               </span>
             </div>
           </div>
@@ -189,9 +189,9 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
 
           {/* Axis Labels */}
           <div className="flex justify-between text-[7.5px] font-bold text-brand-earth/30 uppercase tracking-widest pt-6 border-t border-gray-100/50 mt-4">
-            <span>Low-Sales Spoke</span>
-            <span>Financial Hub Velocity (X-Axis)</span>
-            <span>High-Sales Spoke</span>
+            <span>Lower Sales</span>
+            <span>Monthly Net Sales</span>
+            <span>Higher Sales</span>
           </div>
         </div>
       </div>
@@ -200,10 +200,10 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
       <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-6 flex flex-col justify-between">
         <div>
           <h3 className="text-xs font-black uppercase tracking-wider text-brand-earth">
-            Flavor Demand Forecaster
+            Popular Pastil Flavors
           </h3>
           <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">
-            Moving average flavor metrics with weekly growth velocity projections
+            Best-selling flavors, market share, and weekly growth projections
           </p>
         </div>
 
@@ -238,7 +238,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
                           {trend.flavor.replace(' Pastil', '')}
                         </p>
                         <p className="text-[7px] text-brand-earth/30 uppercase tracking-widest mt-0.5">
-                          Velocity Score: {velocityScore}/100
+                          Popularity Score: {velocityScore}/100
                         </p>
                       </div>
                       <span
