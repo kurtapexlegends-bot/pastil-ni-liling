@@ -95,13 +95,19 @@ export default function MenuPage() {
 
       {/* Selected Product Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-earth/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-xl grid md:grid-cols-2 animate-in zoom-in-95 duration-200">
+        <div 
+          onClick={() => setSelectedProduct(null)}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-earth/40 backdrop-blur-sm animate-fade-in"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-xl grid md:grid-cols-2 animate-slide-up"
+          >
             <div className="relative aspect-square bg-gray-50 md:h-full">
               <Image src={selectedProduct.image_url || "/hero.png"} alt={selectedProduct.name} fill className="object-cover" />
               <button 
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-4 left-4 w-8 h-8 bg-white/95 rounded-full flex items-center justify-center shadow-sm hover:bg-white transition-colors text-xs text-brand-earth/70"
+                className="absolute top-4 left-4 w-8 h-8 bg-white/95 rounded-full flex items-center justify-center shadow-sm hover:bg-white active:scale-95 transition-all text-xs text-brand-earth/70"
               >
                 ✕
               </button>
@@ -119,7 +125,7 @@ export default function MenuPage() {
               <div className="pt-4">
                 <button 
                   onClick={() => handleAddToCart(selectedProduct)}
-                  className="w-full bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-colors"
+                  className="w-full bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
                 >
                   Add to Cart
                 </button>
@@ -156,9 +162,9 @@ export default function MenuPage() {
               <button
                 key={cat.id}
                 onClick={() => setFilter(cat.id)}
-                className={`px-4 py-2 rounded-lg text-[9px] font-semibold uppercase tracking-wider transition-colors ${
+                className={`px-4 py-2 rounded-lg text-[9px] font-semibold uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-[0.97] duration-150 ${
                   filter === cat.id 
-                    ? "bg-brand-earth text-white" 
+                    ? "bg-brand-earth text-white shadow-sm" 
                     : "bg-white border border-gray-100 hover:border-brand-green text-brand-earth/50"
                 }`}
               >
@@ -169,9 +175,20 @@ export default function MenuPage() {
         </header>
 
         {loading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="bg-gray-100 aspect-square rounded-2xl"></div>
+              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-3.5 shadow-sm space-y-4 animate-pulse">
+                <div className="aspect-square rounded-xl bg-gray-100 w-full" />
+                <div className="space-y-2">
+                  <div className="h-2.5 bg-gray-100 rounded w-1/4" />
+                  <div className="h-4 bg-gray-100 rounded w-3/4" />
+                  <div className="space-y-1.5 pt-1">
+                    <div className="h-3 bg-gray-100 rounded w-full" />
+                    <div className="h-3 bg-gray-100 rounded w-5/6" />
+                  </div>
+                  <div className="h-8 bg-gray-100 rounded-xl w-full mt-2" />
+                </div>
+              </div>
             ))}
           </div>
         ) : (

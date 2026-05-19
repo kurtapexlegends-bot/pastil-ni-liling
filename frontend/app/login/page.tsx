@@ -113,7 +113,7 @@ export default function LoginPage() {
               <input 
                 type="email" 
                 required
-                className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green outline-none transition-all shadow-sm"
+                className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
                 placeholder="example@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -125,7 +125,7 @@ export default function LoginPage() {
                 <input 
                   type={showPassword ? "text" : "password"} 
                   required
-                  className="w-full bg-white border border-gray-100 rounded-2xl pl-5 pr-12 py-4 text-sm font-bold focus:border-brand-green outline-none transition-all shadow-sm text-brand-earth"
+                  className="w-full bg-white border border-gray-100 rounded-2xl pl-5 pr-12 py-4 text-sm font-bold focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm text-brand-earth"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}

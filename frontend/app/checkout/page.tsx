@@ -147,7 +147,7 @@ export default function CheckoutPage() {
                    required
                    value={selectedHubId}
                    onChange={(e) => setSelectedHubId(e.target.value)}
-                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green outline-none transition-colors shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
                  >
                    {hubs.length === 0 ? (
                      <option value="">No active hubs available</option>
@@ -164,7 +164,7 @@ export default function CheckoutPage() {
                  <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Delivery Address</label>
                  <textarea 
                    required
-                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green outline-none transition-colors h-20 resize-none shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all h-20 resize-none shadow-sm"
                    placeholder="Street, Barangay, City, Landmark"
                    value={formData.shipping_address}
                    onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
@@ -174,7 +174,7 @@ export default function CheckoutPage() {
                  <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Contact Number</label>
                  <input 
                    required
-                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green outline-none transition-colors shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
                    placeholder="0917 XXX XXXX"
                    value={formData.contact_number}
                    onChange={(e) => setFormData({...formData, contact_number: e.target.value})}

@@ -13,7 +13,7 @@ export default function ProductCard({ product, onAddToCart, onClick }: ProductCa
   return (
     <div 
       onClick={() => onClick(product)}
-      className="group bg-white rounded-2xl border border-gray-100 p-3.5 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
+      className="group bg-white rounded-2xl border border-gray-100 p-3.5 shadow-sm hover:shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 cursor-pointer"
     >
       <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
         <Image
@@ -48,7 +48,7 @@ export default function ProductCard({ product, onAddToCart, onClick }: ProductCa
             e.stopPropagation();
             onAddToCart(product);
           }}
-          className="w-full mt-2 bg-brand-earth hover:bg-brand-green text-white py-2 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-colors"
+          className="w-full mt-2 bg-brand-earth hover:bg-brand-green text-white py-2 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.98] transition-all duration-150 shadow-sm"
         >
           Add to Cart
         </button>

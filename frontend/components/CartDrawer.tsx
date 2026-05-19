@@ -95,14 +95,14 @@ export default function CartDrawer({ isOpen, onClose, items, onUpdateQuantity, o
             <button
               onClick={onCheckout}
               disabled={items.length === 0}
-              className={`block w-full text-center bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-colors shadow-sm ${items.length === 0 ? 'opacity-30 pointer-events-none' : ''}`}
+              className={`block w-full text-center bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-sm ${items.length === 0 ? 'opacity-30 pointer-events-none' : ''}`}
             >
               {checkoutText || "Place Bulk Order"}
             </button>
           ) : (
             <Link 
               href="/checkout"
-              className={`block w-full text-center bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-colors shadow-sm ${items.length === 0 ? 'opacity-30 pointer-events-none' : ''}`}
+              className={`block w-full text-center bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-sm ${items.length === 0 ? 'opacity-30 pointer-events-none' : ''}`}
             >
               {checkoutText || "Proceed to Checkout"}
             </Link>
