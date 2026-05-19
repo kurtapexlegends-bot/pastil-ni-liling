@@ -23,6 +23,7 @@ import AnalyticsEngine from "../../components/admin/AnalyticsEngine";
 export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics'>('analytics');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [applications, setApplications] = useState<FranchiseApplication[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -353,10 +354,12 @@ export default function AdminDashboard() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         handleLogout={handleLogout}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-8 space-y-6 overflow-y-auto h-screen relative">
+      <main className="flex-1 p-4 md:p-8 space-y-6 overflow-y-auto h-screen relative">
         {loading && (
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-brand-green/20 overflow-hidden z-50">
             <div className="h-full bg-brand-green animate-pulse w-1/3 rounded-full"></div>
@@ -364,6 +367,7 @@ export default function AdminDashboard() {
         )}
         <AdminHeader
           activeTab={activeTab}
+          onToggleSidebar={() => setIsSidebarOpen(true)}
           onAddProduct={() => {
             setProductForm({
               id: null,

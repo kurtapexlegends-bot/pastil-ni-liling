@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { Check, Motorcycle } from "@phosphor-icons/react";
 
 export default function SuccessPage() {
   return (
@@ -9,8 +10,8 @@ export default function SuccessPage() {
       <div className="space-y-8 max-w-md animate-in fade-in zoom-in duration-700">
         <div className="relative w-48 h-48 mx-auto">
            <div className="absolute inset-0 bg-brand-green/20 rounded-full animate-ping"></div>
-           <div className="relative bg-brand-green w-48 h-48 rounded-full flex items-center justify-center text-6xl shadow-2xl shadow-brand-green/30">
-             ✅
+           <div className="relative bg-brand-green w-48 h-48 rounded-full flex items-center justify-center shadow-2xl shadow-brand-green/30 text-white">
+             <Check size={72} weight="bold" />
            </div>
         </div>
 
@@ -22,7 +23,9 @@ export default function SuccessPage() {
         </div>
 
         <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex items-center gap-4 text-left">
-          <div className="text-3xl">🛵</div>
+          <div className="text-brand-green bg-brand-green/10 p-3 rounded-2xl">
+            <Motorcycle size={28} weight="fill" />
+          </div>
           <div className="space-y-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-brand-green">On the way soon</p>
             <p className="text-xs font-bold text-brand-earth/60 leading-tight">Keep your phone nearby for delivery updates.</p>

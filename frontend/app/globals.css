@@ -44,12 +44,25 @@ h1, h2, h3, h4, h5, h6, .font-display {
   }
 }
 
+@keyframes slideUpBottom {
+  from { 
+    transform: translateY(100%); 
+  }
+  to { 
+    transform: translateY(0); 
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-slide-up {
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-up-bottom {
+  animation: slideUpBottom 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Glassmorphism glass card utility */

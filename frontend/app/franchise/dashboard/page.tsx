@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Warning, Package, Truck, DeviceTablet, ShieldCheck, Coins } from "@phosphor-icons/react";
 import ProductCard from "@/components/ProductCard";
 import CartDrawer from "@/components/CartDrawer";
 import { Product, CartItem } from "@/types";
@@ -415,8 +416,8 @@ export default function FranchiseDashboard() {
             <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">Franchisee Portal</span>
           </div>
           <div className="flex items-center gap-6">
-            <div onClick={() => setIsCartOpen(true)} className="relative cursor-pointer hover:opacity-80 transition-opacity">
-              <span className="text-lg">📦</span>
+            <div onClick={() => setIsCartOpen(true)} className="relative cursor-pointer hover:opacity-80 transition-opacity flex items-center">
+              <Package size={20} className="text-brand-earth hover:text-brand-green transition-colors" />
               {cartItems.length > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-brand-green text-white text-[8px] font-semibold w-3.5 h-3.5 rounded-full flex items-center justify-center">
                   {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
@@ -446,13 +447,14 @@ export default function FranchiseDashboard() {
         <div className="flex border-b border-gray-100 gap-6">
           <button
             onClick={() => setActivePortalTab('logistics')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
+            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
               activePortalTab === 'logistics'
                 ? 'border-brand-green text-brand-green'
                 : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
             }`}
           >
-            🚚 Logistics
+            <Truck size={16} weight="duotone" />
+            Logistics
           </button>
           <button
             onClick={() => setActivePortalTab('pos')}
@@ -462,7 +464,8 @@ export default function FranchiseDashboard() {
                 : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
             }`}
           >
-            🏪 POS Cashier
+            <DeviceTablet size={16} weight="duotone" />
+            POS Cashier
             {offlineQueue.length > 0 && (
               <span className="bg-brand-yellow text-brand-earth text-[8px] font-bold px-2 py-0.5 rounded-full animate-pulse shadow-sm">
                 {offlineQueue.length}
@@ -471,23 +474,25 @@ export default function FranchiseDashboard() {
           </button>
           <button
             onClick={() => setActivePortalTab('compliance')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
+            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
               activePortalTab === 'compliance'
                 ? 'border-brand-green text-brand-green'
                 : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
             }`}
           >
-            📋 QC Compliance
+            <ShieldCheck size={16} weight="duotone" />
+            QC Compliance
           </button>
           <button
             onClick={() => setActivePortalTab('payroll')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
+            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
               activePortalTab === 'payroll'
                 ? 'border-brand-green text-brand-green'
                 : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
             }`}
           >
-            💰 Shifts & Payroll
+            <Coins size={16} weight="duotone" />
+            Shifts & Payroll
           </button>
           <button
             onClick={() => setActivePortalTab('expenses')}
@@ -676,7 +681,7 @@ export default function FranchiseDashboard() {
               {offlineQueue.length > 0 && (
                 <div className="bg-brand-yellow/10 border border-brand-yellow/20 p-4 rounded-xl flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-3">
-                    <span className="text-lg">⚠️</span>
+                    <Warning size={20} className="text-brand-yellow" weight="fill" />
                     <div>
                       <p className="text-xs font-semibold text-brand-earth">Local offline receipts waiting to sync</p>
                       <p className="text-[9px] text-brand-earth/50">Stall is running offline. {offlineQueue.length} sales are saved locally and will sync once internet recovers.</p>

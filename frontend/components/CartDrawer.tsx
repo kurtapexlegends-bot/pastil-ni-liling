@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ShoppingBag } from "@phosphor-icons/react";
 import { CartItem } from "@/types";
 
 interface CartDrawerProps {
@@ -45,7 +46,7 @@ export default function CartDrawer({ isOpen, onClose, items, onUpdateQuantity, o
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center space-y-3 opacity-30">
-              <span className="text-4xl">🛍️</span>
+              <ShoppingBag size={48} className="text-brand-earth mx-auto" />
               <p className="text-[10px] font-semibold uppercase tracking-wider">Your basket is empty</p>
             </div>
           ) : (

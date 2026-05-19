@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Warning } from '@phosphor-icons/react';
 
 interface SafetyStockData {
   ingredient: string;
@@ -58,7 +59,7 @@ export default function SupplyAndWaste({ ingredientsSafety, foodWaste }: SupplyA
               >
                 <div className="flex justify-between items-center text-[10px] font-bold">
                   <span className="flex items-center gap-1.5">
-                    {isBreached && <span className="text-red-500 animate-pulse">⚠️</span>}
+                    {isBreached && <Warning size={14} className="text-red-500 animate-pulse" weight="fill" />}
                     {item.ingredient}
                   </span>
                   <span className="text-brand-earth/60">

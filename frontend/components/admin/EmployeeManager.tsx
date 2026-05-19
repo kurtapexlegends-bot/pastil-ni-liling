@@ -267,7 +267,7 @@ export default function EmployeeManager() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-earth/30 hover:text-brand-green transition-colors focus:outline-none cursor-pointer flex items-center justify-center"
+                className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 text-brand-earth/30 hover:text-brand-green transition-colors focus:outline-none cursor-pointer flex items-center justify-center"
               >
                 {showPassword ? <EyeSlash size={16} weight="bold" /> : <Eye size={16} weight="bold" />}
               </button>

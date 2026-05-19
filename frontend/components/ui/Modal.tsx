@@ -33,15 +33,18 @@ export default function Modal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-earth/30 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-brand-earth/30 backdrop-blur-md animate-fade-in sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div 
-        className={`bg-white border border-gray-100 w-full ${maxWidthClass} rounded-3xl shadow-[0_24px_64px_-16px_rgba(27,45,22,0.18)] relative overflow-hidden animate-slide-up flex flex-col`}
+        className={`bg-white border border-gray-100 w-full rounded-t-3xl rounded-b-none shadow-[0_24px_64px_-16px_rgba(27,45,22,0.18)] relative overflow-hidden flex flex-col max-h-[90vh] animate-slide-up-bottom sm:rounded-3xl sm:max-h-[calc(100vh-8rem)] sm:w-full ${maxWidthClass} sm:animate-slide-up`}
         onClick={(e) => e.stopPropagation()} // Stop click propagation to background
       >
+        {/* Mobile Swipe/Pull Handle Indicator */}
+        <div className="w-12 h-1 bg-gray-200/80 rounded-full mx-auto my-3 sm:hidden shrink-0" />
+
         {/* Modal Header */}
-        <div className="flex justify-between items-center px-6 pt-5 pb-4 border-b border-gray-100 bg-[#fafafa]/50">
+        <div className="flex justify-between items-center px-6 pt-2 pb-4 border-b border-gray-100 bg-[#fafafa]/50 sm:pt-5">
           <div>
             <h3 className="text-xs font-black text-brand-earth uppercase tracking-widest font-display">
               {title}
@@ -57,7 +60,7 @@ export default function Modal({
         </div>
 
         {/* Modal Scrollable Content Container */}
-        <div className="p-6 max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200">
+        <div className="p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 flex-1">
           {children}
         </div>
       </div>
