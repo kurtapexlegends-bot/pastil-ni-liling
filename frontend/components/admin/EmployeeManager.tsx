@@ -235,7 +235,7 @@ export default function EmployeeManager() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
-              placeholder="e.g. Juan dela Cruz"
+              placeholder="e.g. John Smith"
             />
           </div>
 
@@ -247,7 +247,7 @@ export default function EmployeeManager() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
-              placeholder="e.g. juan@pastilnililing.com"
+              placeholder="e.g. example@pastilnililing.com"
             />
           </div>
 

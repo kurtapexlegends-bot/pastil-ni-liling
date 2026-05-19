@@ -107,7 +107,7 @@ export default function RegisterPage() {
               <input 
                 required
                 className={`w-full bg-white border ${errors.name ? 'border-red-500' : 'border-gray-100'} rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green outline-none transition-all shadow-sm`}
-                placeholder="Juan Dela Cruz"
+                placeholder="John Smith"
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
               />
@@ -120,7 +120,7 @@ export default function RegisterPage() {
                 type="email" 
                 required
                 className={`w-full bg-white border ${errors.email ? 'border-red-500' : 'border-gray-100'} rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green outline-none transition-all shadow-sm`}
-                placeholder="juan@example.com"
+                placeholder="@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
               />

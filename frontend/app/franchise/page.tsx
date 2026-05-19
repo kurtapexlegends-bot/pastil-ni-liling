@@ -133,18 +133,18 @@ export default function FranchisePage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">First Name</label>
-                      <input name="first_name" value={formData.first_name} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="Juan" required />
+                      <input name="first_name" value={formData.first_name} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="John" required />
                       {errors.first_name && <p className="text-[9px] text-red-500 font-semibold">{errors.first_name[0]}</p>}
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">Last Name</label>
-                      <input name="last_name" value={formData.last_name} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="Dela Cruz" required />
+                      <input name="last_name" value={formData.last_name} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="Smith" required />
                       {errors.last_name && <p className="text-[9px] text-red-500 font-semibold">{errors.last_name[0]}</p>}
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/60">Email Address</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="juan@example.com" required />
+                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:bg-white outline-none transition-all text-brand-earth" placeholder="@example.com" required />
                     {errors.email && <p className="text-[9px] text-red-500 font-semibold">{errors.email[0]}</p>}
                   </div>
                   <div className="space-y-1.5">
