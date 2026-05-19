@@ -97,4 +97,26 @@ class AuthController extends Controller
             'data' => $request->user()->load('roles')
         ]);
     }
+
+    /**
+     * Send simulated password reset instructions.
+     */
+    public function forgotPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'We could not find a user with that email address.'
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'A password reset instruction has been sent to your registered email address.'
+        ]);
+    }
 }

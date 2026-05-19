@@ -177,6 +177,24 @@ class HQControlsTest extends TestCase
     }
 
     /** @test */
+    public function test_forgot_password_validation_and_handling()
+    {
+        // 1. Forgot password with existing email
+        $response = $this->postJson('/api/forgot-password', [
+            'email' => $this->admin->email
+        ]);
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        // 2. Forgot password with non-existing email
+        $response = $this->postJson('/api/forgot-password', [
+            'email' => 'doesnotexist@liling.com'
+        ]);
+        $response->assertStatus(422)
+            ->assertJsonPath('success', false);
+    }
+
+    /** @test */
     public function test_only_admins_can_access_business_intelligence_analytics()
     {
         // 1. Admin accesses BI analytics (Authorized)

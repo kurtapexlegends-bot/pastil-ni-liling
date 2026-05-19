@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { Eye, EyeSlash, Envelope } from "@phosphor-icons/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +12,13 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Forgot Password States
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSuccess, setForgotSuccess] = useState(false);
+  const [forgotError, setForgotError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +56,34 @@ export default function LoginPage() {
       setError("Failed to connect to server.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotError("");
+    setForgotSuccess(false);
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+
+      const data = res.status === 200 || res.status === 422 ? await res.json() : null;
+
+      if (res.ok && data?.success) {
+        setForgotSuccess(true);
+      } else {
+        const errorMsg = data?.message || "We could not find a user with that email address.";
+        setForgotError(errorMsg);
+      }
+    } catch (err) {
+      setForgotError("Failed to connect to server.");
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -148,9 +183,13 @@ export default function LoginPage() {
                 />
                 <span className="text-[9px] font-black uppercase tracking-widest text-brand-earth/50">Remember Me</span>
               </label>
-              <Link href="#" className="text-[9px] font-black uppercase tracking-widest text-brand-green hover:underline">
+              <button 
+                type="button"
+                onClick={() => setShowForgotModal(true)}
+                className="text-[9px] font-black uppercase tracking-widest text-brand-green hover:underline cursor-pointer focus:outline-none"
+              >
                 Forgot?
-              </Link>
+              </button>
             </div>
 
             {error && <p className="text-xs font-bold text-red-500 text-center">{error}</p>}
@@ -171,6 +210,100 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotModal && (
+        <div 
+          onClick={() => {
+            if (!forgotLoading) {
+              setShowForgotModal(false);
+              setForgotSuccess(false);
+              setForgotError("");
+              setForgotEmail("");
+            }
+          }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-earth/40 backdrop-blur-sm animate-fade-in"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-xl p-6 md:p-8 animate-slide-up space-y-6"
+          >
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold tracking-tight text-brand-earth">Reset Password</h2>
+              <p className="text-xs text-brand-earth/60">
+                {forgotSuccess 
+                  ? "Check your inbox for password reset instructions."
+                  : "Enter your registered email address below."
+                }
+              </p>
+            </div>
+
+            {forgotSuccess ? (
+              <div className="space-y-6 text-center py-4">
+                <div className="mx-auto w-12 h-12 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-xs text-brand-earth/80 max-w-xs mx-auto">
+                  We have sent reset instructions to <span className="font-semibold text-brand-earth">{forgotEmail}</span>.
+                </p>
+                <button
+                  onClick={() => {
+                    setShowForgotModal(false);
+                    setForgotSuccess(false);
+                    setForgotError("");
+                    setForgotEmail("");
+                  }}
+                  className="w-full bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+                >
+                  Back to Sign In
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/50">Email Address</label>
+                  <input 
+                    type="email"
+                    required
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-semibold text-brand-earth focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
+                    placeholder="example@example.com"
+                  />
+                </div>
+
+                {forgotError && (
+                  <p className="text-[10px] font-semibold text-red-500">{forgotError}</p>
+                )}
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    disabled={forgotLoading}
+                    onClick={() => {
+                      setShowForgotModal(false);
+                      setForgotError("");
+                      setForgotEmail("");
+                    }}
+                    className="flex-1 bg-gray-50 border border-gray-100 hover:bg-gray-100 text-brand-earth/70 py-3.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider active:scale-[0.99] transition-all duration-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={forgotLoading}
+                    className="flex-1 bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-50"
+                  >
+                    {forgotLoading ? "Sending..." : "Send Reset Link"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

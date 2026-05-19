@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { ShoppingCart } from '@phosphor-icons/react';
 
 interface NavbarProps {
@@ -19,10 +20,11 @@ export default function Navbar({
   onLogout,
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <nav className="fixed top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/50 transition-all">
-      <div className="flex items-center justify-between px-6 h-20 max-w-6xl mx-auto w-full">
+      <div className="flex items-center justify-between px-6 h-20 max-w-6xl mx-auto w-full relative">
         {/* LEFT LOGO & BRANDING */}
         <Link href="/" className="flex items-center gap-3 group cursor-pointer">
           <div className="relative">
@@ -38,7 +40,7 @@ export default function Navbar({
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-bold leading-none tracking-tight uppercase text-brand-earth">
-              {variant === 'franchise' ? 'Franchise Portal' : 'Pastil ni Liling'}
+              Pastil ni Liling
             </span>
             <span className="text-[9px] font-medium text-brand-green uppercase tracking-[0.2em] mt-1">
               Authentic Mindanao
@@ -46,49 +48,74 @@ export default function Navbar({
           </div>
         </Link>
 
-        {/* VARIANT-SPECIFIC NAVIGATION CONTENT */}
-
-        {/* 1. Landing Page Navigation */}
-        {variant === 'landing' && (
-          <>
-            <div className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-widest text-brand-earth/60">
-              <Link href="/menu" className="hover:text-brand-green transition-colors">
-                Retail Menu
-              </Link>
-              <Link href="/franchise" className="hover:text-brand-green transition-colors">
-                Franchise
-              </Link>
-              <Link href="/about" className="hover:text-brand-green transition-colors">
-                Our Story
-              </Link>
-            </div>
-
-            <div className="flex items-center gap-5">
-              <Link
-                href="/login"
-                className="hidden sm:block text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 text-brand-earth"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/menu"
-                className="bg-brand-earth text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-brand-earth/10 hover:bg-brand-green transition-all active:scale-95"
-              >
-                Order Online
-              </Link>
-              {/* Mobile Hamburger Toggle */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden text-brand-earth p-1 focus:outline-none"
-                aria-label="Toggle Menu"
-              >
-                <span className="text-xl">{mobileMenuOpen ? '✕' : '☰'}</span>
-              </button>
-            </div>
-          </>
+        {/* CENTER NAVIGATION LINKS - Shared desktop menu */}
+        {(variant === 'landing' || variant === 'menu' || variant === 'franchise') && (
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8 text-[10px] font-bold uppercase tracking-widest h-full">
+            <Link 
+              href="/menu" 
+              className={`relative py-7 transition-colors ${
+                pathname === '/menu' ? 'text-brand-green font-black' : 'text-brand-earth/60 hover:text-brand-green'
+              }`}
+            >
+              Retail Menu
+              {pathname === '/menu' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-green animate-in fade-in slide-in-from-bottom duration-300" />
+              )}
+            </Link>
+            <Link 
+              href="/franchise" 
+              className={`relative py-7 transition-colors ${
+                pathname === '/franchise' ? 'text-brand-green font-black' : 'text-brand-earth/60 hover:text-brand-green'
+              }`}
+            >
+              Franchise
+              {pathname === '/franchise' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-green animate-in fade-in slide-in-from-bottom duration-300" />
+              )}
+            </Link>
+            <Link 
+              href="/about" 
+              className={`relative py-7 transition-colors ${
+                pathname === '/about' ? 'text-brand-green font-black' : 'text-brand-earth/60 hover:text-brand-green'
+              }`}
+            >
+              Our Story
+              {pathname === '/about' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-green animate-in fade-in slide-in-from-bottom duration-300" />
+              )}
+            </Link>
+          </div>
         )}
 
-        {/* 2. Menu Page Navigation */}
+        {/* RIGHT SIDE / VARIANT-SPECIFIC ACTIONS */}
+        
+        {/* 1. Landing & Franchise Page Right Actions */}
+        {(variant === 'landing' || variant === 'franchise') && (
+          <div className="flex items-center gap-5">
+            <Link
+              href="/login"
+              className="hidden sm:block text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 text-brand-earth"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/menu"
+              className="bg-brand-earth text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-brand-earth/10 hover:bg-brand-green transition-all active:scale-95"
+            >
+              Order Online
+            </Link>
+            {/* Mobile Hamburger Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden text-brand-earth p-1 focus:outline-none"
+              aria-label="Toggle Menu"
+            >
+              <span className="text-xl">{mobileMenuOpen ? '✕' : '☰'}</span>
+            </button>
+          </div>
+        )}
+
+        {/* 2. Menu Page Right Actions */}
         {variant === 'menu' && (
           <div className="flex items-center gap-6">
             <div onClick={onCartClick} className="relative cursor-pointer group p-2 select-none flex items-center">
@@ -100,11 +127,19 @@ export default function Navbar({
               )}
             </div>
             <Link
-              href="/"
-              className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/55 hover:text-brand-green transition-colors"
+              href="/login"
+              className="hidden sm:block text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 text-brand-earth"
             >
-              Back to Home
+              Sign In
             </Link>
+            {/* Mobile Hamburger Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden text-brand-earth p-1 focus:outline-none"
+              aria-label="Toggle Menu"
+            >
+              <span className="text-xl">{mobileMenuOpen ? '✕' : '☰'}</span>
+            </button>
           </div>
         )}
 
@@ -120,17 +155,7 @@ export default function Navbar({
           </Link>
         )}
 
-        {/* 4. Franchise Page Navigation */}
-        {variant === 'franchise' && (
-          <Link
-            href="/"
-            className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/55 hover:text-brand-green transition-colors"
-          >
-            Back to Home
-          </Link>
-        )}
-
-        {/* 5. User Dashboard Navigation */}
+        {/* 4. User Dashboard Navigation */}
         {variant === 'dashboard' && (
           <div className="flex items-center gap-6">
             <Link
@@ -151,28 +176,28 @@ export default function Navbar({
         )}
       </div>
 
-      {/* MOBILE MENU DROPDOWN (Landing Page Variant Only) */}
-      {variant === 'landing' && mobileMenuOpen && (
+      {/* MOBILE MENU DROPDOWN */}
+      {(variant === 'landing' || variant === 'menu' || variant === 'franchise') && mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-gray-200/50 animate-in slide-in-from-top duration-200">
           <div className="flex flex-col px-6 py-4 space-y-4 text-[10px] font-bold uppercase tracking-widest text-brand-earth/70">
             <Link
               href="/menu"
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-brand-green transition-colors"
+              className={`hover:text-brand-green transition-colors ${pathname === '/menu' ? 'text-brand-green font-black' : ''}`}
             >
               Retail Menu
             </Link>
             <Link
               href="/franchise"
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-brand-green transition-colors"
+              className={`hover:text-brand-green transition-colors ${pathname === '/franchise' ? 'text-brand-green font-black' : ''}`}
             >
               Franchise
             </Link>
             <Link
               href="/about"
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-brand-green transition-colors"
+              className={`hover:text-brand-green transition-colors ${pathname === '/about' ? 'text-brand-green font-black' : ''}`}
             >
               Our Story
             </Link>
