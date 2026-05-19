@@ -1,5 +1,11 @@
+"use client";
+
 import { useState } from "react";
 import { Ingredient, InventoryBatch, ProductIngredient, Product, Hub } from "../../app/admin/types";
+import AddIngredientModal from "./supply-chain/modals/AddIngredientModal";
+import RestockModal from "./supply-chain/modals/RestockModal";
+import ProductionIntakeModal from "./supply-chain/modals/ProductionIntakeModal";
+import RecipeMapModal from "./supply-chain/modals/RecipeMapModal";
 
 interface SupplyChainManagerProps {
   ingredients: Ingredient[];
@@ -34,40 +40,25 @@ export default function SupplyChainManager({
 }: SupplyChainManagerProps) {
   const [activeSubTab, setActiveSubTab] = useState<'ingredients' | 'batches' | 'recipes'>('ingredients');
 
-  // Modals state
+  // Modals visibility state
   const [isIngredientModalOpen, setIsIngredientModalOpen] = useState(false);
   const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
 
-  // Form states
-  const [ingredientForm, setIngredientForm] = useState({ name: "", unit: "kg", stock: 0, min_stock: 10, unit_cost: 0 });
-  const [selectedIngredientId, setSelectedIngredientId] = useState<number | null>(null);
-  const [restockQty, setRestockQty] = useState(0);
-  const [batchForm, setBatchForm] = useState({
-    batch_number: `BATCH-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`,
-    product_id: "",
-    hub_id: "",
-    initial_quantity: 100,
-    manufacture_date: new Date().toISOString().slice(0, 10),
-    expiry_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
-  });
-  const [recipeForm, setRecipeForm] = useState({ product_id: "", ingredient_id: "", quantity_required: 0.1 });
-
-  // Error/Success state
+  // Global Error/Success and Loading states
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleCreateIngredient = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Form submission handler wrappers that bridge isolated modals with root callback states
+  const handleCreateIngredientSubmit = async (formData: any) => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      await addIngredient(ingredientForm);
+      await addIngredient(formData);
       setSuccessMsg("Raw ingredient type added successfully!");
       setIsIngredientModalOpen(false);
-      setIngredientForm({ name: "", unit: "kg", stock: 0, min_stock: 10, unit_cost: 0 });
       await fetchIngredients();
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to add ingredient.");
@@ -76,17 +67,13 @@ export default function SupplyChainManager({
     }
   };
 
-  const handleRestockIngredient = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedIngredientId || restockQty <= 0) return;
+  const handleRestockIngredientSubmit = async (ingredientId: number, qty: number) => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      await restockIngredient(selectedIngredientId, restockQty);
+      await restockIngredient(ingredientId, qty);
       setSuccessMsg("HQ Commissary restock recorded successfully!");
       setIsRestockModalOpen(false);
-      setSelectedIngredientId(null);
-      setRestockQty(0);
       await fetchIngredients();
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to restock ingredient.");
@@ -95,31 +82,13 @@ export default function SupplyChainManager({
     }
   };
 
-  const handleCreateBatch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!batchForm.product_id) {
-      setErrorMsg("Please select a product.");
-      return;
-    }
+  const handleCreateBatchSubmit = async (batchData: any) => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      await addBatch({
-        ...batchForm,
-        product_id: parseInt(batchForm.product_id),
-        hub_id: batchForm.hub_id ? parseInt(batchForm.hub_id) : null,
-        initial_quantity: parseInt(batchForm.initial_quantity as any)
-      });
+      await addBatch(batchData);
       setSuccessMsg("Manufacture batch intake completed and ingredients depleted!");
       setIsBatchModalOpen(false);
-      setBatchForm({
-        batch_number: `BATCH-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`,
-        product_id: "",
-        hub_id: "",
-        initial_quantity: 100,
-        manufacture_date: new Date().toISOString().slice(0, 10),
-        expiry_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
-      });
       await fetchBatches();
       await fetchIngredients();
     } catch (err: any) {
@@ -129,23 +98,13 @@ export default function SupplyChainManager({
     }
   };
 
-  const handleCreateRecipe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!recipeForm.product_id || !recipeForm.ingredient_id) {
-      setErrorMsg("Please select product and ingredient.");
-      return;
-    }
+  const handleCreateRecipeSubmit = async (recipeData: any) => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      await addRecipe({
-        product_id: parseInt(recipeForm.product_id),
-        ingredient_id: parseInt(recipeForm.ingredient_id),
-        quantity_required: parseFloat(recipeForm.quantity_required as any)
-      });
+      await addRecipe(recipeData);
       setSuccessMsg("Product recipe formula updated successfully!");
       setIsRecipeModalOpen(false);
-      setRecipeForm({ product_id: "", ingredient_id: "", quantity_required: 0.1 });
       await fetchRecipes();
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to save recipe formula.");
@@ -431,323 +390,39 @@ export default function SupplyChainManager({
         </div>
       )}
 
-      {/* Add Ingredient Modal */}
-      {isIngredientModalOpen && (
-        <div className="fixed inset-0 bg-brand-earth/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-gray-100">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-brand-earth mb-4">Add Ingredient Type</h3>
-            <form onSubmit={handleCreateIngredient} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Ingredient Name</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Fresh Chicken Breast"
-                  value={ingredientForm.name}
-                  onChange={(e) => setIngredientForm({ ...ingredientForm, name: e.target.value })}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                />
-              </div>
+      {/* Abstracted Modal Forms */}
+      <AddIngredientModal
+        isOpen={isIngredientModalOpen}
+        onClose={() => setIsIngredientModalOpen(false)}
+        onSubmit={handleCreateIngredientSubmit}
+        loading={loading}
+      />
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Unit of Measure</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. kg, liters, units"
-                    value={ingredientForm.unit}
-                    onChange={(e) => setIngredientForm({ ...ingredientForm, unit: e.target.value })}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Initial Stock</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={ingredientForm.stock}
-                    onChange={(e) => setIngredientForm({ ...ingredientForm, stock: parseFloat(e.target.value) || 0 })}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                  />
-                </div>
-              </div>
+      <RestockModal
+        isOpen={isRestockModalOpen}
+        onClose={() => setIsRestockModalOpen(false)}
+        ingredients={ingredients}
+        onSubmit={handleRestockIngredientSubmit}
+        loading={loading}
+      />
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Low-Stock Alert Level</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={ingredientForm.min_stock}
-                    onChange={(e) => setIngredientForm({ ...ingredientForm, min_stock: parseFloat(e.target.value) || 0 })}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Unit Cost (PHP)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={ingredientForm.unit_cost}
-                    onChange={(e) => setIngredientForm({ ...ingredientForm, unit_cost: parseFloat(e.target.value) || 0 })}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                  />
-                </div>
-              </div>
+      <ProductionIntakeModal
+        isOpen={isBatchModalOpen}
+        onClose={() => setIsBatchModalOpen(false)}
+        products={products}
+        hubs={hubs}
+        onSubmit={handleCreateBatchSubmit}
+        loading={loading}
+      />
 
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsIngredientModalOpen(false)}
-                  className="flex-1 border border-gray-100 text-brand-earth hover:bg-gray-50 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
-                >
-                  Save Ingredient
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Restock Ingredient Modal */}
-      {isRestockModalOpen && (
-        <div className="fixed inset-0 bg-brand-earth/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-gray-100">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-brand-earth mb-4">Restock Commissary</h3>
-            <form onSubmit={handleRestockIngredient} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Select Ingredient</label>
-                <select
-                  required
-                  value={selectedIngredientId || ""}
-                  onChange={(e) => setSelectedIngredientId(parseInt(e.target.value) || null)}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                >
-                  <option value="">-- Choose Ingredient --</option>
-                  {ingredients.map((ing) => (
-                    <option key={ing.id} value={ing.id}>{ing.name} (Currently: {ing.stock} {ing.unit})</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Restock Quantity</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  required
-                  placeholder="e.g. 50"
-                  value={restockQty}
-                  onChange={(e) => setRestockQty(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                />
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsRestockModalOpen(false)}
-                  className="flex-1 border border-gray-100 text-brand-earth hover:bg-gray-50 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
-                >
-                  Record Intake
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Log Production Modal */}
-      {isBatchModalOpen && (
-        <div className="fixed inset-0 bg-brand-earth/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-gray-100">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-brand-earth mb-4">Log Production Intake</h3>
-            <form onSubmit={handleCreateBatch} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Batch Serial Code</label>
-                <input
-                  type="text"
-                  required
-                  value={batchForm.batch_number}
-                  onChange={(e) => setBatchForm({ ...batchForm, batch_number: e.target.value })}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth font-mono"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Product Intaked</label>
-                <select
-                  required
-                  value={batchForm.product_id}
-                  onChange={(e) => setBatchForm({ ...batchForm, product_id: e.target.value })}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                >
-                  <option value="">-- Choose Product --</option>
-                  {products.map((p) => (
-                    <option key={p.id} value={p.id!}>{p.name} ({p.is_wholesale ? 'Wholesale Restock' : 'Retail Jar'})</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Intake Destination</label>
-                  <select
-                    value={batchForm.hub_id}
-                    onChange={(e) => setBatchForm({ ...batchForm, hub_id: e.target.value })}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                  >
-                    <option value="">HQ Commissary (Central)</option>
-                    {hubs.map((h) => (
-                      <option key={h.id} value={h.id!}>{h.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Manufacture Qty (jars)</label>
-                  <input
-                    type="number"
-                    required
-                    value={batchForm.initial_quantity}
-                    onChange={(e) => setBatchForm({ ...batchForm, initial_quantity: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Mfg Date</label>
-                  <input
-                    type="date"
-                    required
-                    value={batchForm.manufacture_date}
-                    onChange={(e) => setBatchForm({ ...batchForm, manufacture_date: e.target.value })}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Expiry Date</label>
-                  <input
-                    type="date"
-                    required
-                    value={batchForm.expiry_date}
-                    onChange={(e) => setBatchForm({ ...batchForm, expiry_date: e.target.value })}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsBatchModalOpen(false)}
-                  className="flex-1 border border-gray-100 text-brand-earth hover:bg-gray-50 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
-                >
-                  Log Batch
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Configure Recipe Modal */}
-      {isRecipeModalOpen && (
-        <div className="fixed inset-0 bg-brand-earth/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-gray-100">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-brand-earth mb-4">Configure Recipe Map</h3>
-            <form onSubmit={handleCreateRecipe} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Product Specification</label>
-                <select
-                  required
-                  value={recipeForm.product_id}
-                  onChange={(e) => setRecipeForm({ ...recipeForm, product_id: e.target.value })}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                >
-                  <option value="">-- Choose Product Jar --</option>
-                  {products.map((p) => (
-                    <option key={p.id} value={p.id!}>{p.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">Required Ingredient</label>
-                <select
-                  required
-                  value={recipeForm.ingredient_id}
-                  onChange={(e) => setRecipeForm({ ...recipeForm, ingredient_id: e.target.value })}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                >
-                  <option value="">-- Choose Commissary Material --</option>
-                  {ingredients.map((ing) => (
-                    <option key={ing.id} value={ing.id}>{ing.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-earth/40">
-                  Multiplier Amount (per individual produced unit)
-                </label>
-                <input
-                  type="number"
-                  step="0.0001"
-                  required
-                  placeholder="e.g. 0.1 for 100g in kg unit"
-                  value={recipeForm.quantity_required}
-                  onChange={(e) => setRecipeForm({ ...recipeForm, quantity_required: parseFloat(e.target.value) || 0 })}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
-                />
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsRecipeModalOpen(false)}
-                  className="flex-1 border border-gray-100 text-brand-earth hover:bg-gray-50 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
-                >
-                  Save Mapping
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <RecipeMapModal
+        isOpen={isRecipeModalOpen}
+        onClose={() => setIsRecipeModalOpen(false)}
+        products={products}
+        ingredients={ingredients}
+        onSubmit={handleCreateRecipeSubmit}
+        loading={loading}
+      />
     </div>
   );
 }

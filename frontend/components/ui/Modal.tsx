@@ -33,7 +33,7 @@ export default function Modal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-brand-earth/30 backdrop-blur-md animate-fade-in sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-brand-earth/30 backdrop-blur-md animate-fade-in sm:items-center sm:p-6"
       onClick={onClose}
     >
       <div 
@@ -62,6 +62,8 @@ export default function Modal({
         {/* Modal Scrollable Content Container */}
         <div className="p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 flex-1">
           {children}
+          {/* Scrollable Spacer to prevent bottom button clipping by rounded corners */}
+          <div className="h-4 w-full shrink-0" />
         </div>
       </div>
     </div>

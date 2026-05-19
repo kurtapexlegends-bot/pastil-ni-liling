@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Modal from "../ui/Modal";
 
 interface Audit {
   id: number;
@@ -229,100 +230,95 @@ export default function QCComplianceManager() {
         </div>
       )}
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-earth/40 backdrop-blur-xs">
-          <div className="bg-white border border-gray-100 w-full max-w-md p-6 rounded-2xl shadow-xl space-y-4">
-            <div className="flex justify-between items-center border-b border-gray-50 pb-3">
-              <h3 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Register QC standard log</h3>
-              <button onClick={() => setIsOpen(false)} className="text-brand-earth/30 hover:text-brand-earth font-bold text-sm">✕</button>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Register QC Standard Log"
+      >
+        {error && (
+          <div className="p-3 mb-4 bg-red-50 border border-red-100 rounded-2xl text-[9px] font-semibold text-red-600 uppercase tracking-wide">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Select Branch Hub</label>
+            <select
+              required
+              value={hubId}
+              onChange={(e) => setHubId(e.target.value)}
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+            >
+              {hubs.map((h) => (
+                <option key={h.id} value={h.id}>{h.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Hygiene Score (0-100)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                required
+                value={hygiene}
+                onChange={(e) => setHygiene(parseInt(e.target.value))}
+                className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              />
             </div>
 
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-[9px] font-semibold text-red-600 uppercase tracking-wide">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">Select Branch Hub</label>
-                <select
-                  required
-                  value={hubId}
-                  onChange={(e) => setHubId(e.target.value)}
-                  className="w-full border border-gray-100 rounded-xl px-3 py-2 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all"
-                >
-                  {hubs.map((h) => (
-                    <option key={h.id} value={h.id}>{h.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">Hygiene Score (0-100)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    required
-                    value={hygiene}
-                    onChange={(e) => setHygiene(parseInt(e.target.value))}
-                    className="w-full border border-gray-100 rounded-xl px-3 py-2 text-[10px] font-medium text-brand-earth focus:border-brand-earth/30 outline-none transition-all"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">Recipe Adherence (0-100)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    required
-                    value={recipe}
-                    onChange={(e) => setRecipe(parseInt(e.target.value))}
-                    className="w-full border border-gray-100 rounded-xl px-3 py-2 text-[10px] font-medium text-brand-earth focus:border-brand-earth/30 outline-none transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">Kitchen photo upload</label>
-                <div className="border border-dashed border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-gray-50/50 transition-colors">
-                  <span className="text-[9px] font-bold text-brand-green uppercase tracking-wide">✓ kitchen_hygiene_diliman.jpg selected</span>
-                  <span className="text-[7px] font-semibold text-brand-earth/30 uppercase tracking-widest mt-1">Automatic high-res photo capture</span>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">Audit & Hygiene Notes</label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="w-full border border-gray-100 rounded-xl px-3 py-2 text-[10px] font-medium text-brand-earth focus:border-brand-earth/30 outline-none transition-all h-20 resize-none"
-                  placeholder="Describe recipe taste checks, cleanliness parameters, and standard checklist details..."
-                />
-              </div>
-
-              <div className="flex gap-3 pt-3">
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
-                >
-                  Submit Standard Log
-                </button>
-              </div>
-            </form>
+            <div className="space-y-1.5">
+              <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Recipe Adherence (0-100)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                required
+                value={recipe}
+                onChange={(e) => setRecipe(parseInt(e.target.value))}
+                className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              />
+            </div>
           </div>
-        </div>
-      )}
+
+          <div className="space-y-1.5">
+            <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Kitchen Photo Upload</label>
+            <div className="border border-dashed border-gray-200 rounded-2xl p-4 flex flex-col items-center justify-center hover:bg-gray-50/50 transition-colors">
+              <span className="text-[9px] font-bold text-brand-green uppercase tracking-wide">✓ kitchen_hygiene_diliman.jpg selected</span>
+              <span className="text-[7px] font-semibold text-brand-earth/30 uppercase tracking-widest mt-1">Automatic high-res photo capture</span>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Audit & Hygiene Notes</label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all h-24 resize-none shadow-sm"
+              placeholder="Describe recipe taste checks, cleanliness parameters, and standard checklist details..."
+            />
+          </div>
+
+          <div className="flex gap-3 pt-3">
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-green/10"
+            >
+              Submit Standard Log
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }
