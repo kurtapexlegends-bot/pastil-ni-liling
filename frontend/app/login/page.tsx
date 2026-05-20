@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeSlash, Envelope } from "@phosphor-icons/react";
+import { setCookie } from "@/components/cookieHelper";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,6 +40,10 @@ export default function LoginPage() {
         localStorage.setItem("user", JSON.stringify(data.data));
         
         const roles = data.data.roles || [];
+        const primaryRole = roles[0]?.name || "Customer";
+        setCookie("token", data.access_token, 7);
+        setCookie("user_role", primaryRole, 7);
+
         const isAdmin = roles.some((r: any) => r.name === "Admin");
         const isFranchisee = roles.some((r: any) => r.name === "Franchisee");
 

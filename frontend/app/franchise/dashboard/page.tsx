@@ -11,6 +11,7 @@ import { Product, CartItem } from "@/types";
 import QCComplianceManager from "@/components/admin/QCComplianceManager";
 import BranchPayrollManager from "@/components/admin/BranchPayrollManager";
 import ExpenseTracker from "@/components/admin/ExpenseTracker";
+import { deleteCookie } from "@/components/cookieHelper";
 
 export default function FranchiseDashboard() {
   const router = useRouter();
@@ -424,7 +425,7 @@ export default function FranchiseDashboard() {
                 </span>
               )}
             </div>
-            <button onClick={() => { localStorage.clear(); router.push('/login'); }} className="text-[10px] font-semibold uppercase tracking-wider text-red-500 hover:text-red-600 transition-colors">Logout</button>
+            <button onClick={() => { localStorage.clear(); deleteCookie("token"); deleteCookie("user_role"); router.push('/login'); }} className="text-[10px] font-semibold uppercase tracking-wider text-red-500 hover:text-red-600 transition-colors">Logout</button>
           </div>
         </div>
       </nav>

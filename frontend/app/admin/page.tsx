@@ -19,6 +19,7 @@ import EmployeeManager from "../../components/admin/EmployeeManager";
 import QCComplianceManager from "../../components/admin/QCComplianceManager";
 import BranchPayrollManager from "../../components/admin/BranchPayrollManager";
 import AnalyticsEngine from "../../components/admin/AnalyticsEngine";
+import { deleteCookie } from "@/components/cookieHelper";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -341,6 +342,8 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    deleteCookie("token");
+    deleteCookie("user_role");
     router.push("/login");
   };
 

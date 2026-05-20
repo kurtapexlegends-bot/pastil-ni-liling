@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { setCookie } from "@/components/cookieHelper";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -35,6 +36,10 @@ export default function RegisterPage() {
       if (data.success) {
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("user", JSON.stringify(data.data));
+        const roles = data.data?.roles || [];
+        const primaryRole = roles[0]?.name || "Customer";
+        setCookie("token", data.access_token, 7);
+        setCookie("user_role", primaryRole, 7);
         router.push("/menu");
       } else {
         setErrors(data.errors || { general: "Registration failed." });

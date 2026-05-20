@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import { deleteCookie } from "@/components/cookieHelper";
 
 export default function UserDashboard() {
   const router = useRouter();
@@ -61,6 +62,8 @@ export default function UserDashboard() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    deleteCookie("token");
+    deleteCookie("user_role");
     router.push("/");
   };
 
