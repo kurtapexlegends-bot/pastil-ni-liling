@@ -116,8 +116,16 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
+    const userData = localStorage.getItem("user");
+    if (!token || !userData) {
       router.push("/login");
+      return;
+    }
+    const parsedUser = JSON.parse(userData);
+    const roles = parsedUser.roles || [];
+    const hasAdminAccess = roles.some((r: any) => r.name === "Admin" || r.name === "HQ operations");
+    if (!hasAdminAccess) {
+      router.push("/dashboard");
       return;
     }
     setHasToken(true);

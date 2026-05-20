@@ -14,8 +14,8 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
-        // Fail-Fast: Only Admins or HQ Operations can list all employees globally
-        $isAuthorized = $request->user()->hasRole('Admin') || $request->user()->hasRole('HQ operations');
+        // Fail-Fast: Only Admins, HQ Operations, or Franchisees can list employees
+        $isAuthorized = $request->user()->hasRole('Admin') || $request->user()->hasRole('HQ operations') || $request->user()->hasRole('Franchisee');
         if (!$isAuthorized) {
             return response()->json([
                 'success' => false,
@@ -23,9 +23,15 @@ class EmployeeController extends Controller
             ], 403);
         }
 
-        $employees = User::role(['Admin', 'HQ operations', 'Franchisee', 'Branch Cashier'])
-            ->with('roles')
-            ->get();
+        if ($request->user()->hasRole('Franchisee')) {
+            $employees = User::role('Branch Cashier')
+                ->with('roles')
+                ->get();
+        } else {
+            $employees = User::role(['Admin', 'HQ operations', 'Franchisee', 'Branch Cashier'])
+                ->with('roles')
+                ->get();
+        }
 
         return response()->json([
             'success' => true,

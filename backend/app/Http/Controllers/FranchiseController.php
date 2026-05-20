@@ -13,7 +13,20 @@ class FranchiseController extends Controller
      */
     public function getInventory(Request $request)
     {
-        $hub = Hub::where('franchisee_id', $request->user()->id)->first();
+        $user = $request->user();
+        if ($user->hasRole('Branch Cashier')) {
+            $shift = \App\Models\WorkShift::where('user_id', $user->id)
+                ->where('status', 'active')
+                ->first();
+            if (!$shift) {
+                $shift = \App\Models\WorkShift::where('user_id', $user->id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
+            $hub = $shift ? Hub::find($shift->hub_id) : Hub::first();
+        } else {
+            $hub = Hub::where('franchisee_id', $user->id)->first();
+        }
 
         if (!$hub) {
             return response()->json([
@@ -38,7 +51,20 @@ class FranchiseController extends Controller
      */
     public function getHubOrders(Request $request)
     {
-        $hub = Hub::where('franchisee_id', $request->user()->id)->first();
+        $user = $request->user();
+        if ($user->hasRole('Branch Cashier')) {
+            $shift = \App\Models\WorkShift::where('user_id', $user->id)
+                ->where('status', 'active')
+                ->first();
+            if (!$shift) {
+                $shift = \App\Models\WorkShift::where('user_id', $user->id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
+            $hub = $shift ? Hub::find($shift->hub_id) : Hub::first();
+        } else {
+            $hub = Hub::where('franchisee_id', $user->id)->first();
+        }
 
         if (!$hub) {
             return response()->json([
@@ -64,7 +90,20 @@ class FranchiseController extends Controller
      */
     public function updateHubOrderStatus(Request $request, int $id)
     {
-        $hub = Hub::where('franchisee_id', $request->user()->id)->first();
+        $user = $request->user();
+        if ($user->hasRole('Branch Cashier')) {
+            $shift = \App\Models\WorkShift::where('user_id', $user->id)
+                ->where('status', 'active')
+                ->first();
+            if (!$shift) {
+                $shift = \App\Models\WorkShift::where('user_id', $user->id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
+            $hub = $shift ? Hub::find($shift->hub_id) : Hub::first();
+        } else {
+            $hub = Hub::where('franchisee_id', $user->id)->first();
+        }
 
         if (!$hub) {
             return response()->json([

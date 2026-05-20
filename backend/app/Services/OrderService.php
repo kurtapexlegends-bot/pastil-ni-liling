@@ -90,7 +90,33 @@ class OrderService
                 }
 
                 // Verify stock and deduct inventory
-                $this->verifyStockAndDeduct($hubId, $orderData['items']);
+                // For POS offline orders, the items have already been physically sold, so we allow overdrafts and reconcile them!
+                foreach ($orderData['items'] as $item) {
+                    $inventory = HubInventory::where('hub_id', $hubId)
+                        ->where('product_id', $item['product_id'])
+                        ->lockForUpdate()
+                        ->first();
+
+                    $available = $inventory ? $inventory->stock_quantity : 0;
+
+                    // Deduct using FIFO with allowOverdraft = true
+                    $this->inventoryBatchService->deductStockFIFO($item['product_id'], $hubId, $item['quantity'], true);
+
+                    // If we overdrafted, record an anomaly for reconciliation review
+                    if ($available < $item['quantity']) {
+                        DB::table('pos_sync_anomalies')->insert([
+                            'hub_id' => $hubId,
+                            'offline_order_id' => $orderData['offline_id'],
+                            'product_id' => $item['product_id'],
+                            'requested_quantity' => $item['quantity'],
+                            'available_quantity' => $available,
+                            'status' => 'pending',
+                            'notes' => 'Offline POS sync exceeded available digital inventory. Overdraft recorded.',
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                    }
+                }
 
                 // Create the completed POS sale
                 $order = Order::create([

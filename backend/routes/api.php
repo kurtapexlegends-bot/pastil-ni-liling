@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index']);
 
     // Franchisee Branch Inventory and B2C Orders
-    Route::middleware('role:Franchisee')->group(function () {
+    Route::middleware('role:Franchisee|Branch Cashier')->group(function () {
         Route::get('/franchise/inventory', [\App\Http\Controllers\FranchiseController::class, 'getInventory']);
         Route::get('/franchise/orders', [\App\Http\Controllers\FranchiseController::class, 'getHubOrders']);
         Route::patch('/franchise/orders/{id}', [\App\Http\Controllers\FranchiseController::class, 'updateHubOrderStatus']);
@@ -45,7 +45,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/products/{id}', [\App\Http\Controllers\AdminController::class, 'destroyProduct']);
 
         // Franchise Branch Management
-        Route::get('/hubs', [\App\Http\Controllers\AdminController::class, 'getHubs']);
         Route::post('/hubs', [\App\Http\Controllers\AdminController::class, 'storeHub']);
         Route::put('/hubs/{id}', [\App\Http\Controllers\AdminController::class, 'updateHub']);
         Route::delete('/hubs/{id}', [\App\Http\Controllers\AdminController::class, 'destroyHub']);
@@ -62,16 +61,23 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/inventory/recipes', [\App\Http\Controllers\InventoryController::class, 'storeRecipe']);
 
         // Phase 4: Employee Personnel Controls (Multi-Tier RBAC)
-        Route::get('/employees', [\App\Http\Controllers\EmployeeController::class, 'index']);
         Route::post('/employees', [\App\Http\Controllers\EmployeeController::class, 'store']);
         Route::put('/employees/{id}', [\App\Http\Controllers\EmployeeController::class, 'update']);
         Route::delete('/employees/{id}', [\App\Http\Controllers\EmployeeController::class, 'destroy']);
+    });
+
+    // Routes shared by Admin, HQ operations, and Franchisee
+    Route::middleware('role:Admin|HQ operations|Franchisee')->prefix('admin')->group(function () {
+        Route::get('/employees', [\App\Http\Controllers\EmployeeController::class, 'index']);
+        Route::get('/hubs', [\App\Http\Controllers\AdminController::class, 'getHubs']);
     });
 
     // Phase 4: Digital Compliance & QC Audits
     Route::get('/compliance/audits', [\App\Http\Controllers\ComplianceController::class, 'index']);
     Route::post('/compliance/audits', [\App\Http\Controllers\ComplianceController::class, 'store']);
     Route::patch('/compliance/audits/{id}', [\App\Http\Controllers\ComplianceController::class, 'updateStatus']);
+    Route::get('/compliance/anomalies', [\App\Http\Controllers\ComplianceController::class, 'getAnomalies']);
+    Route::patch('/compliance/anomalies/{id}/resolve', [\App\Http\Controllers\ComplianceController::class, 'resolveAnomaly']);
 
     // Phase 4: Cashier Shift Sessions and Direct Payout Commission Ledger
     Route::post('/payroll/shifts/clock-in', [\App\Http\Controllers\PayrollController::class, 'clockIn']);

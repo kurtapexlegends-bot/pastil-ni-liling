@@ -18,12 +18,13 @@ class InventoryBatchService
      * @param int $productId
      * @param int|null $hubId Null means HQ Commissary stock
      * @param int $quantityToDeduct
+     * @param bool $allowOverdraft
      * @return void
      * @throws Exception
      */
-    public function deductStockFIFO(int $productId, ?int $hubId, int $quantityToDeduct): void
+    public function deductStockFIFO(int $productId, ?int $hubId, int $quantityToDeduct, bool $allowOverdraft = false): void
     {
-        DB::transaction(function () use ($productId, $hubId, $quantityToDeduct) {
+        DB::transaction(function () use ($productId, $hubId, $quantityToDeduct, $allowOverdraft) {
             /** @var \Illuminate\Database\Eloquent\Collection<\App\Models\InventoryBatch> $batches */
             $batches = InventoryBatch::where('product_id', $productId)
                 ->where('hub_id', $hubId)
@@ -35,7 +36,7 @@ class InventoryBatchService
 
             $totalAvailable = $batches->sum('quantity');
 
-            if ($totalAvailable < $quantityToDeduct) {
+            if ($totalAvailable < $quantityToDeduct && !$allowOverdraft) {
                 throw new Exception("Insufficient stock in unexpired FIFO batches. Requested: {$quantityToDeduct}, Available: {$totalAvailable}");
             }
 
@@ -60,15 +61,24 @@ class InventoryBatchService
             if ($hubId) {
                 $inventory = HubInventory::where('hub_id', $hubId)
                     ->where('product_id', $productId)
+                    ->lockForUpdate()
                     ->first();
                 if ($inventory) {
-                    $inventory->stock_quantity = max(0, $inventory->stock_quantity - $quantityToDeduct);
+                    if ($allowOverdraft) {
+                        $inventory->stock_quantity = $inventory->stock_quantity - $quantityToDeduct;
+                    } else {
+                        $inventory->stock_quantity = max(0, $inventory->stock_quantity - $quantityToDeduct);
+                    }
                     $inventory->save();
                 }
             } else {
                 $product = Product::find($productId);
                 if ($product) {
-                    $product->stock = max(0, $product->stock - $quantityToDeduct);
+                    if ($allowOverdraft) {
+                        $product->stock = $product->stock - $quantityToDeduct;
+                    } else {
+                        $product->stock = max(0, $product->stock - $quantityToDeduct);
+                    }
                     $product->save();
                 }
             }

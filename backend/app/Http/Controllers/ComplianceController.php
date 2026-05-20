@@ -150,4 +150,112 @@ class ComplianceController extends Controller
             'data' => $audit->load(['hub', 'auditor'])
         ]);
     }
+
+    /**
+     * Display a listing of POS sync anomalies.
+     */
+    public function getAnomalies(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->hasRole('Admin') || $user->hasRole('HQ operations')) {
+            $anomalies = \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
+                ->join('hubs', 'pos_sync_anomalies.hub_id', '=', 'hubs.id')
+                ->join('products', 'pos_sync_anomalies.product_id', '=', 'products.id')
+                ->select(
+                    'pos_sync_anomalies.*',
+                    'hubs.name as hub_name',
+                    'products.name as product_name'
+                )
+                ->orderBy('pos_sync_anomalies.created_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $anomalies
+            ]);
+        }
+
+        if ($user->hasRole('Franchisee')) {
+            $hubs = Hub::where('franchisee_id', $user->id)->pluck('id');
+            $anomalies = \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
+                ->join('hubs', 'pos_sync_anomalies.hub_id', '=', 'hubs.id')
+                ->join('products', 'pos_sync_anomalies.product_id', '=', 'products.id')
+                ->whereIn('pos_sync_anomalies.hub_id', $hubs)
+                ->select(
+                    'pos_sync_anomalies.*',
+                    'hubs.name as hub_name',
+                    'products.name as product_name'
+                )
+                ->orderBy('pos_sync_anomalies.created_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $anomalies
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Access denied.'
+        ], 403);
+    }
+
+    /**
+     * Resolve a POS sync anomaly.
+     */
+    public function resolveAnomaly(Request $request, $id)
+    {
+        $user = $request->user();
+
+        // Only HQ Operations or Admins can mark anomalies as resolved
+        if (!$user->hasRole('Admin') && !$user->hasRole('HQ operations')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access denied. Only HQ operators can resolve anomalies.'
+            ], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'notes' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $anomaly = \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
+            ->where('id', $id)
+            ->first();
+
+        if (!$anomaly) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anomaly not found.'
+            ], 404);
+        }
+
+        \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
+            ->where('id', $id)
+            ->update([
+                'status' => 'resolved',
+                'notes' => $request->notes ?? 'Reconciled and resolved by HQ Operator.',
+                'updated_at' => now()
+            ]);
+
+        $updatedAnomaly = \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
+            ->where('id', $id)
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'POS sync anomaly marked as resolved.',
+            'data' => $updatedAnomaly
+        ]);
+    }
 }

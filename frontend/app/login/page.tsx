@@ -44,15 +44,15 @@ export default function LoginPage() {
         setCookie("token", data.access_token, 7);
         setCookie("user_role", primaryRole, 7);
 
-        const isAdmin = roles.some((r: any) => r.name === "Admin");
-        const isFranchisee = roles.some((r: any) => r.name === "Franchisee");
+        const isAdmin = roles.some((r: any) => r.name === "Admin" || r.name === "HQ operations");
+        const isFranchiseAccess = roles.some((r: any) => r.name === "Franchisee" || r.name === "Branch Cashier");
 
         if (isAdmin) {
           router.push("/admin");
-        } else if (isFranchisee) {
+        } else if (isFranchiseAccess) {
           router.push("/franchise/dashboard");
         } else {
-          router.push("/menu");
+          router.push("/dashboard");
         }
       } else {
         setError(data.message || "Invalid credentials");

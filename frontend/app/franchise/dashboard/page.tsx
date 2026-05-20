@@ -18,6 +18,8 @@ export default function FranchiseDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
+  const isCashier = user?.roles?.some((r: any) => r.name === 'Branch Cashier') || false;
+  const isFranchisee = user?.roles?.some((r: any) => r.name === 'Franchisee') || false;
   const [hub, setHub] = useState<any>(null);
   const [hubInventory, setHubInventory] = useState<any[]>([]);
   const [customerOrders, setCustomerOrders] = useState<any[]>([]);
@@ -90,14 +92,19 @@ export default function FranchiseDashboard() {
     }
 
     const parsedUser = JSON.parse(userData);
-    const isFranchisee = parsedUser.roles.some((r: any) => r.name === "Franchisee");
+    const isFranchiseAccess = parsedUser.roles?.some((r: any) => r.name === "Franchisee" || r.name === "Branch Cashier") || false;
     
-    if (!isFranchisee) {
+    if (!isFranchiseAccess) {
       router.push("/dashboard");
       return;
     }
 
     setUser(parsedUser);
+    if (parsedUser.roles?.some((r: any) => r.name === "Branch Cashier")) {
+      setActivePortalTab('pos');
+    } else {
+      setActivePortalTab('logistics');
+    }
 
     // Initial load for Offline POS Queue
     const savedQueue = localStorage.getItem("pos_offline_queue");
@@ -110,10 +117,10 @@ export default function FranchiseDashboard() {
     const fetchAll = async () => {
       try {
         const [prodRes, orderRes, invRes, custRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/products"),
-          fetch("http://127.0.0.1:8000/api/orders", { headers: { "Authorization": `Bearer ${token}` } }),
-          fetch("http://127.0.0.1:8000/api/franchise/inventory", { headers: { "Authorization": `Bearer ${token}` } }),
-          fetch("http://127.0.0.1:8000/api/franchise/orders", { headers: { "Authorization": `Bearer ${token}` } })
+          fetch("http://127.0.0.1:8000/api/products", { headers: { "Accept": "application/json" } }),
+          fetch("http://127.0.0.1:8000/api/orders", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } }),
+          fetch("http://127.0.0.1:8000/api/franchise/inventory", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } }),
+          fetch("http://127.0.0.1:8000/api/franchise/orders", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } })
         ]);
 
         const prodData = await prodRes.json();
@@ -398,6 +405,9 @@ export default function FranchiseDashboard() {
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-medium text-xs text-brand-earth/60 tracking-wider">Loading Partner Portal...</div>;
 
+  const isFranchiseAccess = user?.roles?.some((r: any) => r.name === "Franchisee" || r.name === "Branch Cashier") || false;
+  if (!isFranchiseAccess) return null;
+
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
       <CartDrawer 
@@ -414,17 +424,21 @@ export default function FranchiseDashboard() {
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Image src="/logo.jpg" alt="Logo" width={28} height={28} className="rounded-full" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">Franchisee Portal</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">
+              {isCashier ? 'Cashier Portal' : isFranchisee ? 'Franchisee Portal' : 'Loading Portal...'}
+            </span>
           </div>
           <div className="flex items-center gap-6">
-            <div onClick={() => setIsCartOpen(true)} className="relative cursor-pointer hover:opacity-80 transition-opacity flex items-center">
-              <Package size={20} className="text-brand-earth hover:text-brand-green transition-colors" />
-              {cartItems.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-brand-green text-white text-[8px] font-semibold w-3.5 h-3.5 rounded-full flex items-center justify-center">
-                  {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
-                </span>
-              )}
-            </div>
+            {isFranchisee && (
+              <div onClick={() => setIsCartOpen(true)} className="relative cursor-pointer hover:opacity-80 transition-opacity flex items-center">
+                <Package size={20} className="text-brand-earth hover:text-brand-green transition-colors" />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-brand-green text-white text-[8px] font-semibold w-3.5 h-3.5 rounded-full flex items-center justify-center">
+                    {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+                  </span>
+                )}
+              </div>
+            )}
             <button onClick={() => { localStorage.clear(); deleteCookie("token"); deleteCookie("user_role"); router.push('/login'); }} className="text-[10px] font-semibold uppercase tracking-wider text-red-500 hover:text-red-600 transition-colors">Logout</button>
           </div>
         </div>
@@ -434,29 +448,37 @@ export default function FranchiseDashboard() {
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-50">
            <div className="space-y-1">
               <h1 className="text-3xl font-bold tracking-tight text-brand-earth">Salamat, <span className="text-brand-green">{user?.name?.split(' ')[0]}</span></h1>
-              <p className="text-xs text-brand-earth/50">Manage your branch inventory, B2C live checkouts, and terminal sales</p>
+              <p className="text-xs text-brand-earth/50">
+                {isCashier
+                  ? 'Perform POS sales, track shift sessions, and log operational branch expenses'
+                  : 'Manage your branch inventory, B2C live checkouts, and terminal sales'}
+              </p>
            </div>
-           <div className="w-full sm:w-auto">
-              <div className="bg-white border border-gray-100 p-4 rounded-xl text-left sm:text-right space-y-0.5 shadow-sm">
-                 <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Active Wholesale Orders</p>
-                 <p className="text-lg font-bold text-brand-earth">{orders.filter(o => o.status !== 'delivered').length}</p>
-              </div>
-           </div>
+           {isFranchisee && (
+             <div className="w-full sm:w-auto">
+                <div className="bg-white border border-gray-100 p-4 rounded-xl text-left sm:text-right space-y-0.5 shadow-sm">
+                   <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Active Wholesale Orders</p>
+                   <p className="text-lg font-bold text-brand-earth">{orders.filter(o => o.status !== 'delivered').length}</p>
+                </div>
+             </div>
+           )}
         </header>
 
         {/* Tab Navigation */}
         <div className="flex border-b border-gray-100 gap-6 overflow-x-auto scrollbar-none whitespace-nowrap pb-px">
-          <button
-            onClick={() => setActivePortalTab('logistics')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
-              activePortalTab === 'logistics'
-                ? 'border-brand-green text-brand-green'
-                : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
-            }`}
-          >
-            <Truck size={16} weight="duotone" />
-            Logistics
-          </button>
+          {isFranchisee && (
+            <button
+              onClick={() => setActivePortalTab('logistics')}
+              className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
+                activePortalTab === 'logistics'
+                  ? 'border-brand-green text-brand-green'
+                  : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
+              }`}
+            >
+              <Truck size={16} weight="duotone" />
+              Logistics
+            </button>
+          )}
           <button
             onClick={() => setActivePortalTab('pos')}
             className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
@@ -473,17 +495,19 @@ export default function FranchiseDashboard() {
               </span>
             )}
           </button>
-          <button
-            onClick={() => setActivePortalTab('compliance')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
-              activePortalTab === 'compliance'
-                ? 'border-brand-green text-brand-green'
-                : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
-            }`}
-          >
-            <ShieldCheck size={16} weight="duotone" />
-            QC Compliance
-          </button>
+          {isFranchisee && (
+            <button
+              onClick={() => setActivePortalTab('compliance')}
+              className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
+                activePortalTab === 'compliance'
+                  ? 'border-brand-green text-brand-green'
+                  : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
+              }`}
+            >
+              <ShieldCheck size={16} weight="duotone" />
+              QC Compliance
+            </button>
+          )}
           <button
             onClick={() => setActivePortalTab('payroll')}
             className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
@@ -507,7 +531,7 @@ export default function FranchiseDashboard() {
           </button>
         </div>
 
-        {activePortalTab === 'logistics' && (
+        {activePortalTab === 'logistics' && isFranchisee && (
           <>
             {/* Live Retail Orders Section */}
             <section className="space-y-4">
@@ -882,7 +906,7 @@ export default function FranchiseDashboard() {
           </div>
         )}
 
-        {activePortalTab === 'compliance' && (
+        {activePortalTab === 'compliance' && isFranchisee && (
           <QCComplianceManager />
         )}
 
@@ -945,7 +969,7 @@ export default function FranchiseDashboard() {
               </div>
             </div>
 
-            <BranchPayrollManager />
+            {isFranchisee && <BranchPayrollManager />}
           </div>
         )}
 

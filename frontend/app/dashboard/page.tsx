@@ -24,15 +24,15 @@ export default function UserDashboard() {
 
     const parsedUser = JSON.parse(userData);
     const roles = parsedUser.roles || [];
-    const isAdmin = roles.some((r: any) => r.name === "Admin");
-    const isFranchisee = roles.some((r: any) => r.name === "Franchisee");
+    const isAdmin = roles.some((r: any) => r.name === "Admin" || r.name === "HQ operations");
+    const isFranchiseAccess = roles.some((r: any) => r.name === "Franchisee" || r.name === "Branch Cashier");
 
     if (isAdmin) {
       router.push("/admin");
       return;
     }
 
-    if (isFranchisee) {
+    if (isFranchiseAccess) {
       router.push("/franchise/dashboard");
       return;
     }
