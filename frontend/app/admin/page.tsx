@@ -1,5 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
+
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import Image from "next/image";
@@ -11,7 +13,10 @@ import FranchiseApplications from "../../components/admin/FranchiseApplications"
 import OrderManagement from "../../components/admin/OrderManagement";
 import ProductCatalog from "../../components/admin/ProductCatalog";
 import FranchiseBranches from "../../components/admin/FranchiseBranches";
-import GeoRoutingVisualizer from "../../components/admin/GeoRoutingVisualizer";
+const GeoRoutingVisualizer = dynamic(() => import("../../components/admin/GeoRoutingVisualizer"), {
+  ssr: false,
+  loading: () => <div className="h-64 flex items-center justify-center text-xs font-semibold text-brand-earth/40 animate-pulse bg-white rounded-2xl border border-gray-100 shadow-sm">Booting GPS Routing Module...</div>
+});
 import SupplyChainManager from "../../components/admin/SupplyChainManager";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
@@ -20,7 +25,13 @@ import HubModal from "../../components/admin/HubModal";
 import EmployeeManager from "../../components/admin/EmployeeManager";
 import QCComplianceManager from "../../components/admin/QCComplianceManager";
 import BranchPayrollManager from "../../components/admin/BranchPayrollManager";
-import AnalyticsEngine from "../../components/admin/AnalyticsEngine";
+const AnalyticsEngine = dynamic(() => import("../../components/admin/AnalyticsEngine"), {
+  ssr: false,
+  loading: () => <div className="h-96 flex flex-col items-center justify-center text-xs font-semibold text-brand-earth/40 animate-pulse bg-white rounded-2xl border border-gray-100 shadow-sm">
+    <div className="w-12 h-12 rounded-full border-4 border-brand-green border-t-transparent animate-spin mb-4"></div>
+    <p>Crunching Business Intelligence...</p>
+  </div>
+});
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import DashboardSkeleton from "@/components/ui/DashboardSkeleton";
 import { deleteCookie } from "@/components/cookieHelper";

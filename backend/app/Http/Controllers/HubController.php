@@ -12,7 +12,7 @@ class HubController extends Controller
      */
     public function index()
     {
-        $hubs = Hub::where('status', 'active')->get();
+        $hubs = Hub::with('franchisee')->where('status', 'active')->get();
 
         return response()->json([
             'success' => true,

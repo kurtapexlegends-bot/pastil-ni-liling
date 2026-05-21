@@ -25,7 +25,7 @@ class AnalyticsService
             return $this->calculateAnalyticsSummary();
         }
 
-        return Cache::rememberForever('analytics_summary', function () {
+        return Cache::remember('analytics_summary', 300, function () {
             return $this->calculateAnalyticsSummary();
         });
     }

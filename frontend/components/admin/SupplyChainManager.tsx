@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Ingredient, InventoryBatch, ProductIngredient, Product, Hub } from "../../app/admin/types";
+import { Leaf, Flask, BookOpen } from "@phosphor-icons/react";
 import AddIngredientModal from "./supply-chain/modals/AddIngredientModal";
 import RestockModal from "./supply-chain/modals/RestockModal";
 import ProductionIntakeModal from "./supply-chain/modals/ProductionIntakeModal";
@@ -237,8 +238,13 @@ export default function SupplyChainManager({
               <tbody>
                 {ingredients.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-xs text-brand-earth/40 font-normal">
-                      No raw ingredients registered. Click "Add Ingredient Type" to begin.
+                    <td colSpan={6} className="px-6 py-16 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
+                        <Leaf size={48} weight="duotone" className="text-brand-earth" />
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                          No ingredients recorded
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -295,8 +301,13 @@ export default function SupplyChainManager({
               <tbody>
                 {batches.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-xs text-brand-earth/40 font-normal">
-                      No active FIFO manufacturing batches tracked yet. Click "Log Production Intake".
+                    <td colSpan={6} className="px-6 py-16 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
+                        <Flask size={48} weight="duotone" className="text-brand-earth" />
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                          No batches tracked
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -362,8 +373,13 @@ export default function SupplyChainManager({
               <tbody>
                 {recipes.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-xs text-brand-earth/40 font-normal">
-                      No recipes mapped. Click "Configure Recipe Map" to assign commissary depletion rules.
+                    <td colSpan={4} className="px-6 py-16 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
+                        <BookOpen size={48} weight="duotone" className="text-brand-earth" />
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                          No recipes mapped
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
