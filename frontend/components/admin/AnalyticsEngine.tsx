@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import SalesAndMargins from './analytics/SalesAndMargins';
 import SupplyAndWaste from './analytics/SupplyAndWaste';
 import SpokesAndFlavors from './analytics/SpokesAndFlavors';
@@ -62,44 +62,26 @@ interface AnalyticsData {
   trends: FlavorTrend[];
 }
 
+const fetcher = (url: string) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Missing authentication token.');
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  }).then(res => res.json());
+};
+
 export default function AnalyticsEngine() {
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchAnalytics() {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Missing authentication token.');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await fetch('http://127.0.0.1:8000/api/analytics/summary', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const json = await res.json();
-        if (json.success) {
-          setData(json.data);
-        } else {
-          setError(json.message || 'Failed to load BI analytics summary.');
-        }
-      } catch (err) {
-        console.error(err);
-        setError('Failed to establish network connection with the intelligence server.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchAnalytics();
-  }, []);
+  const { data: resData, error, isLoading } = useSWR('http://127.0.0.1:8000/api/analytics/summary', fetcher, {
+    refreshInterval: 60000 // Auto-poll every minute for live dashboard updates
+  });
+  
+  const data: AnalyticsData | null = resData?.success ? resData.data : null;
+  const loading = isLoading;
+  const fetchError = error ? 'Failed to establish network connection with the intelligence server.' : (resData && !resData.success ? resData.message : null);
 
   if (loading) {
     return (
@@ -112,14 +94,14 @@ export default function AnalyticsEngine() {
     );
   }
 
-  if (error || !data) {
+  if (fetchError || !data) {
     return (
       <div className="bg-white border border-red-100 p-8 rounded-2xl text-center space-y-2 shadow-sm">
         <p className="text-xs font-bold text-red-500 uppercase tracking-wider">
           Analytics Offline
         </p>
         <p className="text-[10px] text-brand-earth/50 leading-relaxed max-w-md mx-auto">
-          {error || 'Could not load analytics summary.'}
+          {fetchError || 'Could not load analytics summary.'}
         </p>
       </div>
     );

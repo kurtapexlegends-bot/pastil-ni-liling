@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useSWR from "swr";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Warning, Package, Truck, DeviceTablet, ShieldCheck, Coins, List } from "@phosphor-icons/react";
@@ -19,14 +20,9 @@ import AlertModal from "@/components/ui/AlertModal";
 
 export default function FranchiseDashboard() {
   const router = useRouter();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const isCashier = user?.roles?.some((r: any) => r.name === 'Branch Cashier') || false;
   const isFranchisee = user?.roles?.some((r: any) => r.name === 'Franchisee') || false;
-  const [hub, setHub] = useState<any>(null);
-  const [hubInventory, setHubInventory] = useState<any[]>([]);
-  const [customerOrders, setCustomerOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -42,6 +38,25 @@ export default function FranchiseDashboard() {
   const [isOnline, setIsOnline] = useState<boolean>(true);
   const [alertState, setAlertState] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error'}>({isOpen: false, message: "", type: "info"});
   const customAlert = (message: string, type: 'info'|'success'|'error' = 'info') => setAlertState({isOpen: true, message, type});
+
+  const fetcher = (url: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No token");
+    return fetch(url, { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } }).then(res => res.json());
+  };
+
+  const { data: ordersRes, mutate: mutateOrders } = useSWR(user ? "http://127.0.0.1:8000/api/orders" : null, fetcher);
+  const orders = ordersRes?.success ? ordersRes.data.filter((o: any) => o.type === 'wholesale') : [];
+
+  const { data: invRes, mutate: mutateInventory } = useSWR(user ? "http://127.0.0.1:8000/api/franchise/inventory" : null, fetcher, { refreshInterval: 60000 });
+  const hub = invRes?.success ? invRes.hub : null;
+  const hubInventory = invRes?.success ? invRes.data : [];
+
+  const { data: prodRes, mutate: mutateProducts } = useSWR(activePortalTab === 'logistics' && user ? "http://127.0.0.1:8000/api/products" : null, fetcher);
+  const products = prodRes?.success ? prodRes.data.filter((p: any) => p.is_wholesale) : [];
+
+  const { data: custRes, mutate: mutateCustomerOrders } = useSWR(activePortalTab === 'logistics' && user ? "http://127.0.0.1:8000/api/franchise/orders" : null, fetcher, { refreshInterval: 60000 });
+  const customerOrders = custRes?.success ? custRes.data : [];
 
   const triggerQueueSyncDirectly = async (token: string) => {
     const queue = localStorage.getItem("pos_offline_queue");
@@ -82,15 +97,8 @@ export default function FranchiseDashboard() {
           setOfflineQueue([]);
         }
         
-        // Refresh local inventory levels
-        const invRes = await fetch("http://127.0.0.1:8000/api/franchise/inventory", {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        const invData = await invRes.json();
-        if (invData.success) {
-          setHub(invData.hub);
-          setHubInventory(invData.data);
-        }
+        // Refresh local inventory levels using SWR
+        mutateInventory();
       } else {
         // Backend failure (e.g. 500 error): Increment retry counters safely
         const updatedQueue = parsedQueue.map((o: any) => {
@@ -153,32 +161,6 @@ export default function FranchiseDashboard() {
 
     setIsOnline(navigator.onLine);
 
-    const fetchHubData = async () => {
-      try {
-        const [orderRes, invRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/orders", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } }),
-          fetch("http://127.0.0.1:8000/api/franchise/inventory", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } })
-        ]);
-
-        const orderData = await orderRes.json();
-        const invData = await invRes.json();
-
-        if (orderData.success) {
-          setOrders(orderData.data.filter((o: any) => o.type === 'wholesale'));
-        }
-        if (invData.success) {
-          setHub(invData.hub);
-          setHubInventory(invData.data);
-        }
-      } catch (err) {
-        console.error("Fetch failed", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHubData();
-
     const handleOnline = () => {
       setIsOnline(true);
       triggerQueueSyncDirectly(token);
@@ -194,37 +176,13 @@ export default function FranchiseDashboard() {
       triggerQueueSyncDirectly(token);
     }
 
+    setLoading(false);
+
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
   }, [router]);
-
-  // JIT Fetcher for Logistics Tab Data
-  useEffect(() => {
-    if (activePortalTab === 'logistics' && products.length === 0) {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const fetchLogisticsData = async () => {
-        try {
-          const [prodRes, custRes] = await Promise.all([
-            fetch("http://127.0.0.1:8000/api/products", { headers: { "Accept": "application/json" } }),
-            fetch("http://127.0.0.1:8000/api/franchise/orders", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } })
-          ]);
-          const prodData = await prodRes.json();
-          const custData = await custRes.json();
-
-          if (prodData.success) setProducts(prodData.data.filter((p: any) => p.is_wholesale));
-          if (custData.success) setCustomerOrders(custData.data);
-        } catch (err) {
-          console.error("Failed to fetch logistics data", err);
-        }
-      };
-
-      fetchLogisticsData();
-    }
-  }, [activePortalTab, products.length]);
 
   const handleAddToPOSCart = (prod: any) => {
     setPosCart(prev => {
@@ -291,16 +249,22 @@ export default function FranchiseDashboard() {
     // Snapshot inventory state BEFORE optimistic UI deduction
     const backupInventory = [...hubInventory];
 
-    setHubInventory(prev => prev.map(invItem => {
-      const cartMatch = posCart.find(c => c.id === invItem.product_id);
-      if (cartMatch) {
-        return {
-          ...invItem,
-          stock_quantity: Math.max(0, invItem.stock_quantity - cartMatch.quantity)
-        };
-      }
-      return invItem;
-    }));
+    mutateInventory((current: any) => {
+      if (!current || !current.data) return current;
+      return {
+        ...current,
+        data: current.data.map((invItem: any) => {
+          const cartMatch = posCart.find((c: any) => c.id === invItem.product_id);
+          if (cartMatch) {
+            return {
+              ...invItem,
+              stock_quantity: Math.max(0, invItem.stock_quantity - cartMatch.quantity)
+            };
+          }
+          return invItem;
+        })
+      };
+    }, { revalidate: false });
 
     const updatedQueue = [...offlineQueue, newPOSOrder];
     setOfflineQueue(updatedQueue);
@@ -327,17 +291,13 @@ export default function FranchiseDashboard() {
           setOfflineQueue(clearedQueue);
           localStorage.setItem("pos_offline_queue", JSON.stringify(clearedQueue));
           
-          const invRes = await fetch("http://127.0.0.1:8000/api/franchise/inventory", {
-            headers: { "Authorization": `Bearer ${token}` }
-          });
-          const invData = await invRes.json();
-          if (invData.success) {
-            setHub(invData.hub);
-            setHubInventory(invData.data);
-          }
+          mutateInventory();
         } else {
           // Sync Failed: Perform Atomic Rollback of optimistic inventory deduction
-          setHubInventory(backupInventory);
+          mutateInventory((current: any) => {
+            if (!current) return current;
+            return { ...current, data: backupInventory };
+          }, { revalidate: false });
           
           // Increment retry counter for this ghost order
           const retriedQueue = updatedQueue.map(o => o.offline_id === offlineId ? { ...o, sync_retries: (o.sync_retries || 0) + 1 } : o);
@@ -349,7 +309,10 @@ export default function FranchiseDashboard() {
       } catch (err) {
         console.warn("Stall offline, order saved locally.", err);
         // Network Crash: Perform Atomic Rollback of optimistic inventory deduction
-        setHubInventory(backupInventory);
+        mutateInventory((current: any) => {
+          if (!current) return current;
+          return { ...current, data: backupInventory };
+        }, { revalidate: false });
         
         // Increment retry counter for this ghost order
         const retriedQueue = updatedQueue.map(o => o.offline_id === offlineId ? { ...o, sync_retries: (o.sync_retries || 0) + 1 } : o);
@@ -406,13 +369,7 @@ export default function FranchiseDashboard() {
 
       const data = await res.json();
       if (data.success) {
-        const refreshRes = await fetch("http://127.0.0.1:8000/api/franchise/orders", {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        const refreshData = await refreshRes.json();
-        if (refreshData.success) {
-          setCustomerOrders(refreshData.data);
-        }
+        mutateCustomerOrders();
         customAlert(`Order status updated to: ${nextStatus}`);
       } else {
         customAlert("Failed to update status: " + (data.message || "Unknown error"));
@@ -461,17 +418,8 @@ export default function FranchiseDashboard() {
         setIsCartOpen(false);
         
         // Refresh orders and inventory
-        const [orderRes, invRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/orders", { headers: { "Authorization": `Bearer ${token}` } }),
-          fetch("http://127.0.0.1:8000/api/franchise/inventory", { headers: { "Authorization": `Bearer ${token}` } })
-        ]);
-        const orderData = await orderRes.json();
-        const invData = await invRes.json();
-        if (orderData.success) setOrders(orderData.data.filter((o: any) => o.type === 'wholesale'));
-        if (invData.success) {
-          setHub(invData.hub);
-          setHubInventory(invData.data);
-        }
+        mutateOrders();
+        mutateInventory();
       } else {
         customAlert("Failed to place order: " + (data.message || "Unknown error"));
       }
@@ -544,7 +492,7 @@ export default function FranchiseDashboard() {
               <>
                 <div className="hidden sm:block text-right bg-white border border-gray-100 p-3.5 rounded-xl shadow-sm">
                   <p className="text-[8px] font-semibold uppercase tracking-wider text-brand-earth/40">Active Wholesale Orders</p>
-                  <p className="text-sm font-bold text-brand-earth">{orders.filter(o => o.status !== 'delivered').length}</p>
+                  <p className="text-sm font-bold text-brand-earth">{orders.filter((o: any) => o.status !== 'delivered').length}</p>
                 </div>
 
                 <div 
