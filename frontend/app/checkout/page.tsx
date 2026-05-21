@@ -119,7 +119,7 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
       <Navbar variant="checkout" />
 
-      <main className="max-w-6xl mx-auto px-6 pt-24 pb-10 grid lg:grid-cols-2 gap-12 w-full flex-1">
+      <main className="max-w-6xl mx-auto px-6 pt-24 pb-10 flex flex-col-reverse lg:grid lg:grid-cols-2 gap-8 lg:gap-12 w-full flex-1">
         {/* Form Section */}
         <section className="space-y-8">
           <header className="space-y-1">
