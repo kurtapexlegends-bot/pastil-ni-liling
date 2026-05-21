@@ -47,7 +47,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
           </div>
         </div>
 
-        <div className="relative w-full border border-gray-100 rounded-2xl p-5 bg-gradient-to-br from-gray-50/50 to-white shadow-inner">
+        <div className="relative w-full border border-gray-100 rounded-2xl p-5 bg-white shadow-sm">
           {/* Background Quadrant Shading & Labels */}
           <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 opacity-[0.03] pointer-events-none p-5">
             <div className="border-r border-b border-dashed border-brand-earth flex items-start p-2">
@@ -116,10 +116,10 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
                 // Gradient color mapped to Compliance
                 const bubbleBg =
                   branch.compliance_score >= 95
-                    ? 'bg-gradient-to-br from-emerald-400 to-teal-600 text-white shadow-emerald-500/25 border-emerald-300'
+                    ? 'bg-emerald-50 text-emerald-700 shadow-sm border-emerald-200'
                     : branch.compliance_score >= 90
-                      ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-orange-500/25 border-orange-300'
-                      : 'bg-gradient-to-br from-rose-400 to-red-600 text-white shadow-red-500/25 border-red-300';
+                      ? 'bg-amber-50 text-amber-700 shadow-sm border-amber-200'
+                      : 'bg-rose-50 text-rose-700 shadow-sm border-rose-200';
 
                 return (
                   <div
@@ -229,7 +229,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
               return (
                 <div
                   key={trend.flavor}
-                  className="group border border-gray-100 hover:border-brand-green/30 hover:shadow-md hover:shadow-brand-green/5 transition-all duration-300 bg-gradient-to-br from-gray-50/50 to-white p-3.5 rounded-xl flex flex-col justify-between space-y-2.5 relative overflow-hidden"
+                  className="group border border-gray-100 hover:border-brand-green/30 hover:shadow-md hover:shadow-brand-green/5 transition-all duration-300 bg-white p-3.5 rounded-xl flex flex-col justify-between space-y-2.5 relative overflow-hidden"
                 >
                   <div className="space-y-1.5">
                     <div className="flex justify-between items-start">
@@ -286,7 +286,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
                   {/* Proportional visual share progress gauge bar */}
                   <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-brand-yellow/80 to-brand-green h-full rounded-full transition-all duration-500"
+                      className="bg-brand-green h-full rounded-full transition-all duration-500"
                       style={{ width: `${trend.share_percent}%` }}
                     />
                   </div>

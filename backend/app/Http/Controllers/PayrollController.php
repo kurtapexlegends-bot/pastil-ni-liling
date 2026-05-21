@@ -169,41 +169,16 @@ class PayrollController extends Controller
         $startDate = Carbon::parse($request->query('start_date'))->startOfDay();
         $endDate = Carbon::parse($request->query('end_date'))->endOfDay();
 
-        // 1. Calculate standard hours pay from completed shifts
-        $shifts = WorkShift::where('user_id', $targetUserId)
-            ->where('status', 'completed')
-            ->whereBetween('clock_in', [$startDate, $endDate])
-            ->get();
+        $payrollService = new \App\Services\PayrollService();
+        $payoutData = $payrollService->calculateUserPayout($targetUserId, $startDate, $endDate);
 
-        $basePay = 0;
-        $totalHours = 0;
-
-        foreach ($shifts as $shift) {
-            $hours = $shift->clock_in->diffInHours($shift->clock_out) + ($shift->clock_in->diffInMinutes($shift->clock_out) % 60) / 60;
-            $totalHours += $hours;
-            $basePay += ($hours * floatval($shift->hourly_rate));
-        }
-
-        // 2. Calculate 5% commission from direct POS walk-in cashier sales
-        $totalPOSSales = Order::where('cashier_id', $targetUserId)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->sum('total_amount');
-
-        $commissionPay = floatval($totalPOSSales) * 0.05; // 5% direct commission
-        $totalPay = $basePay + $commissionPay;
+        // Preserve original exact query string format in response
+        $payoutData['start_date'] = $request->query('start_date');
+        $payoutData['end_date'] = $request->query('end_date');
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'user_id' => intval($targetUserId),
-                'start_date' => $request->query('start_date'),
-                'end_date' => $request->query('end_date'),
-                'total_hours' => round($totalHours, 2),
-                'base_pay' => round($basePay, 2),
-                'total_pos_sales' => round(floatval($totalPOSSales), 2),
-                'commission_pay' => round($commissionPay, 2),
-                'total_pay' => round($totalPay, 2)
-            ]
+            'data' => $payoutData
         ]);
     }
 

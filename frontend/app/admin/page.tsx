@@ -13,13 +13,9 @@ import FranchiseApplications from "../../components/admin/FranchiseApplications"
 import OrderManagement from "../../components/admin/OrderManagement";
 import ProductCatalog from "../../components/admin/ProductCatalog";
 import FranchiseBranches from "../../components/admin/FranchiseBranches";
-const GeoRoutingVisualizer = dynamic(() => import("../../components/admin/GeoRoutingVisualizer"), {
-  ssr: false,
-  loading: () => <div className="h-64 flex items-center justify-center text-xs font-semibold text-brand-earth/40 animate-pulse bg-white rounded-2xl border border-gray-100 shadow-sm">Booting GPS Routing Module...</div>
-});
+
 import SupplyChainManager from "../../components/admin/SupplyChainManager";
-import AdminSidebar from "../../components/admin/AdminSidebar";
-import AdminHeader from "../../components/admin/AdminHeader";
+import DashboardLayout from "../../components/admin/DashboardLayout";
 import ProductModal from "../../components/admin/ProductModal";
 import HubModal from "../../components/admin/HubModal";
 import EmployeeManager from "../../components/admin/EmployeeManager";
@@ -350,46 +346,40 @@ export default function AdminDashboard() {
     (activeTab === 'supply_chain' && (!ingRes || !batRes || !recRes));
 
   return (
-    <div className="h-screen bg-gray-50/30 flex overflow-hidden relative">
-      <AdminSidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        handleLogout={handleLogout}
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
-
-      {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-8 space-y-6 overflow-y-auto h-screen relative">
-        <AdminHeader
-          activeTab={activeTab}
-          onToggleSidebar={() => setIsSidebarOpen(true)}
-          onAddProduct={() => {
-            setProductForm({
-              id: null,
-              name: "",
-              description: "",
-              price: 0,
-              wholesale_price: 0,
-              stock: 0,
-              category: "pastil",
-              is_wholesale: false,
-              is_active: true
-            });
-            setIsProductModalOpen(true);
-          }}
-          onCreateHub={() => {
-            setHubForm({
-              id: null,
-              name: "",
-              address: "",
-              franchisee_id: franchisees[0]?.id?.toString() || "",
-              status: "active"
-            });
-            setIsHubModalOpen(true);
-          }}
-        />
-
+    <>
+      <DashboardLayout
+      activeTab={activeTab}
+      setActiveTab={setActiveTab}
+      handleLogout={handleLogout}
+      isSidebarOpen={isSidebarOpen}
+      setIsSidebarOpen={setIsSidebarOpen}
+      headerProps={{
+        onAddProduct: () => {
+          setProductForm({
+            id: null,
+            name: "",
+            description: "",
+            price: 0,
+            wholesale_price: 0,
+            stock: 0,
+            category: "pastil",
+            is_wholesale: false,
+            is_active: true
+          });
+          setIsProductModalOpen(true);
+        },
+        onCreateHub: () => {
+          setHubForm({
+            id: null,
+            name: "",
+            address: "",
+            franchisee_id: franchisees[0]?.id?.toString() || "",
+            status: "active"
+          });
+          setIsHubModalOpen(true);
+        }
+      }}
+    >
         {isDataLoading ? (
           <DashboardSkeleton />
         ) : (
@@ -422,7 +412,6 @@ export default function AdminDashboard() {
 
           {activeTab === 'hubs' && (
             <div className="space-y-8">
-              <GeoRoutingVisualizer hubs={hubs} />
               <FranchiseBranches 
                 hubs={hubs} 
                 franchisees={franchisees} 
@@ -465,7 +454,7 @@ export default function AdminDashboard() {
         </div>
         </>
         )}
-      </main>
+      </DashboardLayout>
 
       <ConfirmationModal 
         isOpen={confirmState.isOpen}
@@ -494,6 +483,6 @@ export default function AdminDashboard() {
         franchisees={franchisees}
         saveHub={saveHub}
       />
-    </div>
+    </>
   );
 }
