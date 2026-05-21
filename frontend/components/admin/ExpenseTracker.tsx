@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
 
 interface Expense {
   id: number;
@@ -25,6 +26,9 @@ export default function ExpenseTracker() {
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmState, setConfirmState] = useState<{isOpen: boolean, title: string, message: string, action: () => void}>({
+    isOpen: false, title: "", message: "", action: () => {}
+  });
 
   const categories = [
     { value: "materials", label: "Raw Materials & Stock" },
@@ -107,26 +111,34 @@ export default function ExpenseTracker() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this expense record?")) return;
+  const handleDelete = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      title: "Delete Expense Record",
+      message: "Are you sure you want to delete this expense record? This action cannot be undone.",
+      action: async () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const res = await fetch(`http://127.0.0.1:8000/api/expenses/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data.success) {
-        fetchExpenses();
-      } else {
-        alert(data.message || "Failed to delete expense record.");
+        try {
+          const res = await fetch(`http://127.0.0.1:8000/api/expenses/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await res.json();
+          if (data.success) {
+            fetchExpenses();
+          } else {
+            setError(data.message || "Failed to delete expense record.");
+          }
+        } catch (err) {
+          console.error(err);
+          setError("Failed to communicate with the server.");
+        } finally {
+          setConfirmState(prev => ({ ...prev, isOpen: false }));
+        }
       }
-    } catch (err) {
-      console.error(err);
-    }
+    });
   };
 
   // Calculate stats
@@ -282,6 +294,16 @@ export default function ExpenseTracker() {
           )}
         </div>
       </div>
+      <ConfirmationModal 
+        isOpen={confirmState.isOpen}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDestructive={true}
+        onConfirm={confirmState.action}
+        onCancel={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 }

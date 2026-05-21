@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\InvalidatesAnalyticsCache;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InventoryBatch extends Model

@@ -207,7 +207,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
           </p>
         </div>
 
-        <div className="space-y-3 flex-1 mt-4 max-h-[224px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-200">
+        <div className="space-y-3 flex-1 mt-4 max-h-[300px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-200">
           {trends.length === 0 ? (
             <div className="text-center py-12 text-brand-earth/30 uppercase tracking-wider text-[9px]">
               No flavor catalogs detected.

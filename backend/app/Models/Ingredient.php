@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\InvalidatesAnalyticsCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ingredient extends Model
 {
     use HasFactory;
+    use InvalidatesAnalyticsCache;
 
     protected $fillable = [
         'name',

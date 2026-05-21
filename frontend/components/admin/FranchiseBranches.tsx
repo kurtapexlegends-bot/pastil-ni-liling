@@ -5,7 +5,7 @@ interface FranchiseBranchesProps {
   franchisees: FranchiseeUser[];
   setHubForm: (h: Hub) => void;
   setIsHubModalOpen: (open: boolean) => void;
-  deleteHub: (id: number) => Promise<void>;
+  deleteHub: (id: number) => void;
 }
 
 export default function FranchiseBranches({ hubs, franchisees, setHubForm, setIsHubModalOpen, deleteHub }: FranchiseBranchesProps) {

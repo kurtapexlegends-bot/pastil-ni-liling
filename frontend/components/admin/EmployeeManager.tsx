@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Modal from "../ui/Modal";
+import ConfirmationModal from "../ui/ConfirmationModal";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 
 interface Employee {
@@ -24,6 +25,9 @@ export default function EmployeeManager() {
   const [role, setRole] = useState("Branch Cashier");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmState, setConfirmState] = useState<{isOpen: boolean, title: string, message: string, action: () => void}>({
+    isOpen: false, title: "", message: "", action: () => {}
+  });
 
   const fetchEmployees = async () => {
     const token = localStorage.getItem("token");
@@ -101,25 +105,34 @@ export default function EmployeeManager() {
     setIsOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to terminate this employee's credentials?")) return;
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  const handleDelete = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      title: "Terminate Employee",
+      message: "Are you sure you want to terminate this employee's credentials? This action cannot be undone.",
+      action: async () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
-    try {
-      const res = await fetch(`http://127.0.0.1:8000/api/admin/employees/${id}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        fetchEmployees();
-      } else {
-        alert(data.message);
+        try {
+          const res = await fetch(`http://127.0.0.1:8000/api/admin/employees/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+          const data = await res.json();
+          if (data.success) {
+            fetchEmployees();
+          } else {
+            setError(data.message || "Failed to terminate employee.");
+          }
+        } catch (err) {
+          console.error(err);
+          setError("Failed to communicate with the server.");
+        } finally {
+          setConfirmState(prev => ({ ...prev, isOpen: false }));
+        }
       }
-    } catch (err) {
-      console.error(err);
-    }
+    });
   };
 
   const getRoleBadgeColor = (roleName: string) => {
@@ -164,6 +177,12 @@ export default function EmployeeManager() {
           Add Personnel
         </button>
       </div>
+
+      {error && !isOpen && (
+        <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-[9px] font-semibold text-red-600 uppercase tracking-wide">
+          {error}
+        </div>
+      )}
 
       {loading ? (
         <div className="h-64 bg-white border border-gray-100 rounded-xl flex items-center justify-center">
@@ -305,6 +324,17 @@ export default function EmployeeManager() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmationModal 
+        isOpen={confirmState.isOpen}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText="Terminate"
+        cancelText="Cancel"
+        isDestructive={true}
+        onConfirm={confirmState.action}
+        onCancel={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 }

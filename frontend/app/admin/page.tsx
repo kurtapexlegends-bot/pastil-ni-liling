@@ -19,6 +19,7 @@ import EmployeeManager from "../../components/admin/EmployeeManager";
 import QCComplianceManager from "../../components/admin/QCComplianceManager";
 import BranchPayrollManager from "../../components/admin/BranchPayrollManager";
 import AnalyticsEngine from "../../components/admin/AnalyticsEngine";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { deleteCookie } from "@/components/cookieHelper";
 
 export default function AdminDashboard() {
@@ -59,59 +60,62 @@ export default function AdminDashboard() {
   const [isHubModalOpen, setIsHubModalOpen] = useState(false);
 
   const [hasToken, setHasToken] = useState(false);
+  const [confirmState, setConfirmState] = useState<{isOpen: boolean, title: string, message: string, action: () => void}>({
+    isOpen: false, title: "", message: "", action: () => {}
+  });
 
-  const fetchAll = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
+  // JIT Fetchers
+  const fetchApplications = async (token: string) => {
     try {
-      const fetchApp = fetch("http://127.0.0.1:8000/api/admin/applications", { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => { if (data.success) setApplications(data.data); });
+      const res = await fetch("http://127.0.0.1:8000/api/admin/applications", { headers: { "Authorization": `Bearer ${token}` } });
+      const data = await res.json();
+      if (data.success) setApplications(data.data);
+    } catch (err) { console.error(err); }
+  };
 
-      const fetchOrders = fetch("http://127.0.0.1:8000/api/admin/orders", { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => { if (data.success) setOrders(data.data); });
+  const fetchOrdersData = async (token: string) => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/admin/orders", { headers: { "Authorization": `Bearer ${token}` } });
+      const data = await res.json();
+      if (data.success) setOrders(data.data);
+    } catch (err) { console.error(err); }
+  };
 
-      const fetchProducts = fetch("http://127.0.0.1:8000/api/admin/products", { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => { if (data.success) setProducts(data.data); });
+  const fetchProductsData = async (token: string) => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/admin/products", { headers: { "Authorization": `Bearer ${token}` } });
+      const data = await res.json();
+      if (data.success) setProducts(data.data);
+    } catch (err) { console.error(err); }
+  };
 
-      const fetchHubs = fetch("http://127.0.0.1:8000/api/admin/hubs", { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => { if (data.success) setHubs(data.data); });
-
-      const fetchFranchisees = fetch("http://127.0.0.1:8000/api/admin/franchisees", { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => { if (data.success) setFranchisees(data.data); });
-
-      const fetchIngredients = fetch("http://127.0.0.1:8000/api/admin/inventory/ingredients", { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => { if (data.success) setIngredients(data.data); });
-
-      const fetchBatches = fetch("http://127.0.0.1:8000/api/admin/inventory/batches", { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => { if (data.success) setBatches(data.data); });
-
-      const fetchRecipes = fetch("http://127.0.0.1:8000/api/admin/inventory/recipes", { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(data => { if (data.success) setRecipes(data.data); });
-
-      await Promise.allSettled([
-        fetchApp,
-        fetchOrders,
-        fetchProducts,
-        fetchHubs,
-        fetchFranchisees,
-        fetchIngredients,
-        fetchBatches,
-        fetchRecipes
+  const fetchHubsData = async (token: string) => {
+    try {
+      const [hubRes, franRes] = await Promise.all([
+        fetch("http://127.0.0.1:8000/api/admin/hubs", { headers: { "Authorization": `Bearer ${token}` } }),
+        fetch("http://127.0.0.1:8000/api/admin/franchisees", { headers: { "Authorization": `Bearer ${token}` } })
       ]);
-    } catch (err) {
-      console.error("Fetch failed", err);
-    } finally {
-      setLoading(false);
-    }
+      const hubData = await hubRes.json();
+      const franData = await franRes.json();
+      if (hubData.success) setHubs(hubData.data);
+      if (franData.success) setFranchisees(franData.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchSupplyChainData = async (token: string) => {
+    try {
+      const [ingRes, batRes, recRes] = await Promise.all([
+        fetch("http://127.0.0.1:8000/api/admin/inventory/ingredients", { headers: { "Authorization": `Bearer ${token}` } }),
+        fetch("http://127.0.0.1:8000/api/admin/inventory/batches", { headers: { "Authorization": `Bearer ${token}` } }),
+        fetch("http://127.0.0.1:8000/api/admin/inventory/recipes", { headers: { "Authorization": `Bearer ${token}` } })
+      ]);
+      const ingData = await ingRes.json();
+      const batData = await batRes.json();
+      const recData = await recRes.json();
+      if (ingData.success) setIngredients(ingData.data);
+      if (batData.success) setBatches(batData.data);
+      if (recData.success) setRecipes(recData.data);
+    } catch (err) { console.error(err); }
   };
 
   useEffect(() => {
@@ -129,8 +133,20 @@ export default function AdminDashboard() {
       return;
     }
     setHasToken(true);
-    fetchAll();
+    setLoading(false);
   }, [router]);
+
+  useEffect(() => {
+    if (!hasToken) return;
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    if (activeTab === 'applications' && applications.length === 0) fetchApplications(token);
+    else if (activeTab === 'orders' && orders.length === 0) fetchOrdersData(token);
+    else if (activeTab === 'products' && products.length === 0) fetchProductsData(token);
+    else if (activeTab === 'hubs' && hubs.length === 0) fetchHubsData(token);
+    else if (activeTab === 'supply_chain' && (ingredients.length === 0 || batches.length === 0 || recipes.length === 0)) fetchSupplyChainData(token);
+  }, [activeTab, hasToken]);
 
   const updateOrderStatus = async (id: number, status: string) => {
     const token = localStorage.getItem("token");
@@ -190,18 +206,25 @@ export default function AdminDashboard() {
 
     if (res.ok) {
       setIsProductModalOpen(false);
-      fetchAll();
+      fetchProductsData(token || "");
     }
   };
 
-  const deleteProduct = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
-    const token = localStorage.getItem("token");
-    const res = await fetch(`http://127.0.0.1:8000/api/admin/products/${id}`, {
-      method: "DELETE",
-      headers: { "Authorization": `Bearer ${token}` }
+  const deleteProduct = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      title: "Delete Product",
+      message: "Are you sure you want to delete this product? This action cannot be undone and will remove it from the catalog.",
+      action: async () => {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://127.0.0.1:8000/api/admin/products/${id}`, {
+          method: "DELETE",
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (res.ok) fetchProductsData(token || "");
+        setConfirmState(prev => ({ ...prev, isOpen: false }));
+      }
     });
-    if (res.ok) fetchAll();
   };
 
   // Hub CRUD
@@ -228,18 +251,25 @@ export default function AdminDashboard() {
 
     if (res.ok) {
       setIsHubModalOpen(false);
-      fetchAll();
+      fetchHubsData(token || "");
     }
   };
 
-  const deleteHub = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this branch?")) return;
-    const token = localStorage.getItem("token");
-    const res = await fetch(`http://127.0.0.1:8000/api/admin/hubs/${id}`, {
-      method: "DELETE",
-      headers: { "Authorization": `Bearer ${token}` }
+  const deleteHub = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      title: "Delete Branch Hub",
+      message: "Are you sure you want to delete this branch? This action cannot be undone.",
+      action: async () => {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://127.0.0.1:8000/api/admin/hubs/${id}`, {
+          method: "DELETE",
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (res.ok) fetchHubsData(token || "");
+        setConfirmState(prev => ({ ...prev, isOpen: false }));
+      }
     });
-    if (res.ok) fetchAll();
   };
 
   // Supply Chain Fetchers & Mutations
@@ -472,6 +502,17 @@ export default function AdminDashboard() {
           )}
         </div>
       </main>
+
+      <ConfirmationModal 
+        isOpen={confirmState.isOpen}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDestructive={true}
+        onConfirm={confirmState.action}
+        onCancel={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
+      />
 
       <ProductModal
         isOpen={isProductModalOpen}

@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import BranchPayrollManager from "@/components/admin/BranchPayrollManager";
+import AlertModal from "@/components/ui/AlertModal";
 
 interface ShiftsPayrollTabProps {
   hub: any;
@@ -8,6 +10,9 @@ interface ShiftsPayrollTabProps {
 }
 
 export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTabProps) {
+  const [alertState, setAlertState] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error'}>({isOpen: false, message: "", type: "info"});
+  const customAlert = (message: string, type: 'info'|'success'|'error' = 'info') => setAlertState({isOpen: true, message, type});
+
   const handleClockIn = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -21,7 +26,7 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
         body: JSON.stringify({ hub_id: hub?.id || 1 }),
       });
       const data = await res.json();
-      alert(data.message);
+      customAlert(data.message);
     } catch (err) {
       console.error(err);
     }
@@ -39,7 +44,7 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
         },
       });
       const data = await res.json();
-      alert(data.message);
+      customAlert(data.message);
     } catch (err) {
       console.error(err);
     }
@@ -72,6 +77,14 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
       </div>
 
       {isFranchisee && <BranchPayrollManager />}
+
+      <AlertModal 
+        isOpen={alertState.isOpen}
+        title={alertState.type === 'error' ? "Action Failed" : alertState.type === 'success' ? "Success" : "Information"}
+        message={alertState.message}
+        type={alertState.type}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 }
