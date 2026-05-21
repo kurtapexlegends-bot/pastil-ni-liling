@@ -50,6 +50,17 @@ export default function FranchiseDashboard() {
     const parsedQueue = JSON.parse(queue);
     if (parsedQueue.length === 0) return;
 
+    // Isolate viable orders vs dead-letter anomalies
+    const viableOrders = parsedQueue.filter((o: any) => (o.sync_retries || 0) < 3);
+    const deadOrders = parsedQueue.filter((o: any) => (o.sync_retries || 0) >= 3);
+
+    if (viableOrders.length === 0) {
+      if (deadOrders.length > 0) {
+        setOfflineQueue(deadOrders); // Ensure UI shows the blocked anomalies
+      }
+      return;
+    }
+
     try {
       const res = await fetch("http://127.0.0.1:8000/api/pos/sync", {
         method: "POST",
@@ -57,13 +68,19 @@ export default function FranchiseDashboard() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ orders: parsedQueue })
+        body: JSON.stringify({ orders: viableOrders })
       });
 
       const data = await res.json();
       if (data.success) {
-        localStorage.removeItem("pos_offline_queue");
-        setOfflineQueue([]);
+        // Success: Clear viable orders, but retain dead orders for manual review
+        if (deadOrders.length > 0) {
+          localStorage.setItem("pos_offline_queue", JSON.stringify(deadOrders));
+          setOfflineQueue(deadOrders);
+        } else {
+          localStorage.removeItem("pos_offline_queue");
+          setOfflineQueue([]);
+        }
         
         // Refresh local inventory levels
         const invRes = await fetch("http://127.0.0.1:8000/api/franchise/inventory", {
@@ -74,9 +91,24 @@ export default function FranchiseDashboard() {
           setHub(invData.hub);
           setHubInventory(invData.data);
         }
+      } else {
+        // Backend failure (e.g. 500 error): Increment retry counters safely
+        const updatedQueue = parsedQueue.map((o: any) => {
+          if ((o.sync_retries || 0) < 3) return { ...o, sync_retries: (o.sync_retries || 0) + 1 };
+          return o;
+        });
+        localStorage.setItem("pos_offline_queue", JSON.stringify(updatedQueue));
+        setOfflineQueue(updatedQueue);
       }
     } catch (err) {
       console.warn("Failed to automatic sync queue", err);
+      // Network failure: Increment retry counters safely
+      const updatedQueue = parsedQueue.map((o: any) => {
+        if ((o.sync_retries || 0) < 3) return { ...o, sync_retries: (o.sync_retries || 0) + 1 };
+        return o;
+      });
+      localStorage.setItem("pos_offline_queue", JSON.stringify(updatedQueue));
+      setOfflineQueue(updatedQueue);
     }
   };
 
@@ -247,6 +279,7 @@ export default function FranchiseDashboard() {
       total_amount: totalAmount,
       payment_method: posPaymentMethod,
       channel: posChannel,
+      sync_retries: 0,
       items: posCart.map(item => ({
         product_id: item.id,
         quantity: item.quantity,
@@ -254,6 +287,9 @@ export default function FranchiseDashboard() {
         flavor_modifier: item.flavor_modifier || "Original"
       }))
     };
+
+    // Snapshot inventory state BEFORE optimistic UI deduction
+    const backupInventory = [...hubInventory];
 
     setHubInventory(prev => prev.map(invItem => {
       const cartMatch = posCart.find(c => c.id === invItem.product_id);
@@ -299,9 +335,28 @@ export default function FranchiseDashboard() {
             setHub(invData.hub);
             setHubInventory(invData.data);
           }
+        } else {
+          // Sync Failed: Perform Atomic Rollback of optimistic inventory deduction
+          setHubInventory(backupInventory);
+          
+          // Increment retry counter for this ghost order
+          const retriedQueue = updatedQueue.map(o => o.offline_id === offlineId ? { ...o, sync_retries: (o.sync_retries || 0) + 1 } : o);
+          setOfflineQueue(retriedQueue);
+          localStorage.setItem("pos_offline_queue", JSON.stringify(retriedQueue));
+          
+          customAlert("Failed to place order: " + (data.message || "Unknown error"));
         }
       } catch (err) {
         console.warn("Stall offline, order saved locally.", err);
+        // Network Crash: Perform Atomic Rollback of optimistic inventory deduction
+        setHubInventory(backupInventory);
+        
+        // Increment retry counter for this ghost order
+        const retriedQueue = updatedQueue.map(o => o.offline_id === offlineId ? { ...o, sync_retries: (o.sync_retries || 0) + 1 } : o);
+        setOfflineQueue(retriedQueue);
+        localStorage.setItem("pos_offline_queue", JSON.stringify(retriedQueue));
+        
+        customAlert("Network unstable. POS order saved locally and inventory locked.");
       }
     } else {
       customAlert("Offline Mode: Order saved locally. It will automatically sync once online!");
