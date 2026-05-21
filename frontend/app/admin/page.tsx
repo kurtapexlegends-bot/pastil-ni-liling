@@ -11,6 +11,7 @@ import FranchiseApplications from "../../components/admin/FranchiseApplications"
 import OrderManagement from "../../components/admin/OrderManagement";
 import ProductCatalog from "../../components/admin/ProductCatalog";
 import FranchiseBranches from "../../components/admin/FranchiseBranches";
+import GeoRoutingVisualizer from "../../components/admin/GeoRoutingVisualizer";
 import SupplyChainManager from "../../components/admin/SupplyChainManager";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
@@ -402,13 +403,16 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === 'hubs' && (
-            <FranchiseBranches 
-              hubs={hubs} 
-              franchisees={franchisees} 
-              setHubForm={setHubForm} 
-              setIsHubModalOpen={setIsHubModalOpen} 
-              deleteHub={deleteHub} 
-            />
+            <div className="space-y-8">
+              <GeoRoutingVisualizer hubs={hubs} />
+              <FranchiseBranches 
+                hubs={hubs} 
+                franchisees={franchisees} 
+                setHubForm={setHubForm} 
+                setIsHubModalOpen={setIsHubModalOpen} 
+                deleteHub={deleteHub} 
+              />
+            </div>
           )}
 
           {activeTab === 'supply_chain' && (

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AlertModal from "../ui/AlertModal";
+import { Printer } from "@phosphor-icons/react";
 
 interface Shift {
   id: number;
@@ -39,8 +40,19 @@ export default function BranchPayrollManager() {
   const [endDate, setEndDate] = useState(new Date().toISOString().split("T")[0]);
   const [calcResult, setCalcResult] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [printData, setPrintData] = useState<PayoutLedger | null>(null);
   const [alertState, setAlertState] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error'}>({isOpen: false, message: "", type: "info"});
   const customAlert = (message: string, type: 'info'|'success'|'error' = 'info') => setAlertState({isOpen: true, message, type});
+
+  useEffect(() => {
+    if (printData) {
+      setTimeout(() => {
+        window.print();
+        // Clear it after printing so subsequent prints don't flash old data
+        setTimeout(() => setPrintData(null), 500); 
+      }, 100);
+    }
+  }, [printData]);
 
   const fetchPayrollData = async () => {
     const token = localStorage.getItem("token");
@@ -334,6 +346,7 @@ export default function BranchPayrollManager() {
                   <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-brand-earth/40">Base Hourly Pay</th>
                   <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-brand-earth/40">Commission Pay</th>
                   <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-brand-earth/40 text-right">Settled Amount</th>
+                  <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-brand-earth/40 text-center">Receipt</th>
                 </tr>
               </thead>
               <tbody>
@@ -345,6 +358,15 @@ export default function BranchPayrollManager() {
                     <td className="p-4 text-[10px] font-medium text-brand-earth/60">₱ {parseFloat(p.base_pay).toLocaleString()}</td>
                     <td className="p-4 text-[10px] font-medium text-brand-earth/60">₱ {parseFloat(p.commission_pay).toLocaleString()}</td>
                     <td className="p-4 text-right text-[10px] font-black text-brand-green">₱ {parseFloat(p.total_pay).toLocaleString()}</td>
+                    <td className="p-4 text-center">
+                      <button 
+                        onClick={() => setPrintData(p)}
+                        className="bg-brand-earth/5 hover:bg-brand-earth/10 text-brand-earth p-2 rounded-full transition-colors inline-flex"
+                        aria-label="Print Receipt"
+                      >
+                        <Printer size={16} weight="bold" />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -360,6 +382,47 @@ export default function BranchPayrollManager() {
         type={alertState.type}
         onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
       />
+
+      {/* Hidden Print-Only Layout */}
+      <div className="hidden print:block fixed inset-0 bg-white z-[9999] p-8">
+        {printData && (
+          <div className="max-w-sm mx-auto border-2 border-brand-earth p-8 space-y-6">
+            <div className="text-center space-y-2">
+              <h1 className="text-2xl font-black uppercase tracking-widest text-brand-earth">Pastil ni Liling</h1>
+              <p className="text-xs font-bold text-brand-earth/60 uppercase tracking-widest">Official Payroll Receipt</p>
+              <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest">{printData.hub.name}</p>
+            </div>
+            <div className="border-y-2 border-brand-earth border-dashed py-4 space-y-2">
+              <div className="flex justify-between text-xs font-bold text-brand-earth">
+                <span>Cashier</span>
+                <span>{printData.user.name}</span>
+              </div>
+              <div className="flex justify-between text-xs font-bold text-brand-earth">
+                <span>Period</span>
+                <span>{printData.start_date} to {printData.end_date}</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-bold text-brand-earth">
+                <span>Base Shift Pay</span>
+                <span>₱ {parseFloat(printData.base_pay).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-xs font-bold text-brand-earth">
+                <span>POS Commission</span>
+                <span>₱ {parseFloat(printData.commission_pay).toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="border-t-2 border-brand-earth border-solid py-4 flex justify-between text-lg font-black text-brand-earth">
+              <span>Total Settled</span>
+              <span>₱ {parseFloat(printData.total_pay).toLocaleString()}</span>
+            </div>
+            <div className="text-center pt-8">
+              <p className="text-[9px] font-bold text-brand-earth/40 uppercase tracking-widest">Thank you for your hard work!</p>
+              <p className="text-[8px] text-brand-earth/30 uppercase tracking-widest mt-1">Ref: {printData.id}-{Date.now()}</p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
