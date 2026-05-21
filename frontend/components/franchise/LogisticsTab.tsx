@@ -147,14 +147,42 @@ export default function LogisticsTab({
                 {hubInventory.length === 0 ? (
                   <p className="text-[10px] text-brand-earth/40 py-4 text-center">No retail stock yet. Place a bulk order to restock!</p>
                 ) : (
-                  hubInventory.map((item: any) => (
-                    <div key={item.id} className="flex justify-between items-center text-xs text-brand-earth/70">
-                      <span className="font-semibold">{item.product?.name}</span>
-                      <span className={`font-bold px-3 py-1 rounded-full text-[9px] border ${item.stock_quantity < 50 ? 'bg-rose-50 text-rose-600 border-rose-100/50' : 'bg-emerald-50 text-emerald-600 border-emerald-100/50'}`}>
-                        {item.stock_quantity} units
-                      </span>
-                    </div>
-                  ))
+                  hubInventory.map((item: any) => {
+                    const isLowStock = item.stock_quantity < 20;
+                    return (
+                      <div key={item.id} className="flex flex-col gap-2 py-2 border-b border-gray-50/50 last:border-0">
+                        <div className="flex justify-between items-center text-xs text-brand-earth/70">
+                          <span className="font-semibold flex items-center gap-2">
+                            {item.product?.name}
+                            {isLowStock && (
+                              <span className="flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-rose-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                              </span>
+                            )}
+                          </span>
+                          <span className={`font-bold px-3 py-1 rounded-full text-[9px] border ${isLowStock ? 'bg-rose-50 text-rose-600 border-rose-100/50' : 'bg-emerald-50 text-emerald-600 border-emerald-100/50'}`}>
+                            {item.stock_quantity} units
+                          </span>
+                        </div>
+                        {isLowStock && (
+                          <div className="flex justify-end">
+                            <button 
+                              onClick={() => {
+                                const wholesaleEquivalent = products.find(p => p.id === item.product_id);
+                                if (wholesaleEquivalent) {
+                                  handleAddToCart(wholesaleEquivalent);
+                                }
+                              }}
+                              className="text-[9px] flex items-center gap-1 font-bold bg-brand-green/10 text-brand-green hover:bg-brand-green hover:text-white transition-colors px-3 py-1.5 rounded-full uppercase tracking-widest"
+                            >
+                              <Truck size={12} weight="bold" /> 1-Click Restock
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>
