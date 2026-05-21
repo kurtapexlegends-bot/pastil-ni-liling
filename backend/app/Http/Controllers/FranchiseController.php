@@ -128,13 +128,20 @@ class FranchiseController extends Controller
             'status' => 'required|in:pending,preparing,out_for_delivery,delivered,cancelled'
         ]);
 
-        $order->status = $request->input('status');
-        $order->save();
+        try {
+            $fulfillmentService = app(\App\Services\OrderFulfillmentService::class);
+            $order = $fulfillmentService->fulfillOrder($order, $request->input('status'));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order status updated successfully.',
-            'data' => $order->load(['items.product', 'user'])
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Order status updated successfully.',
+                'data' => $order->load(['items.product', 'user'])
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
     }
 }

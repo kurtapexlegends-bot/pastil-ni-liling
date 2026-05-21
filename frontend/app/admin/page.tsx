@@ -116,7 +116,17 @@ export default function AdminDashboard() {
       body: JSON.stringify({ status })
     });
 
-    if (res.ok) {
+    const data = await res.json();
+    if (res.ok && data.success) {
+      mutateOrders();
+    } else {
+      setConfirmState({
+        isOpen: true,
+        title: "Transition Rejected",
+        message: data.message || "Invalid state transition.",
+        action: () => setConfirmState(prev => ({ ...prev, isOpen: false }))
+      });
+      // Force UI to revert back to true server state
       mutateOrders();
     }
   };

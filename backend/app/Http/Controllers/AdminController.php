@@ -28,14 +28,23 @@ class AdminController extends Controller
 
     public function updateOrderStatus(Request $request, int $id, \App\Services\OrderFulfillmentService $fulfillmentService)
     {
+        $request->validate(['status' => 'required|string']);
         $order = \App\Models\Order::with('items.product')->findOrFail($id);
-        $order = $fulfillmentService->fulfillOrder($order, $request->status);
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Order status updated successfully!',
-            'data' => $order
-        ]);
+
+        try {
+            $order = $fulfillmentService->fulfillOrder($order, $request->status);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Order status updated successfully!',
+                'data' => $order
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
     }
 
     /**
