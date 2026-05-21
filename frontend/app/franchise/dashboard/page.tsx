@@ -392,11 +392,13 @@ export default function FranchiseDashboard() {
     );
 
     try {
+      const idempotencyKey = crypto.randomUUID();
       const res = await fetch("http://127.0.0.1:8000/api/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${token}`,
+          "X-Idempotency-Key": idempotencyKey
         },
         body: JSON.stringify({
           type: "wholesale",

@@ -41,6 +41,7 @@ class OrderService
             }
 
             $order = Order::create([
+                'idempotency_key' => $data['idempotency_key'] ?? null,
                 'user_id' => $user?->id,
                 'hub_id' => $hubId,
                 'type' => $type,
@@ -120,6 +121,7 @@ class OrderService
 
                 // Create the completed POS sale
                 $order = Order::create([
+                    'idempotency_key' => $orderData['offline_id'],
                     'user_id' => $user->id, // Franchisee acting as cashier
                     'hub_id' => $hubId,
                     'type' => 'pos',
@@ -224,12 +226,10 @@ class OrderService
     }
 
     /**
-     * Check if a POS order has already been synchronized.
+     * Check if a POS order has already been synchronized via its Idempotency Key.
      */
     protected function isPOSOrderAlreadySynced(int $hubId, string $offlineId): bool
     {
-        return Order::where('hub_id', $hubId)
-            ->where('notes', 'LIKE', "POS-OFFLINE-ID: {$offlineId}%")
-            ->exists();
+        return Order::where('idempotency_key', $offlineId)->exists();
     }
 }
