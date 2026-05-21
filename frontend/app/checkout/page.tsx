@@ -89,11 +89,13 @@ export default function CheckoutPage() {
 
     try {
       const token = localStorage.getItem("token");
+      const idempotencyKey = crypto.randomUUID();
       const res = await fetch("http://127.0.0.1:8000/api/orders", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": token ? `Bearer ${token}` : ""
+          "Authorization": token ? `Bearer ${token}` : "",
+          "X-Idempotency-Key": idempotencyKey
         },
         body: JSON.stringify(payload),
       });

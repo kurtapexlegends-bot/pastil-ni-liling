@@ -59,8 +59,22 @@ class OrderController extends Controller
             ], 422);
         }
 
+        $idempotencyKey = $request->header('X-Idempotency-Key');
+        if ($idempotencyKey) {
+            $existingOrder = Order::where('idempotency_key', $idempotencyKey)->with('items.product')->first();
+            if ($existingOrder) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Order was already processed (Idempotency Check).',
+                    'data' => $existingOrder
+                ], 200); // 200 OK since it's already created
+            }
+        }
+
         try {
-            $order = $this->orderService->createCustomerOrder($request->all(), $request->user());
+            $orderData = $request->all();
+            $orderData['idempotency_key'] = $idempotencyKey;
+            $order = $this->orderService->createCustomerOrder($orderData, $request->user());
 
             return response()->json([
                 'success' => true,
