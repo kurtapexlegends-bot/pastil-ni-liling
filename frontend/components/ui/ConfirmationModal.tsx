@@ -35,7 +35,7 @@ export default function ConfirmationModal({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div 
-        className="absolute inset-0 bg-brand-earth/30 backdrop-blur-sm transition-opacity" 
+        className="absolute inset-0 bg-brand-earth/30 backdrop-blur-sm animate-in fade-in duration-200" 
         onClick={onCancel}
       />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-7 overflow-hidden animate-in zoom-in-95 duration-200">

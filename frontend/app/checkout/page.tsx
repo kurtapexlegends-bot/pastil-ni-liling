@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { CartItem } from "@/types";
-import { MapPin, Compass } from "@phosphor-icons/react";
+import { MapPin, Compass, CircleNotch } from "@phosphor-icons/react";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -149,7 +149,7 @@ export default function CheckoutPage() {
                    required
                    value={selectedHubId}
                    onChange={(e) => setSelectedHubId(e.target.value)}
-                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
                  >
                    {hubs.length === 0 ? (
                      <option value="">No active hubs available</option>
@@ -166,7 +166,7 @@ export default function CheckoutPage() {
                  <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Delivery Address</label>
                  <textarea 
                    required
-                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all h-20 resize-none shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all h-20 resize-none shadow-sm"
                    placeholder="Street, Barangay, City, Landmark"
                    value={formData.shipping_address}
                    onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
@@ -176,7 +176,7 @@ export default function CheckoutPage() {
                  <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Contact Number</label>
                  <input 
                    required
-                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
                    placeholder="0917 XXX XXXX"
                    value={formData.contact_number}
                    onChange={(e) => setFormData({...formData, contact_number: e.target.value})}
@@ -206,9 +206,9 @@ export default function CheckoutPage() {
             <button 
               type="submit" 
               disabled={loading || items.length === 0}
-              className="w-full bg-brand-green text-white py-3 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:bg-brand-green/90 transition-colors shadow-sm disabled:opacity-30"
+              className="w-full bg-brand-green text-white py-3 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:bg-brand-green/90 transition-colors shadow-sm disabled:opacity-30 flex items-center justify-center gap-2"
             >
-              {loading ? "Processing..." : `Place Order (₱${total.toFixed(2)})`}
+              {loading ? <CircleNotch weight="bold" className="animate-spin text-sm" /> : `Place Order (₱${total.toFixed(2)})`}
             </button>
             {error && <p className="text-xs font-medium text-red-500 text-center">{error}</p>}
           </form>

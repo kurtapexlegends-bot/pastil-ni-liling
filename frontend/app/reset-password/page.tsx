@@ -102,7 +102,7 @@ function ResetPasswordForm() {
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                className="w-full bg-white border border-gray-100 rounded-2xl pl-5 pr-12 py-4 text-sm font-bold text-brand-earth focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
+                className="w-full bg-white border border-gray-100 rounded-2xl pl-5 pr-12 py-4 text-sm font-bold text-brand-earth focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -122,7 +122,7 @@ function ResetPasswordForm() {
             <input
               type="password"
               required
-              className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
+              className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
               placeholder="••••••••"
               value={formData.password_confirmation}
               onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })}

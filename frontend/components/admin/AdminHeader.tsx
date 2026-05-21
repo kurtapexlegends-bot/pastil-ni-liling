@@ -57,7 +57,7 @@ export default function AdminHeader({ activeTab, onAddProduct, onCreateHub, onTo
       {activeTab === 'products' && (
         <button
           onClick={onAddProduct}
-          className="bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-colors shadow-sm shrink-0"
+          className="bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all shadow-sm shrink-0 active:scale-[0.98]"
         >
           Add Product
         </button>
@@ -66,7 +66,7 @@ export default function AdminHeader({ activeTab, onAddProduct, onCreateHub, onTo
       {activeTab === 'hubs' && (
         <button
           onClick={onCreateHub}
-          className="bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-colors shadow-sm shrink-0"
+          className="bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all shadow-sm shrink-0 active:scale-[0.98]"
         >
           Create Franchise Hub
         </button>
