@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,14 +27,6 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics'>('analytics');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [applications, setApplications] = useState<FranchiseApplication[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [hubs, setHubs] = useState<Hub[]>([]);
-  const [franchisees, setFranchisees] = useState<FranchiseeUser[]>([]);
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const [batches, setBatches] = useState<InventoryBatch[]>([]);
-  const [recipes, setRecipes] = useState<ProductIngredient[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Modals / Form States
@@ -64,59 +57,35 @@ export default function AdminDashboard() {
     isOpen: false, title: "", message: "", action: () => {}
   });
 
-  // JIT Fetchers
-  const fetchApplications = async (token: string) => {
-    try {
-      const res = await fetch("http://127.0.0.1:8000/api/admin/applications", { headers: { "Authorization": `Bearer ${token}` } });
-      const data = await res.json();
-      if (data.success) setApplications(data.data);
-    } catch (err) { console.error(err); }
+  const fetcher = (url: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No token");
+    return fetch(url, { headers: { "Authorization": `Bearer ${token}` } }).then(res => res.json());
   };
 
-  const fetchOrdersData = async (token: string) => {
-    try {
-      const res = await fetch("http://127.0.0.1:8000/api/admin/orders", { headers: { "Authorization": `Bearer ${token}` } });
-      const data = await res.json();
-      if (data.success) setOrders(data.data);
-    } catch (err) { console.error(err); }
-  };
+  const { data: appsRes, mutate: mutateApps } = useSWR(hasToken && activeTab === 'applications' ? "http://127.0.0.1:8000/api/admin/applications" : null, fetcher);
+  const applications = appsRes?.data || [];
 
-  const fetchProductsData = async (token: string) => {
-    try {
-      const res = await fetch("http://127.0.0.1:8000/api/admin/products", { headers: { "Authorization": `Bearer ${token}` } });
-      const data = await res.json();
-      if (data.success) setProducts(data.data);
-    } catch (err) { console.error(err); }
-  };
+  const { data: ordersRes, mutate: mutateOrders } = useSWR(hasToken && activeTab === 'orders' ? "http://127.0.0.1:8000/api/admin/orders" : null, fetcher);
+  const orders = ordersRes?.data || [];
 
-  const fetchHubsData = async (token: string) => {
-    try {
-      const [hubRes, franRes] = await Promise.all([
-        fetch("http://127.0.0.1:8000/api/admin/hubs", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/franchisees", { headers: { "Authorization": `Bearer ${token}` } })
-      ]);
-      const hubData = await hubRes.json();
-      const franData = await franRes.json();
-      if (hubData.success) setHubs(hubData.data);
-      if (franData.success) setFranchisees(franData.data);
-    } catch (err) { console.error(err); }
-  };
+  const { data: prodsRes, mutate: mutateProducts } = useSWR(hasToken && activeTab === 'products' ? "http://127.0.0.1:8000/api/admin/products" : null, fetcher);
+  const products = prodsRes?.data || [];
 
-  const fetchSupplyChainData = async (token: string) => {
-    try {
-      const [ingRes, batRes, recRes] = await Promise.all([
-        fetch("http://127.0.0.1:8000/api/admin/inventory/ingredients", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/inventory/batches", { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch("http://127.0.0.1:8000/api/admin/inventory/recipes", { headers: { "Authorization": `Bearer ${token}` } })
-      ]);
-      const ingData = await ingRes.json();
-      const batData = await batRes.json();
-      const recData = await recRes.json();
-      if (ingData.success) setIngredients(ingData.data);
-      if (batData.success) setBatches(batData.data);
-      if (recData.success) setRecipes(recData.data);
-    } catch (err) { console.error(err); }
-  };
+  const { data: hubsRes, mutate: mutateHubs } = useSWR(hasToken && activeTab === 'hubs' ? "http://127.0.0.1:8000/api/admin/hubs" : null, fetcher);
+  const hubs = hubsRes?.data || [];
+
+  const { data: franRes, mutate: mutateFranchisees } = useSWR(hasToken && activeTab === 'hubs' ? "http://127.0.0.1:8000/api/admin/franchisees" : null, fetcher);
+  const franchisees = franRes?.data || [];
+
+  const { data: ingRes, mutate: mutateIngredients } = useSWR(hasToken && activeTab === 'supply_chain' ? "http://127.0.0.1:8000/api/admin/inventory/ingredients" : null, fetcher);
+  const ingredients = ingRes?.data || [];
+
+  const { data: batRes, mutate: mutateBatches } = useSWR(hasToken && activeTab === 'supply_chain' ? "http://127.0.0.1:8000/api/admin/inventory/batches" : null, fetcher);
+  const batches = batRes?.data || [];
+
+  const { data: recRes, mutate: mutateRecipes } = useSWR(hasToken && activeTab === 'supply_chain' ? "http://127.0.0.1:8000/api/admin/inventory/recipes" : null, fetcher);
+  const recipes = recRes?.data || [];
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -136,18 +105,6 @@ export default function AdminDashboard() {
     setLoading(false);
   }, [router]);
 
-  useEffect(() => {
-    if (!hasToken) return;
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    if (activeTab === 'applications' && applications.length === 0) fetchApplications(token);
-    else if (activeTab === 'orders' && orders.length === 0) fetchOrdersData(token);
-    else if (activeTab === 'products' && products.length === 0) fetchProductsData(token);
-    else if (activeTab === 'hubs' && hubs.length === 0) fetchHubsData(token);
-    else if (activeTab === 'supply_chain' && (ingredients.length === 0 || batches.length === 0 || recipes.length === 0)) fetchSupplyChainData(token);
-  }, [activeTab, hasToken]);
-
   const updateOrderStatus = async (id: number, status: string) => {
     const token = localStorage.getItem("token");
     const res = await fetch(`http://127.0.0.1:8000/api/admin/orders/${id}`, {
@@ -160,7 +117,7 @@ export default function AdminDashboard() {
     });
 
     if (res.ok) {
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+      mutateOrders();
     }
   };
 
@@ -176,7 +133,7 @@ export default function AdminDashboard() {
     });
 
     if (res.ok) {
-      setApplications(prev => prev.map(a => a.id === id ? { ...a, status: status as 'pending' | 'reviewed' | 'approved' | 'rejected' } : a));
+      mutateApps();
     }
   };
 
@@ -206,7 +163,7 @@ export default function AdminDashboard() {
 
     if (res.ok) {
       setIsProductModalOpen(false);
-      fetchProductsData(token || "");
+      mutateProducts();
     }
   };
 
@@ -221,7 +178,7 @@ export default function AdminDashboard() {
           method: "DELETE",
           headers: { "Authorization": `Bearer ${token}` }
         });
-        if (res.ok) fetchProductsData(token || "");
+        if (res.ok) mutateProducts();
         setConfirmState(prev => ({ ...prev, isOpen: false }));
       }
     });
@@ -251,7 +208,7 @@ export default function AdminDashboard() {
 
     if (res.ok) {
       setIsHubModalOpen(false);
-      fetchHubsData(token || "");
+      mutateHubs();
     }
   };
 
@@ -266,40 +223,13 @@ export default function AdminDashboard() {
           method: "DELETE",
           headers: { "Authorization": `Bearer ${token}` }
         });
-        if (res.ok) fetchHubsData(token || "");
+        if (res.ok) mutateHubs();
         setConfirmState(prev => ({ ...prev, isOpen: false }));
       }
     });
   };
 
-  // Supply Chain Fetchers & Mutations
-  const fetchIngredients = async () => {
-    const token = localStorage.getItem("token");
-    const res = await fetch("http://127.0.0.1:8000/api/admin/inventory/ingredients", {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    const json = await res.json();
-    if (json.success) setIngredients(json.data);
-  };
-
-  const fetchBatches = async () => {
-    const token = localStorage.getItem("token");
-    const res = await fetch("http://127.0.0.1:8000/api/admin/inventory/batches", {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    const json = await res.json();
-    if (json.success) setBatches(json.data);
-  };
-
-  const fetchRecipes = async () => {
-    const token = localStorage.getItem("token");
-    const res = await fetch("http://127.0.0.1:8000/api/admin/inventory/recipes", {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    const json = await res.json();
-    if (json.success) setRecipes(json.data);
-  };
-
+  // Supply Chain Mutations
   const addIngredient = async (data: any) => {
     const token = localStorage.getItem("token");
     const res = await fetch("http://127.0.0.1:8000/api/admin/inventory/ingredients", {
@@ -478,9 +408,9 @@ export default function AdminDashboard() {
               recipes={recipes}
               products={products}
               hubs={hubs}
-              fetchIngredients={fetchIngredients}
-              fetchBatches={fetchBatches}
-              fetchRecipes={fetchRecipes}
+              fetchIngredients={async () => { await mutateIngredients(); }}
+              fetchBatches={async () => { await mutateBatches(); }}
+              fetchRecipes={async () => { await mutateRecipes(); }}
               addIngredient={addIngredient}
               restockIngredient={restockIngredient}
               addBatch={addBatch}
