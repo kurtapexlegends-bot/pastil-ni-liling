@@ -298,7 +298,7 @@ export default function BranchPayrollManager() {
                     <td className="p-4 text-[10px] font-bold text-brand-earth">₱ {parseFloat(s.hourly_rate).toFixed(2)}/hr</td>
                     <td className="p-4">
                       <span className={`inline-block border text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
-                        s.status === 'active' ? 'bg-amber-50 text-amber-700 border-amber-100 animate-pulse' : 'bg-green-50 text-green-700 border-green-100'
+                        s.status === 'active' ? 'bg-amber-50 text-amber-700 border-amber-100 animate-pulse' : 'bg-emerald-50 text-emerald-700 border-emerald-100'
                       }`}>
                         {s.status}
                       </span>
