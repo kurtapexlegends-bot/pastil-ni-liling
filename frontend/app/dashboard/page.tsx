@@ -1,17 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { deleteCookie } from "@/components/cookieHelper";
 
+const fetcher = (url: string) => {
+  const token = localStorage.getItem("token");
+  return fetch(url, { headers: { "Authorization": `Bearer ${token}` } }).then(res => res.json());
+};
+
 export default function UserDashboard() {
   const router = useRouter();
-  const [orders, setOrders] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+
+  const { data: ordersRes } = useSWR(user ? "http://127.0.0.1:8000/api/orders" : null, fetcher);
+  const orders = ordersRes?.data || [];
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -38,16 +45,7 @@ export default function UserDashboard() {
     }
 
     setUser(parsedUser);
-
-    fetch("http://127.0.0.1:8000/api/orders", {
-      headers: { "Authorization": `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) setOrders(data.data);
-        setLoading(false);
-      });
-  }, []);
+  }, [router]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -67,7 +65,6 @@ export default function UserDashboard() {
     router.push("/");
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-black text-brand-earth uppercase tracking-widest">Loading Dashboard...</div>;
 
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
@@ -105,7 +102,7 @@ export default function UserDashboard() {
                 <Link href="/menu" className="inline-block mt-4 text-brand-green font-black text-[10px] uppercase tracking-widest underline">Start Shopping</Link>
               </div>
             ) : (
-              orders.map((order) => (
+              orders.map((order: any) => (
                 <div key={order.id} className="bg-white rounded-[2rem] border border-gray-100 p-8 space-y-6 hover:shadow-xl transition-all group">
                   <header className="flex items-center justify-between">
                     <div className="space-y-1">
