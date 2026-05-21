@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag } from "@phosphor-icons/react";
+import { ShoppingBag, Package } from "@phosphor-icons/react";
 import { CartItem } from "@/types";
 
 interface CartDrawerProps {
@@ -13,9 +13,23 @@ interface CartDrawerProps {
   onRemove: (id: number) => void;
   onCheckout?: () => void;
   checkoutText?: string;
+  title?: string;
+  emptyText?: string;
+  isWholesale?: boolean;
 }
 
-export default function CartDrawer({ isOpen, onClose, items, onUpdateQuantity, onRemove, onCheckout, checkoutText }: CartDrawerProps) {
+export default function CartDrawer({ 
+  isOpen, 
+  onClose, 
+  items, 
+  onUpdateQuantity, 
+  onRemove, 
+  onCheckout, 
+  checkoutText,
+  title,
+  emptyText,
+  isWholesale = false
+}: CartDrawerProps) {
   const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
 
   if (!isOpen) return null;
@@ -32,7 +46,9 @@ export default function CartDrawer({ isOpen, onClose, items, onUpdateQuantity, o
       <div className="relative w-full max-w-sm bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
         <header className="p-6 border-b border-gray-100 flex items-center justify-between">
           <div className="space-y-0.5">
-            <h2 className="text-lg font-bold tracking-tight text-brand-earth">Your Basket</h2>
+            <h2 className="text-lg font-bold tracking-tight text-brand-earth">
+              {title || (isWholesale ? "Wholesale Cart" : "Your Basket")}
+            </h2>
             <p className="text-[10px] font-medium text-brand-earth/40">{items.length} items selected</p>
           </div>
           <button 
@@ -46,8 +62,14 @@ export default function CartDrawer({ isOpen, onClose, items, onUpdateQuantity, o
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center space-y-3 opacity-30">
-              <ShoppingBag size={48} className="text-brand-earth mx-auto" />
-              <p className="text-[10px] font-semibold uppercase tracking-wider">Your basket is empty</p>
+              {isWholesale ? (
+                <Package size={48} className="text-brand-earth mx-auto" />
+              ) : (
+                <ShoppingBag size={48} className="text-brand-earth mx-auto" />
+              )}
+              <p className="text-[10px] font-semibold uppercase tracking-wider">
+                {emptyText || (isWholesale ? "Wholesale cart is empty" : "Your basket is empty")}
+              </p>
             </div>
           ) : (
             items.map((item) => (

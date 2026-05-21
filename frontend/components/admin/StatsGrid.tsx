@@ -24,7 +24,7 @@ export default function StatsGrid({ activeTab, applications, orders, products, h
         </div>
         <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
           <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Food Waste Ratio</p>
-          <p className="text-xl font-bold text-red-500">2.1%</p>
+          <p className="text-xl font-bold text-rose-600">2.1%</p>
         </div>
         <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
           <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Franchise Spokes</p>
@@ -74,7 +74,7 @@ export default function StatsGrid({ activeTab, applications, orders, products, h
         </div>
         <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
           <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Violations Flagged</p>
-          <p className="text-xl font-bold text-red-500">0 Violations</p>
+          <p className="text-xl font-bold text-rose-600">0 Violations</p>
         </div>
       </div>
     );
@@ -116,11 +116,11 @@ export default function StatsGrid({ activeTab, applications, orders, products, h
         </div>
         <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
           <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Pending Review</p>
-          <p className="text-xl font-bold text-yellow-600">{applications.filter(a => a.status === 'pending').length}</p>
+          <p className="text-xl font-bold text-amber-600">{applications.filter(a => a.status === 'pending').length}</p>
         </div>
         <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
           <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Rejected</p>
-          <p className="text-xl font-bold text-red-500">{applications.filter(a => a.status === 'rejected').length}</p>
+          <p className="text-xl font-bold text-rose-600">{applications.filter(a => a.status === 'rejected').length}</p>
         </div>
       </div>
     );
@@ -143,7 +143,7 @@ export default function StatsGrid({ activeTab, applications, orders, products, h
         </div>
         <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
           <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Pending/Preparing</p>
-          <p className="text-xl font-bold text-yellow-600">
+          <p className="text-xl font-bold text-amber-600">
             {orders.filter(o => o.status === 'pending' || o.status === 'preparing').length}
           </p>
         </div>
@@ -164,7 +164,7 @@ export default function StatsGrid({ activeTab, applications, orders, products, h
         </div>
         <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
           <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Retail Exclusive</p>
-          <p className="text-xl font-bold text-blue-600">{products.filter(p => !p.is_wholesale).length}</p>
+          <p className="text-xl font-bold text-stone-600">{products.filter(p => !p.is_wholesale).length}</p>
         </div>
         <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
           <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Wholesale Bulk</p>
@@ -203,7 +203,7 @@ export default function StatsGrid({ activeTab, applications, orders, products, h
         </div>
         <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
           <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Near-Expiry Warnings</p>
-          <p className="text-xl font-bold text-red-500">{expiringBatches}</p>
+          <p className="text-xl font-bold text-rose-600">{expiringBatches}</p>
         </div>
       </div>
     );
@@ -226,7 +226,7 @@ export default function StatsGrid({ activeTab, applications, orders, products, h
       </div>
       <div className="bg-white border border-gray-100 p-5 rounded-xl space-y-1 shadow-sm">
         <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Under Maintenance</p>
-        <p className="text-xl font-bold text-red-500">{hubs.filter(h => h.status === 'inactive').length}</p>
+        <p className="text-xl font-bold text-rose-600">{hubs.filter(h => h.status === 'inactive').length}</p>
       </div>
     </div>
   );

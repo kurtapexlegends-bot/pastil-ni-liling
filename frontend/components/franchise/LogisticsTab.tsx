@@ -55,11 +55,11 @@ export default function LogisticsTab({
                       <p className="text-[10px] text-brand-earth/40 leading-relaxed line-clamp-1">{order.shipping_address}</p>
                     </div>
                     <span
-                      className={`px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest ${
-                        order.status === 'delivered' ? 'bg-green-50 text-green-600' :
-                        order.status === 'preparing' ? 'bg-orange-50 text-orange-600' :
-                        order.status === 'out_for_delivery' ? 'bg-blue-50 text-blue-600' :
-                        'bg-yellow-50 text-yellow-600'
+                      className={`px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest border ${
+                        order.status === 'delivered' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                        order.status === 'preparing' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                        order.status === 'out_for_delivery' ? 'bg-stone-100 text-stone-700 border-stone-200' :
+                        'bg-amber-50 text-amber-700 border-amber-100'
                       }`}
                     >
                       {order.status}
@@ -94,7 +94,7 @@ export default function LogisticsTab({
                     {order.status === 'preparing' && (
                       <button
                         onClick={() => handleUpdateCustomerOrderStatus(order.id, 'out_for_delivery')}
-                        className="bg-blue-600 text-white px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        className="bg-brand-earth text-white px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-brand-green transition-all hover:scale-[1.02] active:scale-[0.98]"
                       >
                         Ship Order
                       </button>
@@ -141,7 +141,7 @@ export default function LogisticsTab({
                   <p className="text-xs font-bold text-brand-earth tracking-tight">{hub?.name || 'Loading Branch...'}</p>
                   <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest font-semibold mt-0.5">{hub?.address || 'Locating...'}</p>
                 </div>
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
               </div>
               <div className="space-y-4">
                 {hubInventory.length === 0 ? (
@@ -150,7 +150,7 @@ export default function LogisticsTab({
                   hubInventory.map((item: any) => (
                     <div key={item.id} className="flex justify-between items-center text-xs text-brand-earth/70">
                       <span className="font-semibold">{item.product?.name}</span>
-                      <span className={`font-bold px-3 py-1 rounded-full text-[9px] ${item.stock_quantity < 50 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                      <span className={`font-bold px-3 py-1 rounded-full text-[9px] border ${item.stock_quantity < 50 ? 'bg-rose-50 text-rose-600 border-rose-100/50' : 'bg-emerald-50 text-emerald-600 border-emerald-100/50'}`}>
                         {item.stock_quantity} units
                       </span>
                     </div>
@@ -172,7 +172,7 @@ export default function LogisticsTab({
                       <p className="text-[9px] font-bold text-brand-earth/30 uppercase tracking-widest">Order #{order.id}</p>
                       <p className="text-sm font-bold text-brand-earth">₱{parseFloat(order.total_amount).toFixed(2)}</p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest ${order.status === 'delivered' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'}`}>
+                    <span className={`px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest border ${order.status === 'delivered' ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50' : 'bg-amber-50 text-amber-700 border-amber-100/50'}`}>
                       {order.status}
                     </span>
                   </div>

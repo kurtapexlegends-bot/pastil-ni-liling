@@ -64,7 +64,7 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
 
           <button
             onClick={handleClockOut}
-            className="bg-red-500 hover:bg-red-600 text-white font-bold uppercase tracking-widest text-[9px] px-5 py-2.5 rounded-full transition-all shadow-sm shadow-red-500/10"
+            className="bg-rose-600 hover:bg-rose-700 text-white font-bold uppercase tracking-widest text-[9px] px-5 py-2.5 rounded-full transition-all shadow-sm shadow-rose-600/10"
           >
             Clock Out Shift
           </button>

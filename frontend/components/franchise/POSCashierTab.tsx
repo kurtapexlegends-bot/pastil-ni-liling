@@ -57,9 +57,9 @@ export default function POSCashierTab({
             <h2 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Branch Shelf Catalog</h2>
           <div className="flex items-center gap-3">
             <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1.5 ${
-              isOnline ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'
+              isOnline ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
             }`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500' : 'bg-yellow-500 animate-pulse'}`}></span>
+              <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`}></span>
               {isOnline ? 'Network Live' : 'Offline Buffering Active'}
             </span>
           </div>
@@ -104,12 +104,12 @@ export default function POSCashierTab({
                     <h3 className="text-sm font-bold text-brand-earth tracking-tight leading-tight">{item.product?.name}</h3>
                     <p className="text-sm font-bold text-brand-green mt-1">₱{parseFloat(item.product?.price).toFixed(2)}</p>
                   </div>
-                  <span className={`text-[9px] font-bold px-3 py-1 rounded-full ${
+                  <span className={`text-[9px] font-bold px-3 py-1 rounded-full border ${
                     item.stock_quantity === 0 
-                      ? 'bg-red-50 text-red-600' 
+                      ? 'bg-rose-50 text-rose-600 border-rose-100/50' 
                       : item.stock_quantity < 30 
-                      ? 'bg-yellow-50 text-yellow-600' 
-                      : 'bg-green-50 text-green-600'
+                      ? 'bg-amber-50 text-amber-600 border-amber-100/50' 
+                      : 'bg-emerald-50 text-emerald-600 border-emerald-100/50'
                   }`}>
                     {item.stock_quantity === 0 ? 'Out of Stock' : `${item.stock_quantity} available`}
                   </span>
@@ -187,7 +187,7 @@ export default function POSCashierTab({
                       <button 
                         type="button" 
                         onClick={() => removeFromPOSCart(item.id)}
-                        className="w-8 h-8 flex items-center justify-center text-red-400 hover:text-red-600 font-bold text-sm transition-colors rounded-full hover:bg-red-50"
+                        className="w-8 h-8 flex items-center justify-center text-rose-400 hover:text-rose-600 font-bold text-sm transition-colors rounded-full hover:bg-rose-50"
                       >
                         ×
                       </button>

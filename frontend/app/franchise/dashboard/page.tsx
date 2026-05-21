@@ -414,7 +414,7 @@ export default function FranchiseDashboard() {
     router.push('/login');
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-black text-xs text-brand-earth/60 tracking-wider">Loading Partner Portal...</div>;
+  if (loading) return null;
 
   const isFranchiseAccess = user?.roles?.some((r: any) => r.name === "Franchisee" || r.name === "Branch Cashier") || false;
   if (!isFranchiseAccess) return null;
@@ -429,6 +429,7 @@ export default function FranchiseDashboard() {
         onRemove={removeFromCart}
         onCheckout={handleCheckout}
         checkoutText="Place Bulk Order"
+        isWholesale={true}
       />
 
       <Sidebar
