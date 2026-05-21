@@ -144,10 +144,11 @@ export default function POSCashierTab({
           </div>
 
           {posCart.length === 0 ? (
-            <div className="py-16 text-center space-y-2 flex flex-col items-center justify-center">
-              <Package size={36} className="text-brand-earth/30" />
-              <p className="text-sm font-semibold text-brand-earth/40">Receipt is empty</p>
-              <p className="text-[9px] text-brand-earth/30 uppercase tracking-widest">Tap products on the left to build order receipt</p>
+            <div className="py-16 flex flex-col items-center justify-center space-y-3 opacity-40">
+              <Package size={48} weight="duotone" className="text-brand-earth" />
+              <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                Receipt is empty
+              </p>
             </div>
           ) : (
             <>

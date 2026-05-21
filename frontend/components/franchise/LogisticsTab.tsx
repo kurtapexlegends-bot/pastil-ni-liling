@@ -2,7 +2,7 @@
 
 import { Product } from "@/types";
 import ProductCard from "@/components/ProductCard";
-import { Truck, Package } from "@phosphor-icons/react";
+import { Truck, Package, Leaf } from "@phosphor-icons/react";
 
 interface LogisticsTabProps {
   customerOrders: any[];
@@ -35,9 +35,11 @@ export default function LogisticsTab({
         </div>
 
         {customerOrders.length === 0 ? (
-          <div className="bg-white p-8 rounded-xl border border-gray-100/80 text-center space-y-2">
-            <p className="text-sm font-semibold text-brand-earth/40">No active customer orders routed to your hub yet.</p>
-            <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest">Orders placed near your region will automatically buffer here.</p>
+          <div className="py-12 flex flex-col items-center justify-center space-y-3 opacity-40 bg-white rounded-xl border border-gray-100/80">
+            <Package size={48} weight="duotone" className="text-brand-earth" />
+            <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+              No active orders
+            </p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -145,7 +147,12 @@ export default function LogisticsTab({
               </div>
               <div className="space-y-4">
                 {hubInventory.length === 0 ? (
-                  <p className="text-[10px] text-brand-earth/40 py-4 text-center">No retail stock yet. Place a bulk order to restock!</p>
+                  <div className="py-12 flex flex-col items-center justify-center space-y-3 opacity-40">
+                    <Leaf size={48} weight="duotone" className="text-brand-earth" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                      No retail stock yet
+                    </p>
+                  </div>
                 ) : (
                   hubInventory.map((item: any) => {
                     const isLowStock = item.stock_quantity < 20;
@@ -192,7 +199,12 @@ export default function LogisticsTab({
             <h2 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Recent Commissary Shipments</h2>
             <div className="space-y-3">
               {orders.length === 0 ? (
-                <p className="text-[10px] text-brand-earth/40 py-2 text-center">No recent orders</p>
+                <div className="py-8 flex flex-col items-center justify-center space-y-3 opacity-40">
+                  <Truck size={48} weight="duotone" className="text-brand-earth" />
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                    No recent orders
+                  </p>
+                </div>
               ) : (
                 orders.slice(0, 5).map((order) => (
                   <div key={order.id} className="bg-white p-4 rounded-xl border border-gray-100/80 flex justify-between items-center group hover:border-brand-green/30 transition-all shadow-sm">
