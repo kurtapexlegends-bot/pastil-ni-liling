@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Product } from "../../app/admin/types";
+import { Package } from "@phosphor-icons/react";
 
 interface ProductCatalogProps {
   products: Product[];
@@ -27,8 +28,13 @@ export default function ProductCatalog({ products, setProductForm, setIsProductM
           <tbody>
             {products.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-xs text-brand-earth/40 font-normal">
-                  No products created in the central catalog.
+                <td colSpan={7} className="px-6 py-16 text-center">
+                  <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
+                    <Package size={48} weight="duotone" className="text-brand-earth" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                      No products created
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : (

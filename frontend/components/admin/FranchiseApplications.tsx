@@ -1,4 +1,5 @@
 import { FranchiseApplication } from "../../app/admin/types";
+import { Users } from "@phosphor-icons/react";
 
 interface FranchiseApplicationsProps {
   applications: FranchiseApplication[];
@@ -23,8 +24,13 @@ export default function FranchiseApplications({ applications, updateAppStatus }:
           <tbody>
             {applications.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-xs text-brand-earth/40 font-normal">
-                  No franchise applications logged on the system.
+                <td colSpan={6} className="px-6 py-16 text-center">
+                  <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
+                    <Users size={48} weight="duotone" className="text-brand-earth" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                      No applications logged
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : (
