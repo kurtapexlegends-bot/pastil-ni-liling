@@ -5,7 +5,7 @@ interface ProductCatalogProps {
   products: Product[];
   setProductForm: (p: Product) => void;
   setIsProductModalOpen: (open: boolean) => void;
-  deleteProduct: (id: number) => Promise<void>;
+  deleteProduct: (id: number) => void;
 }
 
 export default function ProductCatalog({ products, setProductForm, setIsProductModalOpen, deleteProduct }: ProductCatalogProps) {

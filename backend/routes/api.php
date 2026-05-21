@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store']);
 
     // Admin Routes
-    Route::middleware('role:Admin')->prefix('admin')->group(function () {
+    Route::middleware('role:Admin|HQ operations')->prefix('admin')->group(function () {
         Route::get('/applications', [\App\Http\Controllers\AdminController::class, 'getFranchiseApplications']);
         Route::patch('/applications/{id}', [\App\Http\Controllers\AdminController::class, 'updateApplicationStatus']);
         

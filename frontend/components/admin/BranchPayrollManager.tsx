@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import AlertModal from "../ui/AlertModal";
 
 interface Shift {
   id: number;
@@ -38,6 +39,8 @@ export default function BranchPayrollManager() {
   const [endDate, setEndDate] = useState(new Date().toISOString().split("T")[0]);
   const [calcResult, setCalcResult] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [alertState, setAlertState] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error'}>({isOpen: false, message: "", type: "info"});
+  const customAlert = (message: string, type: 'info'|'success'|'error' = 'info') => setAlertState({isOpen: true, message, type});
 
   const fetchPayrollData = async () => {
     const token = localStorage.getItem("token");
@@ -135,7 +138,7 @@ export default function BranchPayrollManager() {
 
       const data = await res.json();
       if (data.success) {
-        alert("Direct payout settles successfully. Payroll recorded.");
+        customAlert("Direct payout settles successfully. Payroll recorded.");
         setCalcResult(null);
         fetchPayrollData();
       }
@@ -349,6 +352,14 @@ export default function BranchPayrollManager() {
           </div>
         )}
       </div>
+
+      <AlertModal 
+        isOpen={alertState.isOpen}
+        title={alertState.type === 'error' ? "Action Failed" : alertState.type === 'success' ? "Success" : "Information"}
+        message={alertState.message}
+        type={alertState.type}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 }

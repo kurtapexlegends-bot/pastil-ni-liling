@@ -15,6 +15,7 @@ import LogisticsTab from "@/components/franchise/LogisticsTab";
 import POSCashierTab from "@/components/franchise/POSCashierTab";
 import ShiftsPayrollTab from "@/components/franchise/ShiftsPayrollTab";
 import Sidebar from "@/components/franchise/Sidebar";
+import AlertModal from "@/components/ui/AlertModal";
 
 export default function FranchiseDashboard() {
   const router = useRouter();
@@ -39,6 +40,8 @@ export default function FranchiseDashboard() {
   const [posChannel, setPosChannel] = useState<string>("walk_in");
   const [offlineQueue, setOfflineQueue] = useState<any[]>([]);
   const [isOnline, setIsOnline] = useState<boolean>(true);
+  const [alertState, setAlertState] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error'}>({isOpen: false, message: "", type: "info"});
+  const customAlert = (message: string, type: 'info'|'success'|'error' = 'info') => setAlertState({isOpen: true, message, type});
 
   const triggerQueueSyncDirectly = async (token: string) => {
     const queue = localStorage.getItem("pos_offline_queue");
@@ -83,7 +86,7 @@ export default function FranchiseDashboard() {
     setLoading(true);
     await triggerQueueSyncDirectly(token);
     setLoading(false);
-    alert("Offline queue sync check completed.");
+    customAlert("Offline queue sync check completed.");
   };
 
   useEffect(() => {
@@ -118,32 +121,22 @@ export default function FranchiseDashboard() {
 
     setIsOnline(navigator.onLine);
 
-    const fetchAll = async () => {
+    const fetchHubData = async () => {
       try {
-        const [prodRes, orderRes, invRes, custRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/products", { headers: { "Accept": "application/json" } }),
+        const [orderRes, invRes] = await Promise.all([
           fetch("http://127.0.0.1:8000/api/orders", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } }),
-          fetch("http://127.0.0.1:8000/api/franchise/inventory", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } }),
-          fetch("http://127.0.0.1:8000/api/franchise/orders", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } })
+          fetch("http://127.0.0.1:8000/api/franchise/inventory", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } })
         ]);
 
-        const prodData = await prodRes.json();
         const orderData = await orderRes.json();
         const invData = await invRes.json();
-        const custData = await custRes.json();
 
-        if (prodData.success) {
-          setProducts(prodData.data.filter((p: any) => p.is_wholesale));
-        }
         if (orderData.success) {
           setOrders(orderData.data.filter((o: any) => o.type === 'wholesale'));
         }
         if (invData.success) {
           setHub(invData.hub);
           setHubInventory(invData.data);
-        }
-        if (custData.success) {
-          setCustomerOrders(custData.data);
         }
       } catch (err) {
         console.error("Fetch failed", err);
@@ -152,7 +145,7 @@ export default function FranchiseDashboard() {
       }
     };
 
-    fetchAll();
+    fetchHubData();
 
     const handleOnline = () => {
       setIsOnline(true);
@@ -175,12 +168,38 @@ export default function FranchiseDashboard() {
     };
   }, [router]);
 
+  // JIT Fetcher for Logistics Tab Data
+  useEffect(() => {
+    if (activePortalTab === 'logistics' && products.length === 0) {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const fetchLogisticsData = async () => {
+        try {
+          const [prodRes, custRes] = await Promise.all([
+            fetch("http://127.0.0.1:8000/api/products", { headers: { "Accept": "application/json" } }),
+            fetch("http://127.0.0.1:8000/api/franchise/orders", { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } })
+          ]);
+          const prodData = await prodRes.json();
+          const custData = await custRes.json();
+
+          if (prodData.success) setProducts(prodData.data.filter((p: any) => p.is_wholesale));
+          if (custData.success) setCustomerOrders(custData.data);
+        } catch (err) {
+          console.error("Failed to fetch logistics data", err);
+        }
+      };
+
+      fetchLogisticsData();
+    }
+  }, [activePortalTab, products.length]);
+
   const handleAddToPOSCart = (prod: any) => {
     setPosCart(prev => {
       const existing = prev.find(item => item.id === prod.product_id);
       if (existing) {
         if (existing.quantity >= prod.stock_quantity) {
-          alert(`Cannot exceed available branch stock of ${prod.stock_quantity} units.`);
+          customAlert(`Cannot exceed available branch stock of ${prod.stock_quantity} units.`);
           return prev;
         }
         return prev.map(item =>
@@ -196,7 +215,7 @@ export default function FranchiseDashboard() {
       if (item.id === id) {
         const newQty = item.quantity + delta;
         if (newQty > item.maxStock) {
-          alert(`Cannot exceed available branch stock of ${item.maxStock} units.`);
+          customAlert(`Cannot exceed available branch stock of ${item.maxStock} units.`);
           return item;
         }
         return { ...item, quantity: Math.max(1, newQty) };
@@ -285,7 +304,7 @@ export default function FranchiseDashboard() {
         console.warn("Stall offline, order saved locally.", err);
       }
     } else {
-      alert("Offline Mode: Order saved locally. It will automatically sync once online!");
+      customAlert("Offline Mode: Order saved locally. It will automatically sync once online!");
     }
   };
 
@@ -339,13 +358,13 @@ export default function FranchiseDashboard() {
         if (refreshData.success) {
           setCustomerOrders(refreshData.data);
         }
-        alert(`Order status updated to: ${nextStatus}`);
+        customAlert(`Order status updated to: ${nextStatus}`);
       } else {
-        alert("Failed to update status: " + (data.message || "Unknown error"));
+        customAlert("Failed to update status: " + (data.message || "Unknown error"));
       }
     } catch (err) {
       console.error(err);
-      alert("Error updating order status.");
+      customAlert("Error updating order status.");
     }
   };
 
@@ -382,7 +401,7 @@ export default function FranchiseDashboard() {
 
       const data = await res.json();
       if (data.success) {
-        alert("Bulk Restock Order Placed successfully!");
+        customAlert("Bulk Restock Order Placed successfully!");
         setCartItems([]);
         setIsCartOpen(false);
         
@@ -399,11 +418,11 @@ export default function FranchiseDashboard() {
           setHubInventory(invData.data);
         }
       } else {
-        alert("Failed to place order: " + (data.message || "Unknown error"));
+        customAlert("Failed to place order: " + (data.message || "Unknown error"));
       }
     } catch (err) {
       console.error(err);
-      alert("Error placing order.");
+      customAlert("Error placing order.");
     }
   };
 
@@ -539,6 +558,7 @@ export default function FranchiseDashboard() {
         </div>
       </main>
 
+
       {/* Floating Bottom Receipt Review Dock for Mobile POS */}
       {activePortalTab === 'pos' && posCart.length > 0 && (
         <div className="fixed bottom-6 right-6 left-6 z-50 lg:hidden animate-in slide-in-from-bottom duration-300">
@@ -556,6 +576,14 @@ export default function FranchiseDashboard() {
           </button>
         </div>
       )}
+
+      <AlertModal 
+        isOpen={alertState.isOpen}
+        title={alertState.type === 'error' ? "Action Failed" : alertState.type === 'success' ? "Success" : "Information"}
+        message={alertState.message}
+        type={alertState.type}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 }

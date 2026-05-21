@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\InvalidatesAnalyticsCache;
 
 class ComplianceAudit extends Model
 {
     use HasFactory;
+    use InvalidatesAnalyticsCache;
 
     protected $fillable = [
         'hub_id',
