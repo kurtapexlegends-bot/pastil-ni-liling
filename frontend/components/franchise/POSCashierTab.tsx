@@ -66,12 +66,17 @@ export default function POSCashierTab({
         </div>
 
         {offlineQueue.length > 0 && (
-          <div className="bg-brand-yellow/10 border border-brand-yellow/20 p-4 rounded-xl flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <Warning size={20} className="text-brand-yellow shrink-0" weight="fill" />
+          <div className="bg-brand-yellow/10 border border-brand-yellow/20 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-start md:items-center gap-3">
+              <Warning size={20} className="text-brand-yellow shrink-0 mt-0.5 md:mt-0" weight="fill" />
               <div>
                 <p className="text-xs font-bold text-brand-earth tracking-tight">Local offline receipts waiting to sync</p>
                 <p className="text-[9px] text-brand-earth/50 leading-relaxed font-semibold mt-0.5">Stall is running offline. {offlineQueue.length} sales are saved locally and will sync once internet recovers.</p>
+                {offlineQueue.filter(o => (o.sync_retries || 0) >= 3).length > 0 && (
+                  <p className="text-[9px] font-black text-red-500 mt-1 uppercase tracking-widest bg-red-50 inline-block px-2 py-0.5 rounded border border-red-100">
+                    {offlineQueue.filter(o => (o.sync_retries || 0) >= 3).length} anomalous orders require HQ manual intervention.
+                  </p>
+                )}
               </div>
             </div>
             <button 
