@@ -194,8 +194,9 @@ export default function EmployeeManager() {
         </div>
       ) : (
         <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
-          <table className="w-full text-left border-collapse">
-            <thead>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[600px]">
+              <thead>
               <tr className="border-b border-gray-50 bg-gray-50/50">
                 <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-brand-earth/40">Name</th>
                 <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-brand-earth/40">Email</th>
@@ -231,6 +232,7 @@ export default function EmployeeManager() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
