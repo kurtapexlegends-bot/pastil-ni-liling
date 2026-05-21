@@ -2,16 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Warning, Package, Truck, DeviceTablet, ShieldCheck, Coins } from "@phosphor-icons/react";
-import ProductCard from "@/components/ProductCard";
+import { Warning, Package, Truck, DeviceTablet, ShieldCheck, Coins, List } from "@phosphor-icons/react";
 import CartDrawer from "@/components/CartDrawer";
 import { Product, CartItem } from "@/types";
 import QCComplianceManager from "@/components/admin/QCComplianceManager";
-import BranchPayrollManager from "@/components/admin/BranchPayrollManager";
 import ExpenseTracker from "@/components/admin/ExpenseTracker";
 import { deleteCookie } from "@/components/cookieHelper";
+
+// Modularized components
+import LogisticsTab from "@/components/franchise/LogisticsTab";
+import POSCashierTab from "@/components/franchise/POSCashierTab";
+import ShiftsPayrollTab from "@/components/franchise/ShiftsPayrollTab";
+import Sidebar from "@/components/franchise/Sidebar";
 
 export default function FranchiseDashboard() {
   const router = useRouter();
@@ -27,6 +30,7 @@ export default function FranchiseDashboard() {
   
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // POS State
   const [activePortalTab, setActivePortalTab] = useState<'logistics' | 'pos' | 'compliance' | 'payroll' | 'expenses'>('logistics');
@@ -403,13 +407,20 @@ export default function FranchiseDashboard() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-medium text-xs text-brand-earth/60 tracking-wider">Loading Partner Portal...</div>;
+  const handleLogout = () => {
+    localStorage.clear();
+    deleteCookie("token");
+    deleteCookie("user_role");
+    router.push('/login');
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-black text-xs text-brand-earth/60 tracking-wider">Loading Partner Portal...</div>;
 
   const isFranchiseAccess = user?.roles?.some((r: any) => r.name === "Franchisee" || r.name === "Branch Cashier") || false;
   if (!isFranchiseAccess) return null;
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
+    <div className="h-screen bg-gray-50/30 flex overflow-hidden relative">
       <CartDrawer 
         isOpen={isCartOpen} 
         onClose={() => setIsCartOpen(false)} 
@@ -420,562 +431,111 @@ export default function FranchiseDashboard() {
         checkoutText="Place Bulk Order"
       />
 
-      <nav className="h-16 bg-white border-b border-gray-100 flex items-center px-6 shrink-0">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Image src="/logo.jpg" alt="Logo" width={28} height={28} className="rounded-full" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/80">
-              {isCashier ? 'Cashier Portal' : isFranchisee ? 'Franchisee Portal' : 'Loading Portal...'}
-            </span>
-          </div>
-          <div className="flex items-center gap-6">
-            {isFranchisee && (
-              <div onClick={() => setIsCartOpen(true)} className="relative cursor-pointer hover:opacity-80 transition-opacity flex items-center">
-                <Package size={20} className="text-brand-earth hover:text-brand-green transition-colors" />
-                {cartItems.length > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-brand-green text-white text-[8px] font-semibold w-3.5 h-3.5 rounded-full flex items-center justify-center">
-                    {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
-                  </span>
-                )}
-              </div>
-            )}
-            <button onClick={() => { localStorage.clear(); deleteCookie("token"); deleteCookie("user_role"); router.push('/login'); }} className="text-[10px] font-semibold uppercase tracking-wider text-red-500 hover:text-red-600 transition-colors">Logout</button>
-          </div>
-        </div>
-      </nav>
+      <Sidebar
+        activeTab={activePortalTab}
+        setActiveTab={setActivePortalTab}
+        handleLogout={handleLogout}
+        isFranchisee={isFranchisee}
+        isCashier={isCashier}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
 
-      <main className="max-w-7xl mx-auto w-full px-6 py-10 space-y-10">
-        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-50">
-           <div className="space-y-1">
-              <h1 className="text-3xl font-bold tracking-tight text-brand-earth">Salamat, <span className="text-brand-green">{user?.name?.split(' ')[0]}</span></h1>
-              <p className="text-xs text-brand-earth/50">
+      {/* Main Content Area */}
+      <main className="flex-1 p-4 md:p-8 space-y-6 overflow-y-auto h-screen relative">
+        <header className="flex justify-between items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-100 text-brand-earth hover:bg-gray-50 hover:text-brand-green transition-all shadow-sm shrink-0"
+              aria-label="Toggle Sidebar Menu"
+            >
+              <List size={20} weight="bold" />
+            </button>
+            <div>
+              <h2 className="text-lg font-bold text-brand-earth uppercase tracking-wide leading-tight">
+                Salamat, <span className="text-brand-green">{user?.name?.split(' ')[0]}</span>
+              </h2>
+              <p className="text-[10px] text-brand-earth/40 font-semibold uppercase tracking-wider mt-0.5 leading-snug">
                 {isCashier
                   ? 'Perform POS sales, track shift sessions, and log operational branch expenses'
                   : 'Manage your branch inventory, B2C live checkouts, and terminal sales'}
               </p>
-           </div>
-           {isFranchisee && (
-             <div className="w-full sm:w-auto">
-                <div className="bg-white border border-gray-100 p-4 rounded-xl text-left sm:text-right space-y-0.5 shadow-sm">
-                   <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40">Active Wholesale Orders</p>
-                   <p className="text-lg font-bold text-brand-earth">{orders.filter(o => o.status !== 'delivered').length}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {isFranchisee && (
+              <>
+                <div className="hidden sm:block text-right bg-white border border-gray-100 p-3.5 rounded-xl shadow-sm">
+                  <p className="text-[8px] font-semibold uppercase tracking-wider text-brand-earth/40">Active Wholesale Orders</p>
+                  <p className="text-sm font-bold text-brand-earth">{orders.filter(o => o.status !== 'delivered').length}</p>
                 </div>
-             </div>
-           )}
+
+                <div 
+                  onClick={() => setIsCartOpen(true)} 
+                  className="relative cursor-pointer hover:opacity-80 transition-opacity flex items-center p-2.5 rounded-xl border border-gray-100 bg-white shadow-sm shrink-0"
+                >
+                  <Package size={20} className="text-brand-earth hover:text-brand-green transition-colors" />
+                  {cartItems.length > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 bg-brand-green text-white text-[8px] font-semibold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
+                      {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+                    </span>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </header>
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-gray-100 gap-6 overflow-x-auto scrollbar-none whitespace-nowrap pb-px">
-          {isFranchisee && (
-            <button
-              onClick={() => setActivePortalTab('logistics')}
-              className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
-                activePortalTab === 'logistics'
-                  ? 'border-brand-green text-brand-green'
-                  : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
-              }`}
-            >
-              <Truck size={16} weight="duotone" />
-              Logistics
-            </button>
+        {/* Tab Content */}
+        <div key={activePortalTab} className="animate-slide-up space-y-6">
+          {activePortalTab === 'logistics' && isFranchisee && (
+            <LogisticsTab
+              customerOrders={customerOrders}
+              handleUpdateCustomerOrderStatus={handleUpdateCustomerOrderStatus}
+              products={products}
+              handleAddToCart={handleAddToCart}
+              hub={hub}
+              hubInventory={hubInventory}
+              orders={orders}
+            />
           )}
-          <button
-            onClick={() => setActivePortalTab('pos')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
-              activePortalTab === 'pos'
-                ? 'border-brand-green text-brand-green'
-                : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
-            }`}
-          >
-            <DeviceTablet size={16} weight="duotone" />
-            POS Cashier
-            {offlineQueue.length > 0 && (
-              <span className="bg-brand-yellow text-brand-earth text-[8px] font-bold px-2 py-0.5 rounded-full animate-pulse shadow-sm">
-                {offlineQueue.length}
-              </span>
-            )}
-          </button>
-          {isFranchisee && (
-            <button
-              onClick={() => setActivePortalTab('compliance')}
-              className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
-                activePortalTab === 'compliance'
-                  ? 'border-brand-green text-brand-green'
-                  : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
-              }`}
-            >
-              <ShieldCheck size={16} weight="duotone" />
-              QC Compliance
-            </button>
+
+          {activePortalTab === 'pos' && (
+            <POSCashierTab
+              hubInventory={hubInventory}
+              handleAddToPOSCart={handleAddToPOSCart}
+              offlineQueue={offlineQueue}
+              isOnline={isOnline}
+              handleManualSync={handleManualSync}
+              posCart={posCart}
+              posPaymentMethod={posPaymentMethod}
+              setPosPaymentMethod={setPosPaymentMethod}
+              posChannel={posChannel}
+              setPosChannel={setPosChannel}
+              handlePOSCheckout={handlePOSCheckout}
+              updatePOSCartFlavor={updatePOSCartFlavor}
+              updatePOSCartQuantity={updatePOSCartQuantity}
+              removeFromPOSCart={removeFromPOSCart}
+            />
           )}
-          <button
-            onClick={() => setActivePortalTab('payroll')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${
-              activePortalTab === 'payroll'
-                ? 'border-brand-green text-brand-green'
-                : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
-            }`}
-          >
-            <Coins size={16} weight="duotone" />
-            Shifts & Payroll
-          </button>
-          <button
-            onClick={() => setActivePortalTab('expenses')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
-              activePortalTab === 'expenses'
-                ? 'border-brand-green text-brand-green'
-                : 'border-transparent text-brand-earth/40 hover:text-brand-earth/70'
-            }`}
-          >
-            Expenses
-          </button>
+
+          {activePortalTab === 'compliance' && isFranchisee && (
+            <QCComplianceManager />
+          )}
+
+          {activePortalTab === 'payroll' && (
+            <ShiftsPayrollTab
+              hub={hub}
+              isFranchisee={isFranchisee}
+            />
+          )}
+
+          {activePortalTab === 'expenses' && (
+            <ExpenseTracker />
+          )}
         </div>
-
-        {activePortalTab === 'logistics' && isFranchisee && (
-          <>
-            {/* Live Retail Orders Section */}
-            <section className="space-y-4">
-               <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-bold tracking-tight text-brand-earth">Live Routed B2C Orders</h2>
-                  <span className="bg-brand-green/10 text-brand-green text-[9px] font-semibold px-2.5 py-0.5 rounded-full tracking-wide">
-                     {customerOrders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length} Active
-                  </span>
-               </div>
-               
-               {customerOrders.length === 0 ? (
-                  <div className="bg-white p-8 rounded-2xl border border-gray-100 text-center space-y-1 shadow-sm">
-                     <p className="text-xs text-brand-earth/40">No active customer orders routed to your hub yet.</p>
-                  </div>
-               ) : (
-                  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                     {customerOrders.map(order => (
-                        <div key={order.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
-                           <div className="space-y-3">
-                              <div className="flex justify-between items-start">
-                                 <div className="space-y-0.5">
-                                    <p className="text-[9px] font-semibold uppercase tracking-wider text-brand-earth/30">Order #{order.id}</p>
-                                    <p className="text-xs font-semibold text-brand-earth">{order.user?.name || 'Guest Customer'}</p>
-                                    <p className="text-[10px] text-brand-earth/50">{order.contact_number}</p>
-                                    <p className="text-[9px] text-brand-earth/40 leading-relaxed line-clamp-1">{order.shipping_address}</p>
-                                 </div>
-                                 <span className={`px-2 py-0.5 rounded-full text-[8px] font-semibold uppercase tracking-wider ${
-                                    order.status === 'delivered' ? 'bg-green-50 text-green-600' :
-                                    order.status === 'preparing' ? 'bg-orange-50 text-orange-600' :
-                                    order.status === 'out_for_delivery' ? 'bg-blue-50 text-blue-600' :
-                                    'bg-yellow-50 text-yellow-600'
-                                 }`}>
-                                    {order.status}
-                                 </span>
-                              </div>
-                              
-                              <div className="pt-3 border-t border-gray-50 space-y-1.5">
-                                 {order.items?.map((item: any) => (
-                                    <div key={item.id} className="flex justify-between items-center text-[10px] text-brand-earth/70">
-                                       <span className="font-medium">{item.quantity}x {item.product?.name}</span>
-                                       <span className="font-semibold">₱{(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
-                                    </div>
-                                 ))}
-                              </div>
-                           </div>
-                           
-                           <div className="pt-3 border-t border-gray-50 flex justify-between items-center">
-                              <div className="text-left">
-                                 <p className="text-[8px] uppercase tracking-wider text-brand-earth/30">Total</p>
-                                 <p className="text-xs font-bold text-brand-earth">₱{parseFloat(order.total_amount).toFixed(2)}</p>
-                              </div>
-                              
-                              <div className="flex gap-1.5">
-                                 {order.status === 'pending' && (
-                                    <button 
-                                      onClick={() => handleUpdateCustomerOrderStatus(order.id, 'preparing')}
-                                      className="bg-brand-earth text-white px-3 py-1.5 rounded-lg text-[9px] font-semibold uppercase tracking-wider hover:bg-brand-green transition-all"
-                                    >
-                                       Start Preparing
-                                    </button>
-                                 )}
-                                 {order.status === 'preparing' && (
-                                    <button 
-                                      onClick={() => handleUpdateCustomerOrderStatus(order.id, 'out_for_delivery')}
-                                      className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[9px] font-semibold uppercase tracking-wider hover:bg-blue-700 transition-all"
-                                    >
-                                       Ship Order
-                                    </button>
-                                 )}
-                                 {order.status === 'out_for_delivery' && (
-                                    <button 
-                                      onClick={() => handleUpdateCustomerOrderStatus(order.id, 'delivered')}
-                                      className="bg-brand-green text-white px-3 py-1.5 rounded-lg text-[9px] font-semibold uppercase tracking-wider hover:bg-brand-green/80 transition-all"
-                                    >
-                                       Deliver
-                                    </button>
-                                 )}
-                              </div>
-                           </div>
-                        </div>
-                     ))}
-                  </div>
-               )}
-            </section>
-
-            <section className="grid lg:grid-cols-3 gap-12 pt-4">
-               {/* Wholesale Catalog */}
-               <div className="lg:col-span-2 space-y-6">
-                  <h2 className="text-lg font-bold tracking-tight text-brand-earth">Request Restock Supplies (Commissary Bulk)</h2>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {products.map(product => (
-                      <ProductCard 
-                        key={product.id} 
-                        product={{ ...product, price: product.wholesale_price || product.price }} 
-                        onAddToCart={handleAddToCart}
-                        onClick={() => handleAddToCart(product)} 
-                      />
-                    ))}
-                  </div>
-               </div>
-
-               {/* Branch Stock and History */}
-               <div className="space-y-8">
-                  <div className="space-y-4">
-                    <h2 className="text-lg font-bold tracking-tight text-brand-earth">Active Spoke Inventory</h2>
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-                       <div className="flex justify-between items-center pb-3 border-b border-gray-50">
-                          <div>
-                             <p className="text-xs font-semibold text-brand-earth">{hub?.name || 'Loading Branch...'}</p>
-                             <p className="text-[9px] text-brand-earth/40 uppercase tracking-wider">{hub?.address || 'Locating...'}</p>
-                          </div>
-                          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                       </div>
-                       <div className="space-y-3">
-                          {hubInventory.length === 0 ? (
-                            <p className="text-[10px] text-brand-earth/40 py-2 text-center">No retail stock yet. Place a bulk order to restock!</p>
-                          ) : (
-                            hubInventory.map((item: any) => (
-                               <div key={item.id} className="flex justify-between items-center text-[11px] text-brand-earth/70">
-                                  <span className="font-medium">{item.product?.name}</span>
-                                  <span className={`font-semibold px-2 py-0.5 rounded-full text-[9px] ${item.stock_quantity < 50 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-                                    {item.stock_quantity} units
-                                  </span>
-                               </div>
-                            ))
-                          )}
-                       </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h2 className="text-lg font-bold tracking-tight text-brand-earth">Recent Commissary Shipments</h2>
-                    <div className="space-y-3">
-                      {orders.length === 0 ? (
-                        <p className="text-[10px] text-brand-earth/40 py-2 text-center">No recent orders</p>
-                      ) : (
-                        orders.slice(0, 5).map(order => (
-                          <div key={order.id} className="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center group hover:border-brand-green/30 transition-all shadow-sm">
-                             <div className="space-y-0.5">
-                                <p className="text-[9px] font-semibold text-brand-earth/30">Order #{order.id}</p>
-                                <p className="text-xs font-semibold text-brand-earth">₱{parseFloat(order.total_amount).toFixed(2)}</p>
-                             </div>
-                             <span className={`px-2 py-0.5 rounded-full text-[8px] font-semibold uppercase tracking-wider ${order.status === 'delivered' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'}`}>
-                                {order.status}
-                             </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-               </div>
-            </section>
-          </>
-        )}
-
-        {activePortalTab === 'pos' && (
-          <div className="grid lg:grid-cols-3 gap-12 pt-4">
-            {/* Cashier Menu Grid */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-lg font-bold tracking-tight text-brand-earth">Branch Shelf Catalog</h2>
-                <div className="flex items-center gap-3">
-                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full flex items-center gap-1.5 ${
-                    isOnline ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500' : 'bg-yellow-500 animate-pulse'}`}></span>
-                    {isOnline ? 'Network Live' : 'Offline Buffering Active'}
-                  </span>
-                </div>
-              </div>
-
-              {offlineQueue.length > 0 && (
-                <div className="bg-brand-yellow/10 border border-brand-yellow/20 p-4 rounded-xl flex items-center justify-between shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <Warning size={20} className="text-brand-yellow" weight="fill" />
-                    <div>
-                      <p className="text-xs font-semibold text-brand-earth">Local offline receipts waiting to sync</p>
-                      <p className="text-[9px] text-brand-earth/50">Stall is running offline. {offlineQueue.length} sales are saved locally and will sync once internet recovers.</p>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={handleManualSync}
-                    className="bg-brand-earth text-white px-3 py-1.5 rounded-lg text-[9px] font-semibold uppercase tracking-wider hover:bg-brand-green transition-all shadow-sm"
-                  >
-                    Retry Sync
-                  </button>
-                </div>
-              )}
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {hubInventory.length === 0 ? (
-                  <div className="col-span-2 bg-white border border-gray-100 p-8 rounded-2xl text-center space-y-2">
-                    <p className="text-xs text-brand-earth/40">No retail stock available at this branch.</p>
-                    <p className="text-[10px] text-brand-earth/30">Order supplies from HQ commissary using the Logistics tab first.</p>
-                  </div>
-                ) : (
-                  hubInventory.map((item: any) => (
-                    <div 
-                      key={item.id} 
-                      onClick={() => item.stock_quantity > 0 && handleAddToPOSCart(item)}
-                      className={`bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:border-brand-green/30 hover:shadow-md transition-all flex flex-col justify-between space-y-4 cursor-pointer relative ${
-                        item.stock_quantity === 0 ? 'opacity-40 cursor-not-allowed' : ''
-                      }`}
-                    >
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="space-y-1">
-                          <span className="text-[8px] bg-brand-earth/5 text-brand-earth/50 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">{item.product?.category}</span>
-                          <h3 className="text-sm font-bold text-brand-earth tracking-tight">{item.product?.name}</h3>
-                          <p className="text-xs font-bold text-brand-green">₱{parseFloat(item.product?.price).toFixed(2)}</p>
-                        </div>
-                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                          item.stock_quantity === 0 
-                            ? 'bg-red-50 text-red-600' 
-                            : item.stock_quantity < 30 
-                            ? 'bg-yellow-50 text-yellow-600' 
-                            : 'bg-green-50 text-green-600'
-                        }`}>
-                          {item.stock_quantity === 0 ? 'Out of Stock' : `${item.stock_quantity} available`}
-                        </span>
-                      </div>
-                      <div className="flex justify-end pt-2 border-t border-gray-50">
-                        <button 
-                          disabled={item.stock_quantity === 0}
-                          className="bg-brand-green text-white text-[9px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl shadow-sm hover:bg-brand-green/90 transition-colors disabled:opacity-0"
-                        >
-                          + Add to Receipt
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {/* Live Receipt Drawer */}
-            <div className="space-y-6">
-              <div id="pos-receipt-drawer" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6 lg:sticky lg:top-24 scroll-mt-6">
-                <div className="flex justify-between items-center pb-3 border-b border-gray-50">
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-brand-earth/80">Active Receipt</h2>
-                  <span className="text-[9px] font-semibold bg-brand-green/10 text-brand-green px-2 py-0.5 rounded-full">
-                    {posCart.reduce((sum, item) => sum + item.quantity, 0)} Items
-                  </span>
-                </div>
-
-                {posCart.length === 0 ? (
-                  <div className="py-12 text-center space-y-1.5 flex flex-col items-center justify-center">
-                    <Package size={28} className="text-brand-earth/30" />
-                    <p className="text-xs font-medium text-brand-earth/40">Receipt is empty</p>
-                    <p className="text-[9px] text-brand-earth/30">Tap products on the left to build order receipt</p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="space-y-4 max-h-[280px] overflow-y-auto pr-1">
-                      {posCart.map((item) => (
-                        <div key={item.id} className="flex justify-between items-center text-xs py-1 border-b border-gray-50/50">
-                          <div className="space-y-0.5">
-                            <p className="font-semibold text-brand-earth">{item.name}</p>
-                            <div className="flex gap-2 items-center">
-                              <p className="text-[10px] text-brand-earth/40">₱{parseFloat(item.price).toFixed(2)} each</p>
-                              <span className="text-[9px] text-brand-earth/30">|</span>
-                              <select
-                                value={item.flavor_modifier || "Original"}
-                                onChange={(e) => updatePOSCartFlavor(item.id, e.target.value)}
-                                className="text-[9px] font-semibold text-brand-green bg-transparent border-none outline-none focus:ring-0 p-0 cursor-pointer"
-                              >
-                                <option value="Original">Original</option>
-                                <option value="Spicy">Spicy</option>
-                                <option value="Toasted">Toasted</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center border border-gray-100 rounded-lg overflow-hidden bg-gray-50/50 shadow-sm">
-                              <button 
-                                type="button" 
-                                onClick={() => updatePOSCartQuantity(item.id, -1)}
-                                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 text-brand-earth/60 font-bold transition-colors"
-                              >
-                                -
-                              </button>
-                              <span className="px-2.5 text-[10px] font-bold text-brand-earth">{item.quantity}</span>
-                              <button 
-                                type="button" 
-                                onClick={() => updatePOSCartQuantity(item.id, 1)}
-                                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 text-brand-earth/60 font-bold transition-colors"
-                              >
-                                +
-                              </button>
-                            </div>
-                            <span className="font-bold text-brand-earth w-14 text-right">₱{(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
-                            <button 
-                              type="button" 
-                              onClick={() => removeFromPOSCart(item.id)}
-                              className="w-8 h-8 flex items-center justify-center text-red-400 hover:text-red-600 font-bold text-sm transition-colors rounded-full hover:bg-red-50"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-50 space-y-4">
-                      {/* POS Sales Channel Selector */}
-                      <div className="space-y-1.5">
-                        <span className="text-[9px] font-bold uppercase tracking-wider text-brand-earth/40">POS Sales Channel</span>
-                        <div className="grid grid-cols-3 gap-2">
-                          {[
-                            { value: "walk_in", label: "Walk-in" },
-                            { value: "grab", label: "Grab" },
-                            { value: "foodpanda", label: "Foodpanda" },
-                            { value: "shopee", label: "Shopee" },
-                            { value: "tiktok", label: "TikTok" }
-                          ].map((ch) => (
-                            <button
-                              key={ch.value}
-                              type="button"
-                              onClick={() => setPosChannel(ch.value)}
-                              className={`py-1.5 rounded-lg border text-[9px] font-semibold uppercase tracking-wider transition-colors ${
-                                posChannel === ch.value 
-                                  ? 'bg-brand-earth text-white border-brand-earth shadow-sm' 
-                                  : 'bg-white border-gray-100 text-brand-earth/40 hover:border-brand-green'
-                              }`}
-                            >
-                              {ch.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Payment Selector */}
-                      <div className="space-y-1.5">
-                        <span className="text-[9px] font-bold uppercase tracking-wider text-brand-earth/40">Booths Payment Type</span>
-                        <div className="grid grid-cols-2 gap-2">
-                          {['cash', 'gcash', 'paymaya', 'cod'].map((method) => (
-                            <button
-                              key={method}
-                              type="button"
-                              onClick={() => setPosPaymentMethod(method)}
-                              className={`py-2 rounded-lg border text-[9px] font-semibold uppercase tracking-wider transition-colors ${
-                                posPaymentMethod === method 
-                                  ? 'bg-brand-earth text-white border-brand-earth shadow-sm' 
-                                  : 'bg-white border-gray-100 text-brand-earth/40 hover:border-brand-green'
-                              }`}
-                            >
-                              {method}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Total calculation */}
-                      <div className="flex justify-between items-center pt-3 border-t border-gray-50">
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/40">Amount Due</span>
-                        <span className="text-xl font-bold text-brand-earth">
-                          ₱{posCart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0).toFixed(2)}
-                        </span>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={handlePOSCheckout}
-                        className="w-full bg-brand-green text-white py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-brand-green/90 transition-colors shadow-sm"
-                      >
-                        Complete Cashier Checkout
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activePortalTab === 'compliance' && isFranchisee && (
-          <QCComplianceManager />
-        )}
-
-        {activePortalTab === 'payroll' && (
-          <div className="space-y-6 pt-4">
-            {/* Cashier Attendance Console */}
-            <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-4">
-              <div>
-                <h3 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Cashier Attendance Console</h3>
-                <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Clock in to register shift hours and qualify for POS commissions.</p>
-              </div>
-
-              <div className="flex gap-4 items-center">
-                <button
-                  onClick={async () => {
-                    const token = localStorage.getItem("token");
-                    if (!token) return;
-                    try {
-                      const res = await fetch("http://127.0.0.1:8000/api/payroll/shifts/clock-in", {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                          "Authorization": `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ hub_id: hub?.id || 1 })
-                      });
-                      const data = await res.json();
-                      alert(data.message);
-                    } catch (err) {
-                      console.error(err);
-                    }
-                  }}
-                  className="bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-lg transition-all shadow-sm"
-                >
-                  Clock In Shift
-                </button>
-
-                <button
-                  onClick={async () => {
-                    const token = localStorage.getItem("token");
-                    if (!token) return;
-                    try {
-                      const res = await fetch("http://127.0.0.1:8000/api/payroll/shifts/clock-out", {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                          "Authorization": `Bearer ${token}`
-                        }
-                      });
-                      const data = await res.json();
-                      alert(data.message);
-                    } catch (err) {
-                      console.error(err);
-                    }
-                  }}
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-lg transition-all shadow-sm"
-                >
-                  Clock Out Shift
-                </button>
-              </div>
-            </div>
-
-            {isFranchisee && <BranchPayrollManager />}
-          </div>
-        )}
-
-        {activePortalTab === 'expenses' && (
-          <ExpenseTracker />
-        )}
       </main>
 
       {/* Floating Bottom Receipt Review Dock for Mobile POS */}
@@ -988,9 +548,9 @@ export default function FranchiseDashboard() {
                 element.scrollIntoView({ behavior: "smooth" });
               }
             }}
-            className="w-full bg-brand-green text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-2xl flex items-center justify-center gap-2 active:scale-95 hover:bg-brand-green/90 transition-all border border-brand-green/10"
+            className="w-full bg-brand-green text-white py-3.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl flex items-center justify-center gap-2 active:scale-95 hover:bg-brand-green/90 transition-all border border-brand-green/10"
           >
-            <Package size={16} weight="bold" />
+            <Package size={14} weight="bold" />
             Review Order Receipt ({posCart.reduce((sum, item) => sum + item.quantity, 0)} items)
           </button>
         </div>

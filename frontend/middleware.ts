@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Protect Franchise routes
-  if (pathname.startsWith('/franchise')) {
+  if (pathname.startsWith('/franchise/dashboard')) {
     if (!token || (role !== 'Franchisee' && role !== 'Branch Cashier')) {
       const loginUrl = new URL('/login', request.url);
       return NextResponse.redirect(loginUrl);
@@ -50,7 +50,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',
-    '/franchise/:path*',
+    '/franchise/dashboard/:path*',
     '/dashboard/:path*',
     '/login',
     '/register',
