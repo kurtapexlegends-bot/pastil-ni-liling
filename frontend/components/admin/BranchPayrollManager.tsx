@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AlertModal from "../ui/AlertModal";
-import { Printer } from "@phosphor-icons/react";
+import { Printer, CircleNotch } from "@phosphor-icons/react";
 
 interface Shift {
   id: number;
@@ -272,9 +272,9 @@ export default function BranchPayrollManager() {
               <button
                 onClick={handlePay}
                 disabled={submitting}
-                className="bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[8px] px-4 py-1.5 rounded-lg shadow-sm transition-all"
+                className="bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[8px] px-4 py-1.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-1.5 min-w-[140px]"
               >
-                {submitting ? "settling..." : "Settle & Disburse Pay"}
+                {submitting ? <CircleNotch weight="bold" className="animate-spin text-[10px]" /> : "Settle & Disburse Pay"}
               </button>
             </div>
           </div>

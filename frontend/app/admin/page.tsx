@@ -22,6 +22,7 @@ import QCComplianceManager from "../../components/admin/QCComplianceManager";
 import BranchPayrollManager from "../../components/admin/BranchPayrollManager";
 import AnalyticsEngine from "../../components/admin/AnalyticsEngine";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import DashboardSkeleton from "@/components/ui/DashboardSkeleton";
 import { deleteCookie } from "@/components/cookieHelper";
 
 export default function AdminDashboard() {
@@ -330,6 +331,13 @@ export default function AdminDashboard() {
     return null;
   }
 
+  const isDataLoading = 
+    (activeTab === 'applications' && !appsRes) ||
+    (activeTab === 'orders' && !ordersRes) ||
+    (activeTab === 'products' && !prodsRes) ||
+    (activeTab === 'hubs' && (!hubsRes || !franRes)) ||
+    (activeTab === 'supply_chain' && (!ingRes || !batRes || !recRes));
+
   return (
     <div className="h-screen bg-gray-50/30 flex overflow-hidden relative">
       <AdminSidebar
@@ -342,11 +350,6 @@ export default function AdminDashboard() {
 
       {/* Main Content Area */}
       <main className="flex-1 p-4 md:p-8 space-y-6 overflow-y-auto h-screen relative">
-        {loading && (
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-brand-green/20 overflow-hidden z-50">
-            <div className="h-full bg-brand-green animate-pulse w-1/3 rounded-full"></div>
-          </div>
-        )}
         <AdminHeader
           activeTab={activeTab}
           onToggleSidebar={() => setIsSidebarOpen(true)}
@@ -376,11 +379,15 @@ export default function AdminDashboard() {
           }}
         />
 
-        {/* Stats Grid */}
-        <StatsGrid activeTab={activeTab} applications={applications} orders={orders} products={products} hubs={hubs} ingredients={ingredients} batches={batches} />
+        {isDataLoading ? (
+          <DashboardSkeleton />
+        ) : (
+          <>
+            {/* Stats Grid */}
+            <StatsGrid activeTab={activeTab} applications={applications} orders={orders} products={products} hubs={hubs} ingredients={ingredients} batches={batches} />
 
-        {/* Tab-specific Content with Premium Slide-Up Motion Transitions */}
-        <div key={activeTab} className="animate-slide-up space-y-6">
+            {/* Tab-specific Content with Premium Slide-Up Motion Transitions */}
+            <div key={activeTab} className="animate-slide-up space-y-6">
           {activeTab === 'analytics' && (
             <AnalyticsEngine />
           )}
@@ -445,6 +452,8 @@ export default function AdminDashboard() {
             <BranchPayrollManager />
           )}
         </div>
+        </>
+        )}
       </main>
 
       <ConfirmationModal 

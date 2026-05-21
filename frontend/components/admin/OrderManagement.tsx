@@ -1,4 +1,5 @@
 import { Order } from "../../app/admin/types";
+import { Receipt } from "@phosphor-icons/react";
 
 interface OrderManagementProps {
   orders: Order[];
@@ -24,8 +25,13 @@ export default function OrderManagement({ orders, updateOrderStatus }: OrderMana
           <tbody>
             {orders.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-xs text-brand-earth/40 font-normal">
-                  No orders recorded on the platform yet.
+                <td colSpan={7} className="px-6 py-16 text-center">
+                  <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
+                    <Receipt size={48} weight="duotone" className="text-brand-earth" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                      No orders recorded yet
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : (

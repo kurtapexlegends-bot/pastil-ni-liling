@@ -1,4 +1,5 @@
 import { Hub, FranchiseeUser } from "../../app/admin/types";
+import { Storefront } from "@phosphor-icons/react";
 
 interface FranchiseBranchesProps {
   hubs: Hub[];
@@ -25,8 +26,13 @@ export default function FranchiseBranches({ hubs, franchisees, setHubForm, setIs
           <tbody>
             {hubs.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-xs text-brand-earth/40 font-normal">
-                  No active branch hubs created.
+                <td colSpan={5} className="px-6 py-16 text-center">
+                  <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
+                    <Storefront size={48} weight="duotone" className="text-brand-earth" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
+                      No branch hubs created
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : (

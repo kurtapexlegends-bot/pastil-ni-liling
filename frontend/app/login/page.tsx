@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeSlash, Envelope } from "@phosphor-icons/react";
+import { Eye, EyeSlash, Envelope, CircleNotch } from "@phosphor-icons/react";
 import { setCookie } from "@/components/cookieHelper";
 
 export default function LoginPage() {
@@ -153,7 +153,7 @@ export default function LoginPage() {
               <input 
                 type="email" 
                 required
-                className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
+                className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-brand-earth focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
                 placeholder="@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -165,7 +165,7 @@ export default function LoginPage() {
                 <input 
                   type={showPassword ? "text" : "password"} 
                   required
-                  className="w-full bg-white border border-gray-100 rounded-2xl pl-5 pr-12 py-4 text-sm font-bold focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm text-brand-earth"
+                  className="w-full bg-white border border-gray-100 rounded-2xl pl-5 pr-12 py-4 text-sm font-bold focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm text-brand-earth"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
@@ -202,9 +202,9 @@ export default function LoginPage() {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-brand-earth text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-green transition-all shadow-xl shadow-brand-earth/10 disabled:opacity-50 active:scale-95"
+              className="w-full bg-brand-earth text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-green transition-all shadow-xl shadow-brand-earth/10 disabled:opacity-50 active:scale-95 flex items-center justify-center gap-2"
             >
-              {loading ? "Signing In..." : "Sign In"}
+              {loading ? <CircleNotch weight="bold" className="animate-spin text-sm" /> : "Sign In"}
             </button>
           </form>
 
@@ -274,7 +274,7 @@ export default function LoginPage() {
                     required
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
-                    className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-semibold text-brand-earth focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-semibold text-brand-earth focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
                     placeholder="example@example.com"
                   />
                 </div>
@@ -299,9 +299,9 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={forgotLoading}
-                    className="flex-1 bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-50"
+                    className="flex-1 bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {forgotLoading ? "Sending..." : "Send Reset Link"}
+                    {forgotLoading ? <CircleNotch weight="bold" className="animate-spin text-sm" /> : "Send Reset Link"}
                   </button>
                 </div>
               </form>
