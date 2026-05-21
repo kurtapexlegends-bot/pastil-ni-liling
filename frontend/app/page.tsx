@@ -9,9 +9,9 @@ export default function Home() {
       <Navbar variant="landing" />
 
       {/* Hero Section - Balanced & Focused */}
-      <main className="pt-24 pb-20 md:pt-32 md:pb-32 px-6">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8 animate-in fade-in duration-1000">
+      <main className="pt-24 pb-16 md:pt-32 md:pb-32 px-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+          <div className="space-y-6 md:space-y-8 animate-in fade-in duration-1000">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green/5 border border-brand-green/10 text-[9px] font-bold uppercase tracking-widest text-brand-green">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-green"></span>
               Sarap na Babalik-balikan
@@ -65,7 +65,7 @@ export default function Home() {
             </div>
             
             {/* Subtle Floating Info */}
-            <div className="absolute -bottom-6 -right-6 bg-white p-5 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-4 animate-in slide-in-from-bottom duration-1000 delay-500">
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:-right-6 bg-white w-[90%] md:w-auto p-4 md:p-5 rounded-2xl shadow-xl border border-gray-100 flex items-center justify-center md:justify-start gap-3 md:gap-4 animate-in slide-in-from-bottom duration-1000 delay-500 z-10">
               <div className="bg-brand-green/10 w-10 h-10 rounded-xl flex items-center justify-center">
                 <svg className="w-5 h-5 text-brand-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M2 22h20" />
@@ -83,15 +83,15 @@ export default function Home() {
       </main>
 
       {/* Featured Categories - Clean & Minimal */}
-      <section className="bg-white py-24 md:py-32 border-y border-gray-100">
+      <section className="bg-white py-20 md:py-32 border-y border-gray-100 overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-12">
+          <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-6 md:gap-12 pb-8 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
             {[
               { title: "The Signature", subtitle: "Chicken Adobo Pastil", desc: "Authentic steamed rice topped with premium shredded chicken.", price: "Starts at ₱25", priority: true },
               { title: "Bottled Premium", subtitle: "Spicy Shrimp Bagoong", desc: "Our secret recipe shrimp paste with a spicy kick.", price: "₱149 per jar", priority: false },
               { title: "Side Kick", subtitle: "Chili Garlic Oil", desc: "Premium garlic bits in spicy toasted chili oil infusion.", price: "₱99 per jar", priority: false },
             ].map((item, idx) => (
-              <div key={idx} className="space-y-6 group cursor-pointer">
+              <div key={idx} className="space-y-6 group cursor-pointer w-[85vw] md:w-auto shrink-0 snap-center">
                 <div className="aspect-[4/3] rounded-3xl bg-gray-50 overflow-hidden relative border border-gray-100 shadow-sm transition-all group-hover:shadow-md">
                    <Image 
                     src="/hero.png" 
@@ -123,7 +123,7 @@ export default function Home() {
             <p className="text-sm md:text-base text-brand-earth/50 max-w-lg mx-auto font-medium">Join our mission to bring Mindanao's finest to every Filipino table through our expanding franchise network.</p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {[
               { label: "Active Branches", value: "50+" },
               { label: "Daily Orders", value: "5,000+" },
@@ -170,7 +170,7 @@ export default function Home() {
             </ul>
           </div>
 
-          <div className="space-y-6 text-right md:text-right text-left">
+          <div className="space-y-6 text-left md:text-right">
             <h4 className="text-[10px] font-bold uppercase tracking-widest">Connect</h4>
             <div className="flex justify-start md:justify-end gap-4 opacity-40">
               {['FB', 'IG', 'TW'].map(s => (

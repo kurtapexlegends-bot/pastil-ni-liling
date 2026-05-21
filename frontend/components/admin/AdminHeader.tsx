@@ -33,7 +33,7 @@ export default function AdminHeader({ activeTab, onAddProduct, onCreateHub, onTo
   } as const;
 
   return (
-    <header className="flex justify-between items-center gap-4">
+    <header className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
       <div className="flex items-center gap-3">
         {onToggleSidebar && (
           <button 
