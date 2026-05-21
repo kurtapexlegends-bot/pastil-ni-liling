@@ -9,15 +9,39 @@ use App\Models\Product;
 class OrderFulfillmentService
 {
     /**
+     * Define the strict state transition matrix.
+     * Prevents illogical jumps (e.g. delivered -> pending).
+     */
+    protected array $validTransitions = [
+        'pending' => ['preparing', 'cancelled'],
+        'preparing' => ['out_for_delivery', 'cancelled'],
+        'out_for_delivery' => ['delivered', 'cancelled'],
+        'delivered' => [], // Terminal State
+        'cancelled' => [], // Terminal State
+    ];
+
+    /**
      * Update the status of an order and fulfill inventory if it is delivered.
      *
      * @param Order $order
      * @param string $newStatus
      * @return Order
+     * @throws \Exception
      */
     public function fulfillOrder(Order $order, string $newStatus): Order
     {
         $oldStatus = $order->status;
+
+        // If no change, exit early
+        if ($oldStatus === $newStatus) {
+            return $order;
+        }
+
+        // Defensive guard: Ensure transition is strictly valid according to the matrix
+        if (!isset($this->validTransitions[$oldStatus]) || !in_array($newStatus, $this->validTransitions[$oldStatus])) {
+            throw new \Exception("Illogical order transition: Cannot transition from '{$oldStatus}' directly to '{$newStatus}'.");
+        }
+
         $order->update(['status' => $newStatus]);
 
         if ($order->type === 'wholesale' && $newStatus === 'delivered' && $oldStatus !== 'delivered') {

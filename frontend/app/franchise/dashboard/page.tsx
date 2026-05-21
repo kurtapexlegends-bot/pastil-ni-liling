@@ -372,7 +372,8 @@ export default function FranchiseDashboard() {
         mutateCustomerOrders();
         customAlert(`Order status updated to: ${nextStatus}`);
       } else {
-        customAlert("Failed to update status: " + (data.message || "Unknown error"));
+        customAlert("Failed to update status: " + (data.message || "Unknown error"), "error");
+        mutateCustomerOrders();
       }
     } catch (err) {
       console.error(err);
