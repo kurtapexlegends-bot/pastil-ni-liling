@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Hub;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class HubController extends Controller
 {
@@ -12,7 +13,9 @@ class HubController extends Controller
      */
     public function index()
     {
-        $hubs = Hub::with('franchisee')->where('status', 'active')->get();
+        $hubs = Cache::rememberForever('active_hubs', function() {
+            return Hub::with('franchisee')->where('status', 'active')->get();
+        });
 
         return response()->json([
             'success' => true,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
@@ -12,10 +13,12 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::where('is_active', true)
-            ->orderBy('category')
-            ->orderBy('name')
-            ->get();
+        $products = Cache::rememberForever('active_catalog', function() {
+            return Product::where('is_active', true)
+                ->orderBy('category')
+                ->orderBy('name')
+                ->get();
+        });
 
         return response()->json([
             'success' => true,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,7 +12,6 @@ import { MapPin, Compass, CircleNotch } from "@phosphor-icons/react";
 export default function CheckoutPage() {
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
-  const [hubs, setHubs] = useState<any[]>([]);
   const [selectedHubId, setSelectedHubId] = useState<string>("");
   const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
   const [geoStatus, setGeoStatus] = useState<string>("idle"); // idle, requested, success, denied
@@ -48,20 +48,16 @@ export default function CheckoutPage() {
         { timeout: 10000 }
       );
     }
-
-    // Fetch active fulfillment hubs
-    fetch("http://127.0.0.1:8000/api/hubs")
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setHubs(data.data);
-          if (data.data.length > 0) {
-            setSelectedHubId(data.data[0].id.toString());
-          }
-        }
-      })
-      .catch(err => console.error("Error loading hubs", err));
   }, []);
+
+  const { data: hubsData } = useSWR("http://127.0.0.1:8000/api/hubs", (url) => fetch(url).then(res => res.json()));
+  const hubs = hubsData?.success ? hubsData.data : [];
+
+  useEffect(() => {
+    if (hubs.length > 0 && !selectedHubId) {
+      setSelectedHubId(hubs[0].id.toString());
+    }
+  }, [hubs, selectedHubId]);
 
   const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
   const deliveryFee = 45; // Flat fee for demo
@@ -154,7 +150,7 @@ export default function CheckoutPage() {
                    {hubs.length === 0 ? (
                      <option value="">No active hubs available</option>
                    ) : (
-                     hubs.map((hub) => (
+                     hubs.map((hub: any) => (
                        <option key={hub.id} value={hub.id}>
                          {hub.name} — {hub.address}
                        </option>
