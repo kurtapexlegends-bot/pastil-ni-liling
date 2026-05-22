@@ -80,8 +80,9 @@ class PayrollController extends Controller
         $shift->status = 'completed';
         $shift->save();
 
-        // Calculate hours worked
-        $hours = $shift->clock_in->diffInHours($shift->clock_out) + ($shift->clock_in->diffInMinutes($shift->clock_out) % 60) / 60;
+        // Calculate hours worked (using centralized service)
+        $payrollService = app(\App\Services\PayrollService::class);
+        $hours = $payrollService->calculateShiftHours($shift);
 
         return response()->json([
             'success' => true,

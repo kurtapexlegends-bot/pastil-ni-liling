@@ -53,9 +53,9 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
       : '';
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
+    <div className="grid lg:grid-cols-3 gap-4 md:gap-8">
       {/* Sales Timeline Trend Area Graph */}
-      <div className="lg:col-span-2 bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-4 flex flex-col justify-between relative">
+      <div className="lg:col-span-2 bg-white border border-gray-100 p-4 md:p-6 rounded-2xl shadow-sm space-y-4 flex flex-col justify-between relative">
         <div>
           <div className="flex justify-between items-start">
             <div>
@@ -161,6 +161,7 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
                   stroke="#1e3f20"
                   strokeWidth="2"
                   className="cursor-pointer transition-all duration-150"
+                  onClick={() => setHoveredSalesIndex(hoveredSalesIndex === idx ? null : idx)}
                   onMouseEnter={() => setHoveredSalesIndex(idx)}
                   onMouseLeave={() => setHoveredSalesIndex(null)}
                 />
@@ -222,7 +223,7 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
       </div>
 
       {/* Corporate Margin structures Breakdown (COGS, Waste, Labor) */}
-      <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-6">
+      <div className="bg-white border border-gray-100 p-4 md:p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-6">
         <div>
           <h3 className="text-xs font-black uppercase tracking-wider">
             Revenue & Cost Breakdown
@@ -241,7 +242,7 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
           
           return (
             <div className="space-y-4">
-              <div className="h-6 w-full rounded-xl overflow-hidden flex shadow-inner border border-gray-100">
+              <div className="h-8 md:h-6 w-full rounded-xl overflow-hidden flex shadow-inner border border-gray-100">
                 <div
                   style={{ width: `${cogsPct}%` }}
                   className="bg-brand-earth/30 h-full"

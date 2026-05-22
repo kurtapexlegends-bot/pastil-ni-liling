@@ -22,6 +22,24 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-plus-jakarta-sans), Arial, Helvetica, sans-serif;
+  overscroll-behavior-y: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+input, textarea, select {
+  font-size: 16px !important;
+  -webkit-user-select: auto;
+  user-select: auto;
 }
 
 h1, h2, h3, h4, h5, h6, .font-display {
@@ -94,4 +112,17 @@ h1, h2, h3, h4, h5, h6, .font-display {
 .premium-shadow {
   box-shadow: 0 10px 40px -10px rgba(27, 45, 22, 0.04), 
               0 2px 8px -2px rgba(27, 45, 22, 0.02);
+}
+
+/* Native Mobile Utilities */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
 }

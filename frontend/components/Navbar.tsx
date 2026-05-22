@@ -118,7 +118,7 @@ export default function Navbar({
         {/* 2. Menu Page Right Actions */}
         {variant === 'menu' && (
           <div className="flex items-center gap-6">
-            <div onClick={onCartClick} className="relative cursor-pointer group p-2 select-none flex items-center">
+            <div onClick={onCartClick} className="relative cursor-pointer group w-11 h-11 md:w-auto md:h-auto md:p-2 select-none flex items-center justify-center">
               <ShoppingCart size={22} className="text-brand-earth hover:text-brand-green transition-colors" />
               {cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-brand-green text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-in zoom-in">

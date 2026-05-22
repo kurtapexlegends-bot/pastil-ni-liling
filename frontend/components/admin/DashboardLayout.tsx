@@ -37,7 +37,7 @@ export default function DashboardLayout({
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-8 space-y-6 overflow-y-auto h-screen relative">
+      <main className="flex-1 p-4 md:p-8 space-y-4 md:space-y-6 overflow-y-auto h-screen relative">
         <AdminHeader
           activeTab={activeTab}
           onToggleSidebar={() => setIsSidebarOpen(true)}

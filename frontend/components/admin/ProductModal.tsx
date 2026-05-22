@@ -124,6 +124,17 @@ export default function ProductModal({
           />
         </div>
 
+        <div className="space-y-1.5">
+          <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Image URL</label>
+          <input 
+            type="url" 
+            value={productForm.image_url || ''}
+            onChange={(e) => setProductForm(prev => ({ ...prev, image_url: e.target.value }))}
+            placeholder="https://images.unsplash.com/photo-..."
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+          />
+        </div>
+
         <div className="flex gap-3 pt-3">
           <button 
             type="button" 

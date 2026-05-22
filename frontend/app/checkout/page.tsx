@@ -119,7 +119,7 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
       <Navbar variant="checkout" />
 
-      <main className="max-w-6xl mx-auto px-6 pt-24 pb-10 flex flex-col-reverse lg:grid lg:grid-cols-2 gap-8 lg:gap-12 w-full flex-1">
+      <main className="max-w-6xl mx-auto px-4 md:px-6 pt-24 pb-10 flex flex-col-reverse lg:grid lg:grid-cols-2 gap-8 lg:gap-12 w-full flex-1">
         {/* Form Section */}
         <section className="space-y-8">
           <header className="space-y-1">
@@ -190,7 +190,7 @@ export default function CheckoutPage() {
                         key={method}
                         type="button"
                         onClick={() => setFormData({...formData, payment_method: method})}
-                        className={`py-2 rounded-lg border text-[9px] font-semibold uppercase tracking-wider transition-colors ${
+                        className={`py-3 rounded-lg border text-[9px] font-semibold uppercase tracking-wider transition-colors ${
                           formData.payment_method === method 
                             ? 'bg-brand-earth text-white border-brand-earth shadow-sm' 
                             : 'bg-white border-gray-100 text-brand-earth/40 hover:border-brand-green'

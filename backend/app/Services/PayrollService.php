@@ -23,7 +23,7 @@ class PayrollService
         $totalHours = 0;
 
         foreach ($shifts as $shift) {
-            $hours = $shift->clock_in->diffInHours($shift->clock_out) + ($shift->clock_in->diffInMinutes($shift->clock_out) % 60) / 60;
+            $hours = $this->calculateShiftHours($shift);
             $totalHours += $hours;
             $basePay += ($hours * floatval($shift->hourly_rate));
         }
@@ -46,5 +46,14 @@ class PayrollService
             'commission_pay' => round($commissionPay, 2),
             'total_pay' => round($totalPay, 2)
         ];
+    }
+
+    /**
+     * Helper to compute exact fractional hours worked for a completed shift.
+     */
+    public function calculateShiftHours(WorkShift $shift): float
+    {
+        if (!$shift->clock_out) return 0;
+        return $shift->clock_in->diffInHours($shift->clock_out) + ($shift->clock_in->diffInMinutes($shift->clock_out) % 60) / 60;
     }
 }
