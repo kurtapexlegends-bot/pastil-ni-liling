@@ -16,6 +16,7 @@ interface CartDrawerProps {
   title?: string;
   emptyText?: string;
   isWholesale?: boolean;
+  isCheckingOut?: boolean;
 }
 
 export default function CartDrawer({ 
@@ -28,7 +29,8 @@ export default function CartDrawer({
   checkoutText,
   title,
   emptyText,
-  isWholesale = false
+  isWholesale = false,
+  isCheckingOut = false
 }: CartDrawerProps) {
   const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
 
@@ -116,10 +118,10 @@ export default function CartDrawer({
           {onCheckout ? (
             <button
               onClick={onCheckout}
-              disabled={items.length === 0}
-              className={`block w-full text-center bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-sm ${items.length === 0 ? 'opacity-30 pointer-events-none' : ''}`}
+              disabled={items.length === 0 || isCheckingOut}
+              className={`block w-full text-center bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-sm flex items-center justify-center gap-2 ${(items.length === 0 || isCheckingOut) ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
             >
-              {checkoutText || "Place Bulk Order"}
+              {isCheckingOut ? "Processing..." : (checkoutText || "Place Bulk Order")}
             </button>
           ) : (
             <Link 

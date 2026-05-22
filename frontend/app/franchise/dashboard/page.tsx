@@ -17,6 +17,7 @@ import POSCashierTab from "@/components/franchise/POSCashierTab";
 import ShiftsPayrollTab from "@/components/franchise/ShiftsPayrollTab";
 import Sidebar from "@/components/franchise/Sidebar";
 import AlertModal from "@/components/ui/AlertModal";
+import DashboardSkeleton from "@/components/ui/DashboardSkeleton";
 
 export default function FranchiseDashboard() {
   const router = useRouter();
@@ -24,6 +25,9 @@ export default function FranchiseDashboard() {
   const isCashier = user?.roles?.some((r: any) => r.name === 'Branch Cashier') || false;
   const isFranchisee = user?.roles?.some((r: any) => r.name === 'Franchisee') || false;
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isPOSCheckingOut, setIsPOSCheckingOut] = useState(false);
   
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -123,9 +127,9 @@ export default function FranchiseDashboard() {
   const handleManualSync = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    setLoading(true);
+    setIsSyncing(true);
     await triggerQueueSyncDirectly(token);
-    setLoading(false);
+    setIsSyncing(false);
     customAlert("Offline queue sync check completed.");
   };
 
@@ -272,8 +276,12 @@ export default function FranchiseDashboard() {
     setPosCart([]);
 
     if (navigator.onLine) {
+      setIsPOSCheckingOut(true);
       const token = localStorage.getItem("token");
-      if (!token) return;
+      if (!token) {
+        setIsPOSCheckingOut(false);
+        return;
+      }
 
       try {
         const res = await fetch("http://127.0.0.1:8000/api/pos/sync", {
@@ -320,6 +328,8 @@ export default function FranchiseDashboard() {
         localStorage.setItem("pos_offline_queue", JSON.stringify(retriedQueue));
         
         customAlert("Network unstable. POS order saved locally and inventory locked.");
+      } finally {
+        setIsPOSCheckingOut(false);
       }
     } else {
       customAlert("Offline Mode: Order saved locally. It will automatically sync once online!");
@@ -386,6 +396,8 @@ export default function FranchiseDashboard() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
+    setIsCheckingOut(true);
+
     try {
       const idempotencyKey = crypto.randomUUID();
       const res = await fetch("http://127.0.0.1:8000/api/franchise/commissary-orders", {
@@ -421,6 +433,8 @@ export default function FranchiseDashboard() {
     } catch (err) {
       console.error(err);
       customAlert("Error placing restock order.");
+    } finally {
+      setIsCheckingOut(false);
     }
   };
 
@@ -431,7 +445,16 @@ export default function FranchiseDashboard() {
     router.push('/login');
   };
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="h-screen bg-gray-50/30 flex overflow-hidden">
+        {/* We can show a skeleton immediately */}
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full">
+          <DashboardSkeleton />
+        </main>
+      </div>
+    );
+  }
 
   const isFranchiseAccess = user?.roles?.some((r: any) => r.name === "Franchisee" || r.name === "Branch Cashier") || false;
   if (!isFranchiseAccess) return null;
@@ -447,6 +470,7 @@ export default function FranchiseDashboard() {
         onCheckout={handleCheckout}
         checkoutText="Place Bulk Order"
         isWholesale={true}
+        isCheckingOut={isCheckingOut}
       />
 
       <Sidebar
@@ -527,6 +551,8 @@ export default function FranchiseDashboard() {
               offlineQueue={offlineQueue}
               isOnline={isOnline}
               handleManualSync={handleManualSync}
+              isSyncing={isSyncing}
+              isPOSCheckingOut={isPOSCheckingOut}
               posCart={posCart}
               posPaymentMethod={posPaymentMethod}
               setPosPaymentMethod={setPosPaymentMethod}

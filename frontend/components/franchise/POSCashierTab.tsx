@@ -1,6 +1,6 @@
 "use client";
 
-import { Warning, Package } from "@phosphor-icons/react";
+import { Warning, Package, CircleNotch, Storefront } from "@phosphor-icons/react";
 
 interface POSCartItem {
   id: number;
@@ -17,6 +17,8 @@ interface POSCashierTabProps {
   offlineQueue: any[];
   isOnline: boolean;
   handleManualSync: () => void;
+  isSyncing?: boolean;
+  isPOSCheckingOut?: boolean;
   posCart: POSCartItem[];
   posPaymentMethod: string;
   setPosPaymentMethod: (method: string) => void;
@@ -34,6 +36,8 @@ export default function POSCashierTab({
   offlineQueue,
   isOnline,
   handleManualSync,
+  isSyncing = false,
+  isPOSCheckingOut = false,
   posCart,
   posPaymentMethod,
   setPosPaymentMethod,
@@ -81,18 +85,27 @@ export default function POSCashierTab({
             </div>
             <button 
               onClick={handleManualSync}
-              className="bg-brand-earth text-white px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-brand-green transition-all shadow-sm shrink-0"
+              disabled={isSyncing}
+              className="bg-brand-earth text-white px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-brand-green transition-all shadow-sm shrink-0 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-wait"
             >
-              Retry Sync
+              {isSyncing ? (
+                <>
+                  <CircleNotch size={14} className="animate-spin" />
+                  Syncing...
+                </>
+              ) : "Retry Sync"}
             </button>
           </div>
         )}
 
         <div className="grid md:grid-cols-2 gap-6">
           {hubInventory.length === 0 ? (
-            <div className="col-span-2 bg-white border border-gray-100 p-8 rounded-xl text-center space-y-2">
-              <p className="text-sm font-semibold text-brand-earth/40">No retail stock available at this branch.</p>
-              <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest">Order supplies from HQ commissary using the Logistics tab first.</p>
+            <div className="col-span-2 bg-white border border-gray-100 p-12 rounded-xl text-center space-y-4">
+              <Storefront size={56} weight="duotone" className="text-brand-earth mx-auto opacity-20" />
+              <div>
+                <p className="text-sm font-semibold text-brand-earth/40 tracking-tight">No retail stock available at this branch.</p>
+                <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest mt-1">Order supplies from HQ commissary using the Logistics tab first.</p>
+              </div>
             </div>
           ) : (
             hubInventory.map((item: any) => (
@@ -163,7 +176,7 @@ export default function POSCashierTab({
                         <select
                           value={item.flavor_modifier || "Original"}
                           onChange={(e) => updatePOSCartFlavor(item.id, e.target.value)}
-                          className="text-[9px] font-bold text-brand-green bg-transparent border-none outline-none focus:ring-1 focus:ring-brand-green focus:border-brand-green p-0 cursor-pointer rounded"
+                          className="text-[9px] font-bold text-brand-green bg-transparent border-none outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green p-0 cursor-pointer rounded"
                         >
                           <option value="Original">Original</option>
                           <option value="Spicy">Spicy</option>
@@ -262,9 +275,15 @@ export default function POSCashierTab({
                 <button
                   type="button"
                   onClick={handlePOSCheckout}
-                  className="w-full bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-green/90 transition-all shadow-md shadow-brand-green/10"
+                  disabled={isPOSCheckingOut}
+                  className="w-full bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-green/90 transition-all shadow-md shadow-brand-green/10 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-wait"
                 >
-                  Complete Cashier Checkout
+                  {isPOSCheckingOut ? (
+                    <>
+                      <CircleNotch size={16} className="animate-spin" />
+                      Processing...
+                    </>
+                  ) : "Complete Cashier Checkout"}
                 </button>
               </div>
             </>

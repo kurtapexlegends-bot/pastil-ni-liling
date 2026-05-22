@@ -137,7 +137,7 @@ export default function OrderManagement({ orders, b2bOrders, updateOrderStatus }
                       <select 
                         value={order.status}
                         onChange={(e) => updateOrderStatus(order.id, e.target.value, viewMode === 'b2b')}
-                        className="bg-gray-50 border border-gray-100 rounded-md text-[9px] font-semibold uppercase tracking-wider px-2 py-1.5 outline-none focus:ring-1 focus:ring-brand-green text-brand-earth"
+                        className="bg-gray-50 border border-gray-100 rounded-md text-[9px] font-semibold uppercase tracking-wider px-2 py-1.5 outline-none focus:ring-2 focus:ring-brand-green/30 text-brand-earth"
                       >
                         <option value="pending">Pending</option>
                         <option value="preparing">Preparing</option>
