@@ -33,24 +33,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Admin Routes
     Route::middleware('role:Admin|HQ operations')->prefix('admin')->group(function () {
-        Route::get('/applications', [\App\Http\Controllers\AdminController::class, 'getFranchiseApplications']);
-        Route::patch('/applications/{id}', [\App\Http\Controllers\AdminController::class, 'updateApplicationStatus']);
+        Route::get('/applications', [\App\Http\Controllers\Admin\FranchiseApplicationController::class, 'index']);
+        Route::patch('/applications/{id}', [\App\Http\Controllers\Admin\FranchiseApplicationController::class, 'updateStatus']);
         
         // Admin Order Management
-        Route::get('/orders', [\App\Http\Controllers\AdminController::class, 'getOrders']);
-        Route::patch('/orders/{id}', [\App\Http\Controllers\AdminController::class, 'updateOrderStatus']);
+        Route::get('/orders', [\App\Http\Controllers\Admin\AdminOrderController::class, 'index']);
+        Route::patch('/orders/{id}', [\App\Http\Controllers\Admin\AdminOrderController::class, 'updateStatus']);
 
         // Product Catalog Management
-        Route::get('/products', [\App\Http\Controllers\AdminController::class, 'getProducts']);
-        Route::post('/products', [\App\Http\Controllers\AdminController::class, 'storeProduct']);
-        Route::put('/products/{id}', [\App\Http\Controllers\AdminController::class, 'updateProduct']);
-        Route::delete('/products/{id}', [\App\Http\Controllers\AdminController::class, 'destroyProduct']);
+        Route::get('/products', [\App\Http\Controllers\Admin\ProductController::class, 'index']);
+        Route::post('/products', [\App\Http\Controllers\Admin\ProductController::class, 'store']);
+        Route::put('/products/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'update']);
+        Route::delete('/products/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'destroy']);
 
         // Franchise Branch Management
-        Route::post('/hubs', [\App\Http\Controllers\AdminController::class, 'storeHub']);
-        Route::put('/hubs/{id}', [\App\Http\Controllers\AdminController::class, 'updateHub']);
-        Route::delete('/hubs/{id}', [\App\Http\Controllers\AdminController::class, 'destroyHub']);
-        Route::get('/franchisees', [\App\Http\Controllers\AdminController::class, 'getFranchisees']);
+        Route::post('/hubs', [\App\Http\Controllers\Admin\HubController::class, 'store']);
+        Route::put('/hubs/{id}', [\App\Http\Controllers\Admin\HubController::class, 'update']);
+        Route::delete('/hubs/{id}', [\App\Http\Controllers\Admin\HubController::class, 'destroy']);
+        Route::get('/franchisees', [\App\Http\Controllers\Admin\AdminFranchiseeController::class, 'index']);
 
         // Supply Chain & Batch Integrity Management
         Route::get('/inventory/batches', [\App\Http\Controllers\InventoryController::class, 'getBatches']);
@@ -71,7 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes shared by Admin, HQ operations, and Franchisee
     Route::middleware('role:Admin|HQ operations|Franchisee')->prefix('admin')->group(function () {
         Route::get('/employees', [\App\Http\Controllers\EmployeeController::class, 'index']);
-        Route::get('/hubs', [\App\Http\Controllers\AdminController::class, 'getHubs']);
+        Route::get('/hubs', [\App\Http\Controllers\Admin\HubController::class, 'index']);
     });
 
     // Phase 4: Digital Compliance & QC Audits
