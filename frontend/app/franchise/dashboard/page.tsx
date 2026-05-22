@@ -45,8 +45,8 @@ export default function FranchiseDashboard() {
     return fetch(url, { headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" } }).then(res => res.json());
   };
 
-  const { data: ordersRes, mutate: mutateOrders } = useSWR(user ? "http://127.0.0.1:8000/api/orders" : null, fetcher);
-  const orders = ordersRes?.success ? ordersRes.data.filter((o: any) => o.type === 'wholesale') : [];
+  const { data: ordersRes, mutate: mutateOrders } = useSWR(user ? "http://127.0.0.1:8000/api/franchise/commissary-orders" : null, fetcher);
+  const orders = ordersRes?.success ? ordersRes.data : [];
 
   const { data: invRes, mutate: mutateInventory } = useSWR(user ? "http://127.0.0.1:8000/api/franchise/inventory" : null, fetcher, { refreshInterval: 60000 });
   const hub = invRes?.success ? invRes.hub : null;
@@ -386,14 +386,9 @@ export default function FranchiseDashboard() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    const totalAmount = cartItems.reduce(
-      (sum, item) => sum + (parseFloat(item.wholesale_price || item.price) * item.quantity),
-      0
-    );
-
     try {
       const idempotencyKey = crypto.randomUUID();
-      const res = await fetch("http://127.0.0.1:8000/api/orders", {
+      const res = await fetch("http://127.0.0.1:8000/api/franchise/commissary-orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -401,22 +396,19 @@ export default function FranchiseDashboard() {
           "X-Idempotency-Key": idempotencyKey
         },
         body: JSON.stringify({
-          type: "wholesale",
-          total_amount: totalAmount,
           shipping_address: hub?.address || "Franchise Branch Address",
           contact_number: user?.contact_number || "09171234567",
           payment_method: "cod",
           items: cartItems.map(item => ({
             product_id: item.id,
-            quantity: item.quantity,
-            price: parseFloat(item.wholesale_price || item.price)
+            quantity: item.quantity
           }))
         })
       });
 
       const data = await res.json();
-      if (data.success) {
-        customAlert("Bulk Restock Order Placed successfully!");
+      if (res.ok && data.success) {
+        customAlert("Commissary restock order placed successfully!");
         setCartItems([]);
         setIsCartOpen(false);
         
@@ -424,11 +416,11 @@ export default function FranchiseDashboard() {
         mutateOrders();
         mutateInventory();
       } else {
-        customAlert("Failed to place order: " + (data.message || "Unknown error"));
+        customAlert("Failed to place restock order: " + (data.message || "Unknown error"));
       }
     } catch (err) {
       console.error(err);
-      customAlert("Error placing order.");
+      customAlert("Error placing restock order.");
     }
   };
 

@@ -16,15 +16,19 @@ class Product extends Model
         'slug',
         'description',
         'price',
+        'wholesale_price',
         'category',
         'image_url',
         'stock',
         'is_active',
+        'is_wholesale',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'wholesale_price' => 'decimal:2',
         'is_active' => 'boolean',
+        'is_wholesale' => 'boolean',
         'stock' => 'integer',
     ];
 }
