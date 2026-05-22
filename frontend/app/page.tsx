@@ -52,7 +52,7 @@ export default function Home() {
 
           <div className="relative group animate-in fade-in zoom-in duration-1000 delay-200">
             <div className="absolute inset-0 bg-brand-yellow/20 rounded-[2.5rem] blur-3xl -z-10 group-hover:bg-brand-yellow/30 transition-all duration-700"></div>
-            <div className="relative rounded-[2.5rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(45,74,34,0.2)] border-8 border-white bg-white aspect-square">
+            <div className="relative rounded-[2.5rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(45,74,34,0.2)] border-4 border-white/20 bg-white/10 backdrop-blur-md aspect-square">
               <Image 
                 src="/hero.png" 
                 alt="Pastil ni Liling Signature Dish" 
@@ -91,7 +91,11 @@ export default function Home() {
               { title: "Bottled Premium", subtitle: "Spicy Shrimp Bagoong", desc: "Our secret recipe shrimp paste with a spicy kick.", price: "₱149 per jar", priority: false },
               { title: "Side Kick", subtitle: "Chili Garlic Oil", desc: "Premium garlic bits in spicy toasted chili oil infusion.", price: "₱99 per jar", priority: false },
             ].map((item, idx) => (
-              <div key={idx} className="space-y-6 group cursor-pointer w-[85vw] md:w-auto shrink-0 snap-center">
+              <div 
+                key={idx} 
+                className="space-y-6 group cursor-pointer w-[85vw] md:w-auto shrink-0 snap-center animate-in slide-in-from-bottom fade-in duration-1000 fill-mode-both"
+                style={{ animationDelay: `${idx * 150}ms` }}
+              >
                 <div className="aspect-[4/3] rounded-3xl bg-gray-50 overflow-hidden relative border border-gray-100 shadow-sm transition-all group-hover:shadow-md">
                    <Image 
                     src="/hero.png" 
@@ -130,7 +134,7 @@ export default function Home() {
               { label: "Cities Reached", value: "20+" },
               { label: "Franchise Apps", value: "200+" },
             ].map((stat, idx) => (
-              <div key={idx} className="space-y-1">
+              <div key={idx} className="space-y-1 hover:-translate-y-2 transition-transform duration-500 cursor-default">
                 <div className="text-3xl md:text-4xl font-black tracking-tighter text-brand-earth">{stat.value}</div>
                 <div className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/40">{stat.label}</div>
               </div>
