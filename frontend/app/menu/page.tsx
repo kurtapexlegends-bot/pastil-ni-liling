@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
 import { MagnifyingGlass } from "@phosphor-icons/react";
@@ -10,8 +11,6 @@ import Navbar from "@/components/Navbar";
 import { Product, CartItem } from "@/types";
 
 export default function MenuPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -35,24 +34,12 @@ export default function MenuPage() {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setProducts(data.data);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch products:", err);
-        setLoading(false);
-      });
-  }, []);
+  const { data, isLoading: loading } = useSWR("http://127.0.0.1:8000/api/products", (url) => fetch(url).then(res => res.json()));
+  const products = data?.success ? data.data : [];
 
   const filteredProducts = filter === "all" 
     ? products 
-    : products.filter(p => p.category === filter);
+    : products.filter((p: Product) => p.category === filter);
 
   const handleAddToCart = (product: Product) => {
     setCartItems(prev => {
@@ -193,7 +180,7 @@ export default function MenuPage() {
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((product: Product) => (
               <ProductCard 
                 key={product.id} 
                 product={product} 

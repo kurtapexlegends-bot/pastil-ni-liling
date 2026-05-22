@@ -18,10 +18,14 @@ trait InvalidatesAnalyticsCache
     {
         static::saved(function ($model) {
             Cache::forget('analytics_summary');
+            if ($model instanceof \App\Models\Product) Cache::forget('active_catalog');
+            if ($model instanceof \App\Models\Hub) Cache::forget('active_hubs');
         });
 
         static::deleted(function ($model) {
             Cache::forget('analytics_summary');
+            if ($model instanceof \App\Models\Product) Cache::forget('active_catalog');
+            if ($model instanceof \App\Models\Hub) Cache::forget('active_hubs');
         });
     }
 }
