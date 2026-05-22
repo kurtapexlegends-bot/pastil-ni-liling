@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { deleteCookie } from "@/components/cookieHelper";
+import { ShoppingBag } from "@phosphor-icons/react";
+import CustomerDashboardSkeleton from "@/components/CustomerDashboardSkeleton";
 
 const fetcher = (url: string) => {
   const token = localStorage.getItem("token");
@@ -96,14 +98,26 @@ export default function UserDashboard() {
           </header>
 
           <div className="space-y-6">
-            {orders.length === 0 ? (
-              <div className="bg-white rounded-[2rem] p-20 text-center border border-dashed border-gray-200">
-                <p className="text-xs font-bold uppercase tracking-widest text-brand-earth/30">No orders placed yet.</p>
-                <Link href="/menu" className="inline-block mt-4 text-brand-green font-black text-[10px] uppercase tracking-widest underline">Start Shopping</Link>
+            {!ordersRes ? (
+               <CustomerDashboardSkeleton />
+            ) : orders.length === 0 ? (
+              <div className="bg-white rounded-[2rem] p-20 flex flex-col items-center text-center border border-dashed border-gray-200">
+                <div className="w-20 h-20 bg-brand-green/5 rounded-full flex items-center justify-center text-brand-green mb-6">
+                  <ShoppingBag size={32} weight="fill" />
+                </div>
+                <h3 className="text-xl font-extrabold tracking-tight mb-2">No orders placed yet</h3>
+                <p className="text-xs font-bold text-brand-earth/40">Your order history will appear here once you make a purchase.</p>
+                <Link href="/menu" className="mt-8 bg-brand-green hover:bg-brand-earth transition-colors text-white px-8 py-4 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-green/20">
+                  Start Shopping
+                </Link>
               </div>
             ) : (
-              orders.map((order: any) => (
-                <div key={order.id} className="bg-white rounded-[2rem] border border-gray-100 p-8 space-y-6 hover:shadow-xl transition-all group">
+              orders.map((order: any, idx: number) => (
+                <div 
+                  key={order.id} 
+                  className="bg-white rounded-[2rem] border border-gray-100 p-8 space-y-6 hover:shadow-xl transition-all group animate-in slide-in-from-bottom fade-in duration-700 fill-mode-both"
+                  style={{ animationDelay: `${idx * 100}ms` }}
+                >
                   <header className="flex items-center justify-between">
                     <div className="space-y-1">
                       <p className="text-[10px] font-black uppercase tracking-widest text-brand-earth/40">Order #{order.id}</p>

@@ -97,7 +97,7 @@ export default function RegisterPage() {
 
       {/* Form Side */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-20 lg:px-24 py-12 bg-[#fafafa]">
-        <div className="max-w-md w-full mx-auto space-y-10">
+        <div className="max-w-md w-full mx-auto space-y-10 animate-in slide-in-from-bottom fade-in duration-1000 fill-mode-both">
           <div className="space-y-4">
              <Link href="/" className="lg:hidden inline-block mb-4">
                 <Image src="/logo.jpg" alt="Logo" width={48} height={48} className="rounded-full" />
@@ -106,7 +106,7 @@ export default function RegisterPage() {
              <p className="text-xs font-bold uppercase tracking-widest text-brand-earth/40">Register for a premium experience</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className={`space-y-5 ${Object.keys(errors).length > 0 ? 'animate-shake' : ''}`}>
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60">Full Name</label>
               <input 
