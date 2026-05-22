@@ -6,7 +6,7 @@ use App\Models\Expense;
 use App\Models\Hub;
 use App\Models\WorkShift;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreExpenseRequest;
 
 class ExpenseController extends Controller
 {
@@ -62,40 +62,14 @@ class ExpenseController extends Controller
     /**
      * Store a newly created expense in storage.
      */
-    public function store(Request $request)
+    public function store(StoreExpenseRequest $request)
     {
         $user = $request->user();
         $hubId = null;
 
         if ($user->hasRole('Admin') || $user->hasRole('HQ operations')) {
-            $validator = Validator::make($request->all(), [
-                'hub_id' => 'nullable|exists:hubs,id',
-                'category' => 'required|string|max:255',
-                'amount' => 'required|numeric|min:0.01',
-                'date' => 'required|date',
-                'description' => 'nullable|string|max:1000',
-            ]);
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => $validator->errors()
-                ], 422);
-            }
             $hubId = $request->input('hub_id');
         } else {
-            $validator = Validator::make($request->all(), [
-                'category' => 'required|string|max:255',
-                'amount' => 'required|numeric|min:0.01',
-                'date' => 'required|date',
-                'description' => 'nullable|string|max:1000',
-            ]);
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             if ($user->hasRole('Franchisee')) {
                 $hub = Hub::where('franchisee_id', $user->id)->first();
                 if (!$hub) {

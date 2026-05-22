@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\ComplianceAudit;
 use App\Models\Hub;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreComplianceAuditRequest;
+use App\Http\Requests\UpdateComplianceStatusRequest;
+use App\Http\Requests\ResolveAnomalyRequest;
 
 class ComplianceController extends Controller
 {
@@ -48,7 +50,7 @@ class ComplianceController extends Controller
     /**
      * Store a newly created compliance QC audit in storage.
      */
-    public function store(Request $request)
+    public function store(StoreComplianceAuditRequest $request)
     {
         $user = $request->user();
 
@@ -59,22 +61,6 @@ class ComplianceController extends Controller
                 'success' => false,
                 'message' => 'Unauthorized compliance action.'
             ], 403);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'hub_id' => 'required|exists:hubs,id',
-            'hygiene_score' => 'required|integer|min:0|max:100',
-            'recipe_adherence_score' => 'required|integer|min:0|max:100',
-            'notes' => 'nullable|string',
-            'kitchen_photo' => 'nullable|string', // mock base64 or path
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error.',
-                'errors' => $validator->errors()
-            ], 422);
         }
 
         // Set default status. If Franchisee submits, must be pending reviewer approval.
@@ -104,7 +90,7 @@ class ComplianceController extends Controller
     /**
      * Update QC audit approval status.
      */
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(UpdateComplianceStatusRequest $request, $id)
     {
         $user = $request->user();
 
@@ -115,19 +101,6 @@ class ComplianceController extends Controller
                 'success' => false,
                 'message' => 'Unauthorized audit governance access.'
             ], 403);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|string|in:approved,flagged',
-            'notes' => 'nullable|string'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors()
-            ], 422);
         }
 
         $audit = ComplianceAudit::find($id);
@@ -205,7 +178,7 @@ class ComplianceController extends Controller
     /**
      * Resolve a POS sync anomaly.
      */
-    public function resolveAnomaly(Request $request, $id)
+    public function resolveAnomaly(ResolveAnomalyRequest $request, $id)
     {
         $user = $request->user();
 
@@ -215,18 +188,6 @@ class ComplianceController extends Controller
                 'success' => false,
                 'message' => 'Access denied. Only HQ operators can resolve anomalies.'
             ], 403);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'notes' => 'nullable|string'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error.',
-                'errors' => $validator->errors()
-            ], 422);
         }
 
         $anomaly = \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
