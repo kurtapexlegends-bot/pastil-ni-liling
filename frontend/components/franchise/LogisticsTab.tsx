@@ -43,10 +43,11 @@ export default function LogisticsTab({
           </div>
         ) : (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {customerOrders.map((order) => (
+            {customerOrders.map((order, index) => (
               <div
                 key={order.id}
-                className="bg-white p-6 rounded-xl border border-gray-100/65 shadow-sm flex flex-col justify-between space-y-5 hover:border-brand-green/20 transition-all duration-300"
+                className="bg-white p-6 rounded-xl border border-gray-100/65 shadow-sm flex flex-col justify-between space-y-5 hover:border-brand-green/20 transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+                style={{ animationDelay: `${index * 50}ms`, animationDuration: '400ms' }}
               >
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
@@ -206,8 +207,12 @@ export default function LogisticsTab({
                   </p>
                 </div>
               ) : (
-                orders.slice(0, 5).map((order) => (
-                  <div key={order.id} className="bg-white p-4 rounded-xl border border-gray-100/80 flex justify-between items-center group hover:border-brand-green/30 transition-all shadow-sm">
+                orders.slice(0, 5).map((order, index) => (
+                  <div 
+                    key={order.id} 
+                    className="bg-white p-4 rounded-xl border border-gray-100/80 flex justify-between items-center group hover:border-brand-green/30 transition-all shadow-sm animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+                    style={{ animationDelay: `${index * 50}ms`, animationDuration: '400ms' }}
+                  >
                     <div className="space-y-1">
                       <p className="text-[9px] font-bold text-brand-earth/30 uppercase tracking-widest">Order #{order.id}</p>
                       <p className="text-sm font-bold text-brand-earth">₱{parseFloat(order.total_amount).toFixed(2)}</p>

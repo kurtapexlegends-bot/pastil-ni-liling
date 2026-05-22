@@ -80,8 +80,12 @@ export default function OrderManagement({ orders, b2bOrders, updateOrderStatus }
                   </td>
                 </tr>
               ) : (
-                activeOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50/30 transition-colors">
+                activeOrders.map((order, index) => (
+                  <tr 
+                    key={order.id} 
+                    className="hover:bg-gray-50/30 transition-colors animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+                    style={{ animationDelay: `${index * 50}ms`, animationDuration: '400ms' }}
+                  >
                     <td className="px-6 py-4 border-b border-gray-100">
                       <p className="text-xs font-semibold text-brand-earth">#{order.id}</p>
                       <span className={`inline-block px-1.5 py-0.2 mt-0.5 rounded text-[7px] font-bold uppercase tracking-wider ${

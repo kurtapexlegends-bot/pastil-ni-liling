@@ -595,7 +595,12 @@ export default function FranchiseDashboard() {
             }}
             className="w-full bg-brand-green text-white py-3.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-2xl flex items-center justify-center gap-2 active:scale-95 hover:bg-brand-green/90 transition-all border border-brand-green/10"
           >
-            <Package size={14} weight="bold" />
+            <Package 
+              key={posCart.reduce((sum, item) => sum + item.quantity, 0)}
+              size={16} 
+              weight="bold" 
+              className="animate-in zoom-in-75 duration-300"
+            />
             Review Order Receipt ({posCart.reduce((sum, item) => sum + item.quantity, 0)} items)
           </button>
         </div>
