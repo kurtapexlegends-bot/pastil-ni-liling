@@ -78,6 +78,9 @@ export default function AdminDashboard() {
   const { data: ordersRes, mutate: mutateOrders } = useSWR(hasToken && activeTab === 'orders' ? "http://127.0.0.1:8000/api/admin/orders" : null, fetcher);
   const orders = ordersRes?.data || [];
 
+  const { data: b2bOrdersRes, mutate: mutateB2bOrders } = useSWR(hasToken && activeTab === 'orders' ? "http://127.0.0.1:8000/api/admin/commissary-orders" : null, fetcher);
+  const b2bOrders = b2bOrdersRes?.data || [];
+
   const { data: prodsRes, mutate: mutateProducts } = useSWR(hasToken && activeTab === 'products' ? "http://127.0.0.1:8000/api/admin/products" : null, fetcher);
   const products = prodsRes?.data || [];
 
@@ -114,9 +117,13 @@ export default function AdminDashboard() {
     setLoading(false);
   }, [router]);
 
-  const updateOrderStatus = async (id: number, status: string) => {
+  const updateOrderStatus = async (id: number, status: string, isB2B: boolean = false) => {
     const token = localStorage.getItem("token");
-    const res = await fetch(`http://127.0.0.1:8000/api/admin/orders/${id}`, {
+    const endpoint = isB2B 
+      ? `http://127.0.0.1:8000/api/admin/commissary-orders/${id}`
+      : `http://127.0.0.1:8000/api/admin/orders/${id}`;
+
+    const res = await fetch(endpoint, {
       method: "PATCH",
       headers: { 
         "Content-Type": "application/json",
@@ -127,7 +134,11 @@ export default function AdminDashboard() {
 
     const data = await res.json();
     if (res.ok && data.success) {
-      mutateOrders();
+      if (isB2B) {
+        mutateB2bOrders();
+      } else {
+        mutateOrders();
+      }
     } else {
       setConfirmState({
         isOpen: true,
@@ -136,7 +147,11 @@ export default function AdminDashboard() {
         action: () => setConfirmState(prev => ({ ...prev, isOpen: false }))
       });
       // Force UI to revert back to true server state
-      mutateOrders();
+      if (isB2B) {
+        mutateB2bOrders();
+      } else {
+        mutateOrders();
+      }
     }
   };
 
@@ -398,7 +413,7 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === 'orders' && (
-            <OrderManagement orders={orders} updateOrderStatus={updateOrderStatus} />
+            <OrderManagement orders={orders} b2bOrders={b2bOrders} updateOrderStatus={updateOrderStatus} />
           )}
 
           {activeTab === 'products' && (

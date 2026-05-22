@@ -26,6 +26,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/franchise/orders', [\App\Http\Controllers\FranchiseController::class, 'getHubOrders']);
         Route::patch('/franchise/orders/{id}', [\App\Http\Controllers\FranchiseController::class, 'updateHubOrderStatus']);
         Route::post('/pos/sync', [\App\Http\Controllers\OrderController::class, 'syncPOSOrders']);
+        Route::post('/franchise/commissary-orders', [\App\Http\Controllers\CommissaryController::class, 'store']);
+        Route::get('/franchise/commissary-orders', [\App\Http\Controllers\CommissaryController::class, 'index']);
     });
 
     // Order Placement (Authenticated)
@@ -39,6 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
         // Admin Order Management
         Route::get('/orders', [\App\Http\Controllers\Admin\AdminOrderController::class, 'index']);
         Route::patch('/orders/{id}', [\App\Http\Controllers\Admin\AdminOrderController::class, 'updateStatus']);
+
+        // Admin B2B Commissary Restocks
+        Route::get('/commissary-orders', [\App\Http\Controllers\CommissaryController::class, 'adminIndex']);
+        Route::patch('/commissary-orders/{id}', [\App\Http\Controllers\CommissaryController::class, 'adminUpdateStatus']);
 
         // Product Catalog Management
         Route::get('/products', [\App\Http\Controllers\Admin\ProductController::class, 'index']);
