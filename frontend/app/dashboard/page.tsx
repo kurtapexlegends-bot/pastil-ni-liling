@@ -72,10 +72,10 @@ export default function UserDashboard() {
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
       <Navbar variant="dashboard" onLogout={handleLogout} />
 
-      <main className="max-w-6xl mx-auto w-full px-8 pt-28 pb-12 flex-1 grid lg:grid-cols-3 gap-12">
+      <main className="max-w-6xl mx-auto w-full px-4 md:px-8 pt-28 pb-12 flex-1 grid lg:grid-cols-3 gap-8 md:gap-12">
         {/* User Sidebar */}
         <aside className="space-y-8">
-          <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-6">
+          <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm space-y-6">
             <div className="w-20 h-20 bg-brand-earth rounded-3xl flex items-center justify-center text-3xl text-white font-black shadow-xl shadow-brand-earth/20">
               {user?.name?.charAt(0)}
             </div>
@@ -85,7 +85,7 @@ export default function UserDashboard() {
             </div>
           </div>
 
-          <div className="bg-brand-earth text-white rounded-[2rem] p-8 space-y-4">
+          <div className="bg-brand-earth text-white rounded-[2rem] p-6 md:p-8 space-y-4">
              <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Total Orders</p>
              <p className="text-5xl font-black tracking-tighter">{orders.length}</p>
           </div>
@@ -115,7 +115,7 @@ export default function UserDashboard() {
               orders.map((order: any, idx: number) => (
                 <div 
                   key={order.id} 
-                  className="bg-white rounded-[2rem] border border-gray-100 p-8 space-y-6 hover:shadow-xl transition-all group animate-in slide-in-from-bottom fade-in duration-700 fill-mode-both"
+                  className="bg-white rounded-[2rem] border border-gray-100 p-5 md:p-8 space-y-6 hover:shadow-xl transition-all group animate-in slide-in-from-bottom fade-in duration-700 fill-mode-both"
                   style={{ animationDelay: `${idx * 100}ms` }}
                 >
                   <header className="flex items-center justify-between">

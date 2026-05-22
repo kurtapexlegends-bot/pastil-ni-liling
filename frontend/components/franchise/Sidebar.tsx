@@ -80,7 +80,7 @@ export default function FranchiseSidebar({
             {onClose && (
               <button 
                 onClick={onClose}
-                className="lg:hidden w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-xs text-brand-earth/70 hover:bg-gray-100 transition-colors"
+                className="lg:hidden w-11 h-11 rounded-full bg-gray-50 flex items-center justify-center text-xs text-brand-earth/70 hover:bg-gray-100 transition-colors"
               >
                 ✕
               </button>

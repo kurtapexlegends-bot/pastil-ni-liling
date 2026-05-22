@@ -28,9 +28,9 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
   const [hoveredHubId, setHoveredHubId] = useState<number | null>(null);
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
+    <div className="grid lg:grid-cols-3 gap-4 md:gap-8">
       {/* Branch Quality vs Sales Correlation Matrix */}
-      <div className="lg:col-span-2 bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-6 flex flex-col justify-between">
+      <div className="lg:col-span-2 bg-white border border-gray-100 p-4 md:p-6 rounded-2xl shadow-sm space-y-6 flex flex-col justify-between">
         <div>
           <div className="flex justify-between items-start">
             <div>
@@ -132,6 +132,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
                       height: `${radiusSize}px`,
                       transform: 'translate(-50%, 50%)',
                     }}
+                    onClick={() => setHoveredHubId(hoveredHubId === branch.id ? null : branch.id)}
                     onMouseEnter={() => setHoveredHubId(branch.id)}
                     onMouseLeave={() => setHoveredHubId(null)}
                   >
@@ -197,7 +198,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
       </div>
 
       {/* Flavor Demand Forecaster */}
-      <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm flex flex-col">
+      <div className="bg-white border border-gray-100 p-4 md:p-6 rounded-2xl shadow-sm flex flex-col">
         <div>
           <h3 className="text-xs font-black uppercase tracking-wider text-brand-earth">
             Popular Pastil Flavors

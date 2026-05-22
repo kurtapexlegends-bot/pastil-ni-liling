@@ -231,7 +231,7 @@ export default function POSCashierTab({
                         key={ch.value}
                         type="button"
                         onClick={() => setPosChannel(ch.value)}
-                        className={`py-2 rounded-full border text-[9px] font-bold uppercase tracking-widest transition-colors ${
+                        className={`py-3 rounded-full border text-[9px] font-bold uppercase tracking-widest transition-colors ${
                           posChannel === ch.value 
                             ? 'bg-brand-earth text-white border-brand-earth shadow-sm' 
                             : 'bg-white border-gray-100 text-brand-earth/40 hover:border-brand-green'

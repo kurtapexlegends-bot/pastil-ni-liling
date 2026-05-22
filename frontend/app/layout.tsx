@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import WarningSuppressor from "../components/WarningSuppressor";
 import SWRProvider from "../components/SWRProvider";
@@ -19,6 +19,14 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Pastil ni Liling | Swak sa Bulsa, Sarap na Babalik-balikan",
   description: "Experience authentic Mindanao Pastil. Premium quality, affordable, and undeniably delicious.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#1b2d16",
 };
 
 export default function RootLayout({

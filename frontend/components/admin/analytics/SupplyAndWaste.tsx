@@ -26,9 +26,9 @@ export default function SupplyAndWaste({ ingredientsSafety, foodWaste }: SupplyA
   const [hoveredStockIndex, setHoveredStockIndex] = useState<number | null>(null);
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
+    <div className="grid lg:grid-cols-3 gap-4 md:gap-8">
       {/* Ingredient Depletion & Safety Forecast (Horizontal Bar Chart) */}
-      <div className="lg:col-span-2 bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-4">
+      <div className="lg:col-span-2 bg-white border border-gray-100 p-4 md:p-6 rounded-2xl shadow-sm space-y-4">
         <div>
           <h3 className="text-xs font-black uppercase tracking-wider text-brand-earth">
             Ingredient Stock Levels
@@ -54,6 +54,7 @@ export default function SupplyAndWaste({ ingredientsSafety, foodWaste }: SupplyA
               <div
                 key={idx}
                 className="space-y-1 cursor-pointer group"
+                onClick={() => setHoveredStockIndex(hoveredStockIndex === idx ? null : idx)}
                 onMouseEnter={() => setHoveredStockIndex(idx)}
                 onMouseLeave={() => setHoveredStockIndex(null)}
               >
@@ -108,7 +109,7 @@ export default function SupplyAndWaste({ ingredientsSafety, foodWaste }: SupplyA
       </div>
 
       {/* Circular Waste Tracker Card */}
-      <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-6">
+      <div className="bg-white border border-gray-100 p-4 md:p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-6">
         <div>
           <h3 className="text-xs font-black uppercase tracking-wider">
             Food Waste Tracker
