@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use App\Models\Hub;
 use App\Models\HubInventory;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
@@ -25,7 +26,7 @@ class OrderService
      *
      * @throws \Exception
      */
-    public function createCustomerOrder(array $data, $user): Order
+    public function createCustomerOrder(array $data, ?User $user): Order
     {
         return DB::transaction(function () use ($data, $user) {
             $type = $data['type'] ?? 'retail';
@@ -40,12 +41,20 @@ class OrderService
                 $this->verifyStockAndDeduct($hubId, $data['items']);
             }
 
+            // Server-side Cart Payload Recalculation (Anti-Manipulation)
+            $calculatedTotal = 0;
+            foreach ($data['items'] as &$item) {
+                $product = Product::findOrFail($item['product_id']);
+                $item['price'] = $product->price; // Force override with DB price
+                $calculatedTotal += ($item['quantity'] * $item['price']);
+            }
+
             $order = Order::create([
                 'idempotency_key' => $data['idempotency_key'] ?? null,
                 'user_id' => $user?->id,
                 'hub_id' => $hubId,
                 'type' => $type,
-                'total_amount' => $data['total_amount'],
+                'total_amount' => $calculatedTotal,
                 'status' => 'pending',
                 'shipping_address' => $data['shipping_address'],
                 'latitude' => $customerLat,
@@ -73,7 +82,7 @@ class OrderService
      *
      * @throws \Exception
      */
-    public function syncPOSOrders(array $orders, $user): array
+    public function syncPOSOrders(array $orders, User $user): array
     {
         $hub = Hub::where('franchisee_id', $user->id)->first();
         if (!$hub) {
@@ -159,7 +168,7 @@ class OrderService
      *
      * @throws \Exception
      */
-    protected function resolveWholesaleHub($user): int
+    protected function resolveWholesaleHub(?User $user): int
     {
         if (!$user || !$user->hasRole('Franchisee')) {
             throw new \Exception('Access denied. Wholesale orders are restricted to registered Franchise partners.');
@@ -178,7 +187,7 @@ class OrderService
      *
      * @throws \Exception
      */
-    protected function resolveRetailHub($lat, $lng, array $items, ?int $hubId): int
+    protected function resolveRetailHub(?float $lat, ?float $lng, array $items, ?int $hubId): int
     {
         if (!is_null($lat) && !is_null($lng)) {
             $matchedHub = $this->geoRoutingService->findNearestHubWithStock((float) $lat, (float) $lng, $items);

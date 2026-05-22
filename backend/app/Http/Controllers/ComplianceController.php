@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ComplianceAudit;
 use App\Models\Hub;
+use App\Models\PosSyncAnomaly;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreComplianceAuditRequest;
 use App\Http\Requests\UpdateComplianceStatusRequest;
@@ -131,48 +132,28 @@ class ComplianceController extends Controller
     {
         $user = $request->user();
 
-        if ($user->hasRole('Admin') || $user->hasRole('HQ operations')) {
-            $anomalies = \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
-                ->join('hubs', 'pos_sync_anomalies.hub_id', '=', 'hubs.id')
-                ->join('products', 'pos_sync_anomalies.product_id', '=', 'products.id')
-                ->select(
-                    'pos_sync_anomalies.*',
-                    'hubs.name as hub_name',
-                    'products.name as product_name'
-                )
-                ->orderBy('pos_sync_anomalies.created_at', 'desc')
-                ->get();
-
+        if (!$user->hasRole('Admin') && !$user->hasRole('HQ operations') && !$user->hasRole('Franchisee')) {
             return response()->json([
-                'success' => true,
-                'data' => $anomalies
-            ]);
+                'success' => false,
+                'message' => 'Access denied.'
+            ], 403);
         }
 
-        if ($user->hasRole('Franchisee')) {
-            $hubs = Hub::where('franchisee_id', $user->id)->pluck('id');
-            $anomalies = \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
-                ->join('hubs', 'pos_sync_anomalies.hub_id', '=', 'hubs.id')
-                ->join('products', 'pos_sync_anomalies.product_id', '=', 'products.id')
-                ->whereIn('pos_sync_anomalies.hub_id', $hubs)
-                ->select(
-                    'pos_sync_anomalies.*',
-                    'hubs.name as hub_name',
-                    'products.name as product_name'
-                )
-                ->orderBy('pos_sync_anomalies.created_at', 'desc')
-                ->get();
-
-            return response()->json([
-                'success' => true,
-                'data' => $anomalies
-            ]);
-        }
+        $anomalies = PosSyncAnomaly::with(['hub', 'product'])
+            ->forUser($user)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($anomaly) {
+                // Map to maintain backward compatibility with frontend
+                $anomaly->hub_name = $anomaly->hub->name ?? 'Unknown';
+                $anomaly->product_name = $anomaly->product->name ?? 'Unknown';
+                return $anomaly;
+            });
 
         return response()->json([
-            'success' => false,
-            'message' => 'Access denied.'
-        ], 403);
+            'success' => true,
+            'data' => $anomalies
+        ]);
     }
 
     /**
@@ -190,9 +171,7 @@ class ComplianceController extends Controller
             ], 403);
         }
 
-        $anomaly = \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
-            ->where('id', $id)
-            ->first();
+        $anomaly = PosSyncAnomaly::find($id);
 
         if (!$anomaly) {
             return response()->json([
@@ -201,22 +180,15 @@ class ComplianceController extends Controller
             ], 404);
         }
 
-        \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
-            ->where('id', $id)
-            ->update([
-                'status' => 'resolved',
-                'notes' => $request->notes ?? 'Reconciled and resolved by HQ Operator.',
-                'updated_at' => now()
-            ]);
-
-        $updatedAnomaly = \Illuminate\Support\Facades\DB::table('pos_sync_anomalies')
-            ->where('id', $id)
-            ->first();
+        $anomaly->update([
+            'status' => 'resolved',
+            'notes' => $request->notes ?? 'Reconciled and resolved by HQ Operator.'
+        ]);
 
         return response()->json([
             'success' => true,
             'message' => 'POS sync anomaly marked as resolved.',
-            'data' => $updatedAnomaly
+            'data' => $anomaly
         ]);
     }
 }
