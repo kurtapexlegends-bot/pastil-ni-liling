@@ -9,14 +9,16 @@ use App\Models\User;
 use App\Models\WorkShift;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\ClockInRequest;
+use App\Http\Requests\CalculatePayoutRequest;
+use App\Http\Requests\StorePayoutRequest;
 
 class PayrollController extends Controller
 {
     /**
      * Clock-in a cashier shift session.
      */
-    public function clockIn(Request $request)
+    public function clockIn(ClockInRequest $request)
     {
         $user = $request->user();
 
@@ -38,18 +40,6 @@ class PayrollController extends Controller
                 'success' => false,
                 'message' => 'You already have an active shift session open.'
             ], 400);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'hub_id' => 'required|exists:hubs,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid hub location.',
-                'errors' => $validator->errors()
-            ], 422);
         }
 
         $shift = WorkShift::create([
@@ -146,24 +136,9 @@ class PayrollController extends Controller
     /**
      * Compute base shift pay and 5% walk-in POS cashier sales commissions.
      */
-    public function calculatePayout(Request $request)
+    public function calculatePayout(CalculatePayoutRequest $request)
     {
         $user = $request->user();
-
-        $validator = Validator::make($request->query(), [
-            'user_id' => 'required|exists:users,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-        ]);
-
-        // Fail-Fast: Validate date inputs
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
 
         $targetUserId = $request->query('user_id');
         $startDate = Carbon::parse($request->query('start_date'))->startOfDay();
@@ -185,7 +160,7 @@ class PayrollController extends Controller
     /**
      * Record a direct payout transaction.
      */
-    public function storePayout(Request $request)
+    public function storePayout(StorePayoutRequest $request)
     {
         $user = $request->user();
 
@@ -196,24 +171,6 @@ class PayrollController extends Controller
                 'success' => false,
                 'message' => 'Unauthorized payout action.'
             ], 403);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
-            'hub_id' => 'required|exists:hubs,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'base_pay' => 'required|numeric',
-            'commission_pay' => 'required|numeric',
-            'total_pay' => 'required|numeric',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error.',
-                'errors' => $validator->errors()
-            ], 422);
         }
 
         $payout = Payout::create([
