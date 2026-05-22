@@ -183,23 +183,23 @@ export default function FranchisePage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">First Name</label>
-                      <input name="first_name" value={formData.first_name} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-1 focus:ring-brand-green rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="John" required />
+                      <input name="first_name" value={formData.first_name} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="John" required />
                       {errors.first_name && <p className="text-[9px] text-red-500 font-semibold">{errors.first_name[0]}</p>}
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Last Name</label>
-                      <input name="last_name" value={formData.last_name} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-1 focus:ring-brand-green rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="Smith" required />
+                      <input name="last_name" value={formData.last_name} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="Smith" required />
                       {errors.last_name && <p className="text-[9px] text-red-500 font-semibold">{errors.last_name[0]}</p>}
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Email Address</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-1 focus:ring-brand-green rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="john.smith@example.com" required />
+                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="john.smith@example.com" required />
                     {errors.email && <p className="text-[9px] text-red-500 font-semibold">{errors.email[0]}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Phone Number</label>
-                    <input name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-1 focus:ring-brand-green rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="0917 123 4567" required />
+                    <input name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="0917 123 4567" required />
                     {errors.phone && <p className="text-[9px] text-red-500 font-semibold">{errors.phone[0]}</p>}
                   </div>
                   <button type="button" onClick={nextStep} className="w-full bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-earth/10 flex items-center justify-center gap-1.5">
@@ -217,12 +217,12 @@ export default function FranchisePage() {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Target Location</label>
-                    <input name="target_location" value={formData.target_location} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-1 focus:ring-brand-green rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="e.g. Davao City, Poblacion" required />
+                    <input name="target_location" value={formData.target_location} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="e.g. Davao City, Poblacion" required />
                     {errors.target_location && <p className="text-[9px] text-red-500 font-semibold">{errors.target_location[0]}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Investment Capacity</label>
-                    <select name="investment_capacity" value={formData.investment_capacity} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-1 focus:ring-brand-green rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" required>
+                    <select name="investment_capacity" value={formData.investment_capacity} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" required>
                       <option value="">Select Capacity Range</option>
                       <option value="50k-100k">₱50,000 - ₱100,000</option>
                       <option value="100k-200k">₱100,000 - ₱200,000</option>
@@ -252,7 +252,7 @@ export default function FranchisePage() {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Business Experience (Optional)</label>
-                    <textarea name="experience_summary" value={formData.experience_summary} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-1 focus:ring-brand-green rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all h-28 resize-none text-brand-earth placeholder:font-normal" placeholder="Briefly explain any prior business or food stall experiences..."></textarea>
+                    <textarea name="experience_summary" value={formData.experience_summary} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all h-28 resize-none text-brand-earth placeholder:font-normal" placeholder="Briefly explain any prior business or food stall experiences..."></textarea>
                   </div>
                   <div className="p-4 rounded-2xl bg-brand-green/5 border border-brand-green/10 space-y-1">
                     <p className="text-[9px] font-bold uppercase tracking-widest text-brand-green">Compliance Acknowledgement</p>
