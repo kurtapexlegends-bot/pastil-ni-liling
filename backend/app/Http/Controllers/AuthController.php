@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\ForgotPasswordRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -16,20 +19,8 @@ class AuthController extends Controller
     /**
      * Register a new user.
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
 
         $user = User::create([
             'name' => $request->name,
@@ -53,7 +44,7 @@ class AuthController extends Controller
     /**
      * Login user and create token.
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
@@ -104,19 +95,8 @@ class AuthController extends Controller
     /**
      * Send simulated password reset instructions and store reset token.
      */
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'We could not find a user with that email address.'
-            ], 422);
-        }
-
         $email = $request->email;
         $token = Str::random(40);
 
@@ -128,7 +108,8 @@ class AuthController extends Controller
             ]
         );
 
-        $resetLink = "http://localhost:3000/reset-password?token=" . $token . "&email=" . urlencode($email);
+        $frontendUrl = (string) config('app.frontend_url', 'http://localhost:3000');
+        $resetLink = rtrim($frontendUrl, '/') . "/reset-password?token=" . $token . "&email=" . urlencode((string) $email);
         \Illuminate\Support\Facades\Log::info("Password reset link requested: " . $resetLink);
 
         return response()->json([
@@ -142,21 +123,8 @@ class AuthController extends Controller
     /**
      * Reset the user's password.
      */
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'token' => 'required|string',
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
-
         // Verify token
         $record = DB::table('password_reset_tokens')
             ->where('email', $request->email)

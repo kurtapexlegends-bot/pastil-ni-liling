@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreCustomerOrderRequest;
+use App\Http\Requests\SyncPOSOrdersRequest;
 
 class OrderController extends Controller
 {
@@ -35,29 +36,8 @@ class OrderController extends Controller
     /**
      * Store a newly created order in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCustomerOrderRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'type' => 'nullable|string|in:retail,wholesale',
-            'hub_id' => 'nullable|exists:hubs,id',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
-            'total_amount' => 'required|numeric',
-            'shipping_address' => 'required|string',
-            'contact_number' => 'required|string',
-            'payment_method' => 'required|string|in:gcash,paymaya,cod',
-            'items' => 'required|array',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.price' => 'required|numeric',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
 
         $idempotencyKey = $request->header('X-Idempotency-Key');
         if ($idempotencyKey) {
@@ -93,27 +73,8 @@ class OrderController extends Controller
     /**
      * Synchronize offline POS orders taken at the franchisee stall/booth.
      */
-    public function syncPOSOrders(Request $request)
+    public function syncPOSOrders(SyncPOSOrdersRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'orders' => 'required|array',
-            'orders.*.offline_id' => 'required|string',
-            'orders.*.total_amount' => 'required|numeric',
-            'orders.*.payment_method' => 'required|string|in:gcash,paymaya,cod,cash,grab_pay,foodpanda_pay,online_card',
-            'orders.*.channel' => 'nullable|string|in:walk_in,grab,foodpanda,shopee,tiktok,e_commerce',
-            'orders.*.items' => 'required|array',
-            'orders.*.items.*.product_id' => 'required|exists:products,id',
-            'orders.*.items.*.quantity' => 'required|integer|min:1',
-            'orders.*.items.*.price' => 'required|numeric',
-            'orders.*.items.*.flavor_modifier' => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
 
         try {
             $syncedOrders = $this->orderService->syncPOSOrders($request->orders, $request->user());
