@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import useSWR from "swr";
 import Navbar from "@/components/Navbar";
 import { 
   Coins, 
@@ -15,7 +16,49 @@ import {
   ArrowLeft
 } from "@phosphor-icons/react";
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+interface SiteSettings {
+  franchise_badge: string;
+  franchise_title_white: string;
+  franchise_title_green: string;
+  franchise_subtitle: string;
+  franchise_benefit1_title: string;
+  franchise_benefit1_desc: string;
+  franchise_benefit2_title: string;
+  franchise_benefit2_desc: string;
+  franchise_benefit3_title: string;
+  franchise_benefit3_desc: string;
+  franchise_benefit4_title: string;
+  franchise_benefit4_desc: string;
+  franchise_milestone_title: string;
+  franchise_milestone_desc: string;
+  franchise_footer_copyright: string;
+}
+
 export default function FranchisePage() {
+  const { data: settingsRes } = useSWR("http://127.0.0.1:8000/api/website-settings", fetcher);
+
+  const defaults: SiteSettings = {
+    franchise_badge: 'Business Opportunity',
+    franchise_title_white: 'Grow with',
+    franchise_title_green: 'Pastil ni Liling.',
+    franchise_subtitle: "Be part of the Philippines' fastest-growing pastil brand. Low investment, high returns, and a product Filipinos love.",
+    franchise_benefit1_title: 'Low Capital',
+    franchise_benefit1_desc: 'Start your business journey with minimal overhead and rapid startup times.',
+    franchise_benefit2_title: 'Proven System',
+    franchise_benefit2_desc: 'Complete operational training, kitchen blueprints, and staff management support.',
+    franchise_benefit3_title: 'High Demand',
+    franchise_benefit3_desc: 'Pastil is a beloved staple food favorite that sells consistently 24/7.',
+    franchise_benefit4_title: 'Marketing Power',
+    franchise_benefit4_desc: 'National brand awareness campaigns and localized digital marketing support.',
+    franchise_milestone_title: '50+ Branches',
+    franchise_milestone_desc: 'And growing rapidly nationwide.',
+    franchise_footer_copyright: '&copy; 2026 Pastil ni Liling Franchise Program. Swak sa Bulsa, Sarap na Babalik-balikan.'
+  };
+
+  const settings: SiteSettings = settingsRes?.success ? settingsRes.data : defaults;
+
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -30,20 +73,94 @@ export default function FranchisePage() {
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<any>({});
 
+  const validateField = (name: string, value: string): string | null => {
+    switch (name) {
+      case 'first_name':
+        if (!value.trim()) return 'First Name is required.';
+        if (value.trim().length < 2) return 'First Name must be at least 2 characters.';
+        if (!/^[a-zA-Z\sñÑ]+$/.test(value)) return 'First Name can only contain letters and spaces.';
+        return null;
+      case 'last_name':
+        if (!value.trim()) return 'Last Name is required.';
+        if (value.trim().length < 2) return 'Last Name must be at least 2 characters.';
+        if (!/^[a-zA-Z\sñÑ]+$/.test(value)) return 'Last Name can only contain letters and spaces.';
+        return null;
+      case 'email':
+        if (!value.trim()) return 'Email Address is required.';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          return 'Enter a valid email address (e.g. name@domain.com).';
+        }
+        return null;
+      case 'phone': {
+        if (!value.trim()) return 'Phone Number is required.';
+        const cleaned = value.replace(/[\s-]/g, '');
+        if (!/^09\d{9}$/.test(cleaned) && !/^\+639\d{9}$/.test(cleaned)) {
+          return 'Enter a valid 11-digit mobile number starting with 09 (e.g. 09171234567).';
+        }
+        return null;
+      }
+      case 'target_location':
+        if (!value.trim()) return 'Target Location is required.';
+        if (value.trim().length < 8) return 'Provide a descriptive location (at least 8 characters).';
+        return null;
+      case 'investment_capacity':
+        if (!value) return 'Please select an investment capacity range.';
+        return null;
+      case 'experience_summary':
+        if (value && value.length > 500) return 'Experience summary must not exceed 500 characters.';
+        return null;
+      default:
+        return null;
+    }
+  };
+
+  const validateStep = (currentStep: number): boolean => {
+    let fieldsToValidate: string[] = [];
+    if (currentStep === 1) {
+      fieldsToValidate = ['first_name', 'last_name', 'email', 'phone'];
+    } else if (currentStep === 2) {
+      fieldsToValidate = ['target_location', 'investment_capacity'];
+    }
+
+    const stepErrors: any = {};
+    let isValid = true;
+    fieldsToValidate.forEach(field => {
+      const errorMsg = validateField(field, formData[field as keyof typeof formData]);
+      if (errorMsg) {
+        stepErrors[field] = [errorMsg];
+        isValid = false;
+      }
+    });
+
+    setErrors((prev: any) => ({ ...prev, ...stepErrors }));
+    return isValid;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev: any) => {
-        const newErrors = { ...prev };
+    
+    // Real-Time Constraint Validation
+    const errorMsg = validateField(name, value);
+    setErrors((prev: any) => {
+      const newErrors = { ...prev };
+      if (errorMsg) {
+        newErrors[name] = [errorMsg];
+      } else {
         delete newErrors[name];
-        return newErrors;
-      });
-    }
+      }
+      return newErrors;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Defensive final checks before dispatching payload to API
+    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+      return;
+    }
+
     setLoading(true);
     setErrors({});
 
@@ -68,8 +185,21 @@ export default function FranchisePage() {
     }
   };
 
-  const nextStep = () => setStep(prev => prev + 1);
+  const nextStep = () => {
+    if (validateStep(step)) {
+      setStep(prev => prev + 1);
+    }
+  };
+
   const prevStep = () => setStep(prev => prev - 1);
+
+  const getInputClassName = (fieldName: keyof typeof formData) => {
+    const hasError = !!errors[fieldName];
+    const base = "w-full bg-gray-50/50 border rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth";
+    const errorStyle = "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200/50";
+    const normalStyle = "border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30";
+    return `${base} ${hasError ? errorStyle : normalStyle}`;
+  };
 
   return (
     <div className="min-h-screen bg-background font-sans text-brand-earth selection:bg-brand-yellow/30 flex flex-col justify-between">
@@ -81,14 +211,14 @@ export default function FranchisePage() {
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-[9px] font-bold uppercase tracking-wider text-brand-yellow">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>
-              Business Opportunity
+              {settings.franchise_badge}
             </div>
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-brand-earth leading-[1.1] font-display">
-              Grow with <br />
-              <span className="text-brand-green">Pastil ni Liling.</span>
+              {settings.franchise_title_white} <br />
+              <span className="text-brand-green">{settings.franchise_title_green}</span>
             </h1>
             <p className="text-sm text-brand-earth/60 font-medium leading-relaxed max-w-md">
-              Be part of the Philippines' fastest-growing pastil brand. Low investment, high returns, and a product Filipinos love.
+              {settings.franchise_subtitle}
             </p>
           </div>
 
@@ -96,23 +226,23 @@ export default function FranchisePage() {
           <div className="grid sm:grid-cols-2 gap-8">
             {[
               { 
-                title: "Low Capital", 
-                desc: "Start your business journey with minimal overhead and rapid startup times.", 
+                title: settings.franchise_benefit1_title, 
+                desc: settings.franchise_benefit1_desc, 
                 icon: Coins 
               },
               { 
-                title: "Proven System", 
-                desc: "Complete operational training, kitchen blueprints, and staff management support.", 
+                title: settings.franchise_benefit2_title, 
+                desc: settings.franchise_benefit2_desc, 
                 icon: Briefcase 
               },
               { 
-                title: "High Demand", 
-                desc: "Pastil is a beloved staple food favorite that sells consistently 24/7.", 
+                title: settings.franchise_benefit3_title, 
+                desc: settings.franchise_benefit3_desc, 
                 icon: ShieldCheck 
               },
               { 
-                title: "Marketing Power", 
-                desc: "National brand awareness campaigns and localized digital marketing support.", 
+                title: settings.franchise_benefit4_title, 
+                desc: settings.franchise_benefit4_desc, 
                 icon: Megaphone 
               },
             ].map((item, i) => {
@@ -134,8 +264,8 @@ export default function FranchisePage() {
           {/* Branch Milestones Card */}
           <div className="p-6 bg-brand-earth rounded-3xl text-white relative overflow-hidden shadow-sm premium-shadow">
              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-green/20 blur-3xl rounded-full"></div>
-             <p className="text-3xl font-extrabold tracking-tight mb-1 font-display">50+ Branches</p>
-             <p className="text-[9px] font-bold uppercase tracking-widest opacity-60">And growing rapidly nationwide.</p>
+             <p className="text-3xl font-extrabold tracking-tight mb-1 font-display">{settings.franchise_milestone_title}</p>
+             <p className="text-[9px] font-bold uppercase tracking-widest opacity-60">{settings.franchise_milestone_desc}</p>
           </div>
         </div>
 
@@ -183,23 +313,23 @@ export default function FranchisePage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">First Name</label>
-                      <input name="first_name" value={formData.first_name} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="John" required />
+                      <input name="first_name" value={formData.first_name} onChange={handleInputChange} className={getInputClassName('first_name')} placeholder="John" required />
                       {errors.first_name && <p className="text-[9px] text-red-500 font-semibold">{errors.first_name[0]}</p>}
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Last Name</label>
-                      <input name="last_name" value={formData.last_name} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="Smith" required />
+                      <input name="last_name" value={formData.last_name} onChange={handleInputChange} className={getInputClassName('last_name')} placeholder="Smith" required />
                       {errors.last_name && <p className="text-[9px] text-red-500 font-semibold">{errors.last_name[0]}</p>}
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Email Address</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="john.smith@example.com" required />
+                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className={getInputClassName('email')} placeholder="@example.com" required />
                     {errors.email && <p className="text-[9px] text-red-500 font-semibold">{errors.email[0]}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Phone Number</label>
-                    <input name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="0917 123 4567" required />
+                    <input name="phone" value={formData.phone} onChange={handleInputChange} className={getInputClassName('phone')} placeholder="0912 345 6789" required />
                     {errors.phone && <p className="text-[9px] text-red-500 font-semibold">{errors.phone[0]}</p>}
                   </div>
                   <button type="button" onClick={nextStep} className="w-full bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-earth/10 flex items-center justify-center gap-1.5">
@@ -217,12 +347,12 @@ export default function FranchisePage() {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Target Location</label>
-                    <input name="target_location" value={formData.target_location} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" placeholder="e.g. Davao City, Poblacion" required />
+                    <input name="target_location" value={formData.target_location} onChange={handleInputChange} className={getInputClassName('target_location')} placeholder="e.g. Davao City, Poblacion" required />
                     {errors.target_location && <p className="text-[9px] text-red-500 font-semibold">{errors.target_location[0]}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Investment Capacity</label>
-                    <select name="investment_capacity" value={formData.investment_capacity} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all text-brand-earth" required>
+                    <select name="investment_capacity" value={formData.investment_capacity} onChange={handleInputChange} className={getInputClassName('investment_capacity')} required>
                       <option value="">Select Capacity Range</option>
                       <option value="50k-100k">₱50,000 - ₱100,000</option>
                       <option value="100k-200k">₱100,000 - ₱200,000</option>
@@ -252,7 +382,7 @@ export default function FranchisePage() {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Business Experience (Optional)</label>
-                    <textarea name="experience_summary" value={formData.experience_summary} onChange={handleInputChange} className="w-full bg-gray-50/50 border border-gray-100 focus:border-brand-green focus:ring-2 focus:ring-brand-green/30 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white outline-none transition-all h-28 resize-none text-brand-earth placeholder:font-normal" placeholder="Briefly explain any prior business or food stall experiences..."></textarea>
+                    <textarea name="experience_summary" value={formData.experience_summary} onChange={handleInputChange} className={`${getInputClassName('experience_summary')} h-28 resize-none placeholder:font-normal`} placeholder="Briefly explain any prior business or food stall experiences..."></textarea>
                   </div>
                   <div className="p-4 rounded-2xl bg-brand-green/5 border border-brand-green/10 space-y-1">
                     <p className="text-[9px] font-bold uppercase tracking-widest text-brand-green">Compliance Acknowledgement</p>
@@ -278,9 +408,10 @@ export default function FranchisePage() {
       </main>
 
       <footer className="py-8 border-t border-gray-100 text-center w-full mt-auto">
-        <p className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/30">
-          &copy; 2026 Pastil ni Liling Franchise Program. Swak sa Bulsa, Sarap na Babalik-balikan.
-        </p>
+        <p 
+          className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/30"
+          dangerouslySetInnerHTML={{ __html: settings.franchise_footer_copyright || '&copy; 2026 Pastil ni Liling Franchise Program. Swak sa Bulsa...' }}
+        />
       </footer>
     </div>
   );

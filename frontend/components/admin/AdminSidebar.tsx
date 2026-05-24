@@ -10,12 +10,13 @@ import {
   UsersThree, 
   ShieldCheck, 
   Coins, 
-  SignOut 
+  SignOut,
+  Globe
 } from '@phosphor-icons/react';
 
 interface AdminSidebarProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics';
-  setActiveTab: (tab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics') => void;
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content';
+  setActiveTab: (tab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content') => void;
   handleLogout: () => void;
   isOpen?: boolean;
   onClose?: () => void;
@@ -36,6 +37,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, handleLogout, is
         { id: 'products', label: 'Products', icon: BowlFood },
         { id: 'hubs', label: 'Branches', icon: Storefront },
         { id: 'supply_chain', label: 'Inventory', icon: Package },
+        { id: 'website_content', label: 'Site Content', icon: Globe },
       ]
     },
     {

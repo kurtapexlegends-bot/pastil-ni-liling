@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             ProductSeeder::class,
             HubSeeder::class,
+            WebsiteSettingSeeder::class,
         ]);
     }
 }
