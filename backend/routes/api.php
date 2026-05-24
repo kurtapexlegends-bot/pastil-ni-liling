@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Product Catalog Management
         Route::get('/products', [\App\Http\Controllers\Admin\ProductController::class, 'index']);
+        Route::post('/products/upload-image', [\App\Http\Controllers\Admin\ProductController::class, 'uploadImage']);
         Route::post('/products', [\App\Http\Controllers\Admin\ProductController::class, 'store']);
         Route::put('/products/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'update']);
         Route::delete('/products/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'destroy']);

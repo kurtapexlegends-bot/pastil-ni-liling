@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import WarningSuppressor from "../components/WarningSuppressor";
 import SWRProvider from "../components/SWRProvider";
+import GlobalProviders from "../providers/GlobalProviders";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -43,7 +44,9 @@ export default function RootLayout({
       <body suppressHydrationWarning className="min-h-full flex flex-col font-sans">
         <WarningSuppressor />
         <SWRProvider>
-          {children}
+          <GlobalProviders>
+            {children}
+          </GlobalProviders>
         </SWRProvider>
       </body>
     </html>

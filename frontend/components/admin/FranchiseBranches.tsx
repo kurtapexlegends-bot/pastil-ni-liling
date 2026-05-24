@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Hub, FranchiseeUser } from "../../app/admin/types";
 import { Storefront, Plus } from "@phosphor-icons/react";
 import HubModal from "./HubModal";
+import { useConfirm } from "../../hooks/useConfirm";
+import { toast } from "sonner";
 
 interface FranchiseBranchesProps {
   hubs: Hub[];
@@ -11,6 +13,7 @@ interface FranchiseBranchesProps {
 }
 
 export default function FranchiseBranches({ hubs, franchisees, saveHub, deleteHub }: FranchiseBranchesProps) {
+  const { confirm } = useConfirm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hubForm, setHubForm] = useState<Hub>({
     id: null,
@@ -47,6 +50,26 @@ export default function FranchiseBranches({ hubs, franchisees, saveHub, deleteHu
     const success = await saveHub(hubForm);
     if (success) {
       setIsModalOpen(false);
+      toast.success(hubForm.id ? "Branch updated successfully" : "Branch created successfully");
+    } else {
+      toast.error("Failed to save branch");
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    const isConfirmed = await confirm({
+      title: "Delete Branch",
+      message: "Are you sure you want to delete this franchise branch? This action cannot be undone.",
+      isDestructive: true
+    });
+    
+    if (isConfirmed) {
+      const success = await deleteHub(id);
+      if (success) {
+        toast.success("Branch deleted successfully");
+      } else {
+        toast.error("Failed to delete branch");
+      }
     }
   };
 
@@ -115,7 +138,7 @@ export default function FranchiseBranches({ hubs, franchisees, saveHub, deleteHu
                           Edit
                         </button>
                         <button
-                          onClick={() => deleteHub(hub.id!)}
+                          onClick={() => handleDelete(hub.id!)}
                           className="border border-red-100 text-red-600 hover:bg-red-50 px-2.5 py-1.5 rounded-md text-[9px] font-semibold uppercase tracking-wider transition-colors"
                         >
                           Delete

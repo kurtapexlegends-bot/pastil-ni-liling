@@ -5,19 +5,50 @@ import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
 import Navbar from "@/components/Navbar";
+import { useValidation, constraints, ValidationSchema } from "@/hooks/useValidation";
 import { 
   Coins, 
   Briefcase, 
-  ShieldCheck, 
-  Megaphone, 
-  CheckCircle, 
-  CaretRight, 
+  ShieldCheck,
+  Megaphone,
+  CheckCircle,
+  CaretRight,
   CaretLeft,
   ArrowLeft
 } from "@phosphor-icons/react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const franchiseSchema: ValidationSchema<any> = {
+  first_name: [
+    constraints.required('First Name is required.'),
+    constraints.minLength(2, 'First Name must be at least 2 characters.'),
+    constraints.pattern(/^[a-zA-Z\sñÑ]+$/, 'First Name can only contain letters and spaces.')
+  ],
+  last_name: [
+    constraints.required('Last Name is required.'),
+    constraints.minLength(2, 'Last Name must be at least 2 characters.'),
+    constraints.pattern(/^[a-zA-Z\sñÑ]+$/, 'Last Name can only contain letters and spaces.')
+  ],
+  email: [
+    constraints.required('Email Address is required.'),
+    constraints.email('Enter a valid email address (e.g. name@domain.com).')
+  ],
+  phone: [
+    constraints.required('Phone Number is required.'),
+    constraints.phonePH('Enter a valid 11-digit mobile number starting with 09 (e.g. 09171234567).')
+  ],
+  target_location: [
+    constraints.required('Target Location is required.'),
+    constraints.minLength(8, 'Provide a descriptive location (at least 8 characters).')
+  ],
+  investment_capacity: [
+    constraints.required('Please select an investment capacity range.')
+  ],
+  experience_summary: [
+    constraints.maxLength(500, 'Experience summary must not exceed 500 characters.')
+  ]
+};
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 interface SiteSettings {
   franchise_badge: string;
   franchise_title_white: string;
@@ -71,93 +102,33 @@ export default function FranchisePage() {
   });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState<any>({});
 
-  const validateField = (name: string, value: string): string | null => {
-    switch (name) {
-      case 'first_name':
-        if (!value.trim()) return 'First Name is required.';
-        if (value.trim().length < 2) return 'First Name must be at least 2 characters.';
-        if (!/^[a-zA-Z\sñÑ]+$/.test(value)) return 'First Name can only contain letters and spaces.';
-        return null;
-      case 'last_name':
-        if (!value.trim()) return 'Last Name is required.';
-        if (value.trim().length < 2) return 'Last Name must be at least 2 characters.';
-        if (!/^[a-zA-Z\sñÑ]+$/.test(value)) return 'Last Name can only contain letters and spaces.';
-        return null;
-      case 'email':
-        if (!value.trim()) return 'Email Address is required.';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          return 'Enter a valid email address (e.g. name@domain.com).';
-        }
-        return null;
-      case 'phone': {
-        if (!value.trim()) return 'Phone Number is required.';
-        const cleaned = value.replace(/[\s-]/g, '');
-        if (!/^09\d{9}$/.test(cleaned) && !/^\+639\d{9}$/.test(cleaned)) {
-          return 'Enter a valid 11-digit mobile number starting with 09 (e.g. 09171234567).';
-        }
-        return null;
-      }
-      case 'target_location':
-        if (!value.trim()) return 'Target Location is required.';
-        if (value.trim().length < 8) return 'Provide a descriptive location (at least 8 characters).';
-        return null;
-      case 'investment_capacity':
-        if (!value) return 'Please select an investment capacity range.';
-        return null;
-      case 'experience_summary':
-        if (value && value.length > 500) return 'Experience summary must not exceed 500 characters.';
-        return null;
-      default:
-        return null;
-    }
-  };
+  const { errors, validateField, validateStep, setErrors, clearErrors } = useValidation(franchiseSchema);
 
-  const validateStep = (currentStep: number): boolean => {
+  const isStepValid = (currentStep: number): boolean => {
     let fieldsToValidate: string[] = [];
     if (currentStep === 1) {
       fieldsToValidate = ['first_name', 'last_name', 'email', 'phone'];
     } else if (currentStep === 2) {
       fieldsToValidate = ['target_location', 'investment_capacity'];
+    } else if (currentStep === 3) {
+      fieldsToValidate = ['experience_summary'];
     }
-
-    const stepErrors: any = {};
-    let isValid = true;
-    fieldsToValidate.forEach(field => {
-      const errorMsg = validateField(field, formData[field as keyof typeof formData]);
-      if (errorMsg) {
-        stepErrors[field] = [errorMsg];
-        isValid = false;
-      }
-    });
-
-    setErrors((prev: any) => ({ ...prev, ...stepErrors }));
-    return isValid;
+    return validateStep(fieldsToValidate, formData);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Real-Time Constraint Validation
-    const errorMsg = validateField(name, value);
-    setErrors((prev: any) => {
-      const newErrors = { ...prev };
-      if (errorMsg) {
-        newErrors[name] = [errorMsg];
-      } else {
-        delete newErrors[name];
-      }
-      return newErrors;
-    });
-  };
 
+    // Real-Time Constraint Validation
+    validateField(name, value, { ...formData, [name]: value });
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Defensive final checks before dispatching payload to API
-    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+    if (!isStepValid(1) || !isStepValid(2) || !isStepValid(3)) {
       return;
     }
 
@@ -186,7 +157,7 @@ export default function FranchisePage() {
   };
 
   const nextStep = () => {
-    if (validateStep(step)) {
+    if (isStepValid(step)) {
       setStep(prev => prev + 1);
     }
   };

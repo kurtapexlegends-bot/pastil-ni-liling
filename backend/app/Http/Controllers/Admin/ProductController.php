@@ -28,6 +28,23 @@ class ProductController extends Controller
     }
 
     /**
+     * Upload product image.
+     */
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|max:5120' // 5MB max
+        ]);
+
+        $path = $request->file('image')->store('products', 'public');
+        
+        return response()->json([
+            'success' => true,
+            'url' => asset('storage/' . $path)
+        ]);
+    }
+
+    /**
      * Store a new product.
      */
     public function store(Request $request)

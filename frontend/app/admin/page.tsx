@@ -12,6 +12,8 @@ import { useAdminProducts } from "../../hooks/admin/useAdminProducts";
 import { useAdminHubs } from "../../hooks/admin/useAdminHubs";
 import { useAdminSupplyChain } from "../../hooks/admin/useAdminSupplyChain";
 import { useAdminOrders } from "../../hooks/admin/useAdminOrders";
+import { useConfirm } from "../../hooks/useConfirm";
+import { toast } from "sonner";
 
 // Components
 import DashboardLayout from "../../components/admin/DashboardLayout";
@@ -38,7 +40,7 @@ const SupplyChainManager = dynamic(() => import("../../components/admin/SupplyCh
 const EmployeeManager = dynamic(() => import("../../components/admin/EmployeeManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">Loading module...</p> });
 const QCComplianceManager = dynamic(() => import("../../components/admin/QCComplianceManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">Loading module...</p> });
 const BranchPayrollManager = dynamic(() => import("../../components/admin/BranchPayrollManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">Loading module...</p> });
-const WebsiteContentManager = dynamic(() => import("../../components/admin/WebsiteContentManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">Loading module...</p> });
+const WebsiteContentManager = dynamic(() => import("@/components/admin/WebsiteContentManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">Loading module...</p> });
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -52,9 +54,7 @@ export default function AdminDashboard() {
   const [authLoading, setAuthLoading] = useState(true);
 
   // Global Modals State
-  const [confirmState, setConfirmState] = useState<{isOpen: boolean, title: string, message: string, action: () => void}>({
-    isOpen: false, title: "", message: "", action: () => {}
-  });
+  const { alert } = useConfirm();
 
   // Data Hooks
   const { products, saveProduct, deleteProduct, isLoading: isLoadingProducts } = useAdminProducts(hasToken, activeTab === 'products' || activeTab === 'supply_chain' || activeTab === 'analytics');
@@ -89,12 +89,13 @@ export default function AdminDashboard() {
   const handleOrderTransition = async (id: number, status: string, isB2B: boolean = false) => {
     const result = await updateOrderStatus(id, status, isB2B);
     if (!result.success) {
-      setConfirmState({
-        isOpen: true,
+      alert({
         title: "Transition Rejected",
         message: result.message || "Invalid state transition.",
-        action: () => setConfirmState(prev => ({ ...prev, isOpen: false }))
+        isDestructive: true
       });
+    } else {
+      toast.success(`Order #${id} marked as ${status.replace('_', ' ')}`);
     }
   };
 
@@ -187,17 +188,6 @@ export default function AdminDashboard() {
               </>
               )}
               </DashboardLayout>
-
-              <ConfirmationModal 
-              isOpen={confirmState.isOpen}
-              title={confirmState.title}
-              message={confirmState.message}
-              confirmText="Acknowledge"
-              cancelText="Close"
-              isDestructive={true}
-              onConfirm={confirmState.action}
-              onCancel={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
-              />
               </>
               );
               }
