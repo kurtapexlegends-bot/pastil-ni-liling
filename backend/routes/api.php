@@ -72,6 +72,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/employees', [\App\Http\Controllers\EmployeeController::class, 'store']);
         Route::put('/employees/{id}', [\App\Http\Controllers\EmployeeController::class, 'update']);
         Route::delete('/employees/{id}', [\App\Http\Controllers\EmployeeController::class, 'destroy']);
+
+        // Website Settings Content Management
+        Route::put('/website-settings', [\App\Http\Controllers\WebsiteSettingController::class, 'update']);
     });
 
     // Routes shared by Admin, HQ operations, and Franchisee
@@ -113,3 +116,6 @@ Route::post('/franchise/apply', [\App\Http\Controllers\FranchiseApplicationContr
 
 // Hub Public Routes
 Route::get('/hubs', [\App\Http\Controllers\HubController::class, 'index']);
+
+// Website Settings Public Route
+Route::get('/website-settings', [\App\Http\Controllers\WebsiteSettingController::class, 'index']);

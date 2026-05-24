@@ -20,6 +20,7 @@ import HubModal from "../../components/admin/HubModal";
 const EmployeeManager = dynamic(() => import("../../components/admin/EmployeeManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">Loading module...</p> });
 const QCComplianceManager = dynamic(() => import("../../components/admin/QCComplianceManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">Loading module...</p> });
 const BranchPayrollManager = dynamic(() => import("../../components/admin/BranchPayrollManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">Loading module...</p> });
+const WebsiteContentManager = dynamic(() => import("../../components/admin/WebsiteContentManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">Loading module...</p> });
 const AnalyticsEngine = dynamic(() => import("../../components/admin/AnalyticsEngine"), {
   ssr: false,
   loading: () => <div className="h-96 flex flex-col items-center justify-center text-xs font-semibold text-brand-earth/40 animate-pulse bg-white rounded-2xl border border-gray-100 shadow-sm">
@@ -33,7 +34,7 @@ import { deleteCookie } from "@/components/cookieHelper";
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics'>('analytics');
+  const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content'>('analytics');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -464,6 +465,10 @@ export default function AdminDashboard() {
 
           {activeTab === 'payroll' && (
             <BranchPayrollManager />
+          )}
+
+          {activeTab === 'website_content' && (
+            <WebsiteContentManager />
           )}
         </div>
         </>

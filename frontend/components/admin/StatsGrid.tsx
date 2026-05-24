@@ -1,7 +1,7 @@
 import { FranchiseApplication, Order, Product, Hub } from "../../app/admin/types";
 
 interface StatsGridProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics';
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content';
   applications: FranchiseApplication[];
   orders: Order[];
   products: Product[];
@@ -11,6 +11,10 @@ interface StatsGridProps {
 }
 
 export default function StatsGrid({ activeTab, applications, orders, products, hubs, ingredients = [], batches = [] }: StatsGridProps) {
+  if (activeTab === 'website_content') {
+    return null;
+  }
+
   if (activeTab === 'analytics') {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">

@@ -35,11 +35,11 @@ export default function MenuPage() {
   }, [cartItems]);
 
   const { data, isLoading: loading } = useSWR("http://127.0.0.1:8000/api/products", (url) => fetch(url).then(res => res.json()));
-  const products = data?.success ? data.data : [];
+  const products = (data?.success && Array.isArray(data.data)) ? data.data : [];
 
-  const filteredProducts = filter === "all" 
-    ? products 
-    : products.filter((p: Product) => p.category === filter);
+  const filteredProducts = Array.isArray(products)
+    ? (filter === "all" ? products : products.filter((p: Product) => p.category === filter))
+    : [];
 
   const handleAddToCart = (product: Product) => {
     setCartItems(prev => {
