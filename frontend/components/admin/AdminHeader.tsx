@@ -1,13 +1,11 @@
 import { List } from "@phosphor-icons/react";
 
 interface AdminHeaderProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics';
-  onAddProduct: () => void;
-  onCreateHub: () => void;
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content';
   onToggleSidebar?: () => void;
 }
 
-export default function AdminHeader({ activeTab, onAddProduct, onCreateHub, onToggleSidebar }: AdminHeaderProps) {
+export default function AdminHeader({ activeTab, onToggleSidebar }: AdminHeaderProps) {
   const titles = {
     analytics: "Enterprise Business Intelligence",
     applications: "Franchise Partnerships",
@@ -17,7 +15,8 @@ export default function AdminHeader({ activeTab, onAddProduct, onCreateHub, onTo
     supply_chain: "Commissary Logistics & Batches",
     employees: "Personnel Access Control",
     compliance: "Digital QC Audits",
-    payroll: "Branch Payroll & Shift Logs"
+    payroll: "Branch Payroll & Shift Logs",
+    website_content: "Website Content Manager"
   } as const;
 
   const descriptions = {
@@ -29,7 +28,8 @@ export default function AdminHeader({ activeTab, onAddProduct, onCreateHub, onTo
     supply_chain: "FIFO Batch integrity tracking and recipe formula config",
     employees: "Define custom RBAC permission locks and terminate staff credentials",
     compliance: "Review weekly branch cleanliness logs and recipe standard checks",
-    payroll: "Dry run direct payouts and track cashier 5% POS sales commissions"
+    payroll: "Dry run direct payouts and track cashier 5% POS sales commissions",
+    website_content: "Modify public-facing marketing material"
   } as const;
 
   return (
@@ -46,31 +46,13 @@ export default function AdminHeader({ activeTab, onAddProduct, onCreateHub, onTo
         )}
         <div>
           <h2 className="text-lg font-bold text-brand-earth uppercase tracking-wide leading-tight">
-            {titles[activeTab]}
+            {titles[activeTab as keyof typeof titles]}
           </h2>
           <p className="text-[10px] text-brand-earth/40 font-semibold uppercase tracking-wider mt-0.5 leading-snug">
-            {descriptions[activeTab]}
+            {descriptions[activeTab as keyof typeof descriptions]}
           </p>
         </div>
       </div>
-
-      {activeTab === 'products' && (
-        <button
-          onClick={onAddProduct}
-          className="bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all shadow-sm shrink-0 active:scale-[0.98]"
-        >
-          Add Product
-        </button>
-      )}
-
-      {activeTab === 'hubs' && (
-        <button
-          onClick={onCreateHub}
-          className="bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all shadow-sm shrink-0 active:scale-[0.98]"
-        >
-          Create Franchise Hub
-        </button>
-      )}
     </header>
   );
 }
