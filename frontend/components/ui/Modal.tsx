@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   isOpen: boolean;
@@ -17,6 +18,12 @@ export default function Modal({
   children,
   maxWidthClass = 'max-w-md',
 }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -29,11 +36,11 @@ export default function Modal({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div 
-      className="fixed inset-0 z-50 flex items-end justify-center p-0 bg-brand-earth/30 backdrop-blur-md animate-fade-in sm:items-center sm:p-6"
+      className="fixed inset-0 z-[9999] flex items-end justify-center p-0 bg-brand-earth/30 backdrop-blur-md animate-fade-in sm:items-center sm:p-6"
       onClick={onClose}
     >
       <div 
@@ -66,6 +73,7 @@ export default function Modal({
           <div className="h-4 w-full shrink-0" />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

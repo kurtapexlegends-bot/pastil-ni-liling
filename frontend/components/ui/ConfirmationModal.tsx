@@ -1,4 +1,7 @@
-import React, { useEffect } from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Warning, Info } from "@phosphor-icons/react";
 
 interface ConfirmationModalProps {
@@ -22,6 +25,12 @@ export default function ConfirmationModal({
   onConfirm,
   onCancel
 }: ConfirmationModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onCancel();
@@ -30,9 +39,9 @@ export default function ConfirmationModal({
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen, onCancel]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div 
         className="absolute inset-0 bg-brand-earth/30 backdrop-blur-sm animate-in fade-in duration-200" 
@@ -74,6 +83,7 @@ export default function ConfirmationModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -10,10 +10,6 @@ interface DashboardLayoutProps {
   handleLogout: () => void;
   isSidebarOpen: boolean;
   setIsSidebarOpen: (isOpen: boolean) => void;
-  headerProps: {
-    onAddProduct: () => void;
-    onCreateHub: () => void;
-  };
   children: React.ReactNode;
 }
 
@@ -23,7 +19,6 @@ export default function DashboardLayout({
   handleLogout,
   isSidebarOpen,
   setIsSidebarOpen,
-  headerProps,
   children
 }: DashboardLayoutProps) {
   return (
@@ -41,7 +36,6 @@ export default function DashboardLayout({
         <AdminHeader
           activeTab={activeTab}
           onToggleSidebar={() => setIsSidebarOpen(true)}
-          {...headerProps}
         />
         
         {children}

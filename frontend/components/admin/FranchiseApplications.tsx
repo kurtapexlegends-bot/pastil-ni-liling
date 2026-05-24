@@ -3,7 +3,7 @@ import { Users } from "@phosphor-icons/react";
 
 interface FranchiseApplicationsProps {
   applications: FranchiseApplication[];
-  updateAppStatus: (id: number, status: string) => Promise<void>;
+  updateAppStatus: (id: number, status: string) => Promise<boolean>;
 }
 
 export default function FranchiseApplications({ applications, updateAppStatus }: FranchiseApplicationsProps) {
