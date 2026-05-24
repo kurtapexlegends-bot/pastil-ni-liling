@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Product } from "../../app/admin/types";
 import { Package, Plus } from "@phosphor-icons/react";
 import ProductModal from "./ProductModal";
+import { useConfirm } from "../../hooks/useConfirm";
+import { toast } from "sonner";
 
 interface ProductCatalogProps {
   products: Product[];
@@ -11,6 +13,7 @@ interface ProductCatalogProps {
 }
 
 export default function ProductCatalog({ products, saveProduct, deleteProduct }: ProductCatalogProps) {
+  const { confirm } = useConfirm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productForm, setProductForm] = useState<Product>({
     id: null,
@@ -59,6 +62,26 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
     const success = await saveProduct(productForm);
     if (success) {
       setIsModalOpen(false);
+      toast.success(productForm.id ? "Product updated successfully" : "Product added successfully");
+    } else {
+      toast.error("Failed to save product");
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    const isConfirmed = await confirm({
+      title: "Delete Product",
+      message: "Are you sure you want to delete this product? This action cannot be undone.",
+      isDestructive: true
+    });
+    
+    if (isConfirmed) {
+      const success = await deleteProduct(id);
+      if (success) {
+        toast.success("Product deleted successfully");
+      } else {
+        toast.error("Failed to delete product");
+      }
     }
   };
 
@@ -146,7 +169,7 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
                           Edit
                         </button>
                         <button
-                          onClick={() => deleteProduct(product.id!)}
+                          onClick={() => handleDelete(product.id!)}
                           className="border border-red-100 text-red-600 hover:bg-red-50 px-2.5 py-1.5 rounded-md text-[9px] font-semibold uppercase tracking-wider transition-colors"
                         >
                           Delete

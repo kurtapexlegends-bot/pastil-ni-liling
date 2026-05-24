@@ -40,7 +40,7 @@ export default function Modal({
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[9999] flex items-end justify-center p-0 bg-brand-earth/30 backdrop-blur-md animate-fade-in sm:items-center sm:p-6"
+      className="fixed inset-0 z-[9999] flex items-end justify-center p-0 bg-brand-earth/30 backdrop-blur-[2px] animate-fade-in sm:items-center sm:p-6"
       onClick={onClose}
     >
       <div 

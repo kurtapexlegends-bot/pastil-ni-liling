@@ -44,7 +44,7 @@ export default function ConfirmationModal({
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div 
-        className="absolute inset-0 bg-brand-earth/30 backdrop-blur-sm animate-in fade-in duration-200" 
+        className="absolute inset-0 bg-brand-earth/30 backdrop-blur-[2px] animate-in fade-in duration-200" 
         onClick={onCancel}
       />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-7 overflow-hidden animate-in zoom-in-95 duration-200">
@@ -65,12 +65,14 @@ export default function ConfirmationModal({
         </div>
 
         <div className="mt-8 flex gap-3 w-full">
-          <button
-            onClick={onCancel}
-            className="flex-1 py-3 px-4 rounded-xl border border-gray-100 bg-white text-brand-earth font-bold text-xs uppercase tracking-widest hover:bg-gray-50 active:scale-[0.98] transition-all shadow-sm"
-          >
-            {cancelText}
-          </button>
+          {cancelText && (
+            <button
+              onClick={onCancel}
+              className="flex-1 py-3 px-4 rounded-xl border border-gray-100 bg-white text-brand-earth font-bold text-xs uppercase tracking-widest hover:bg-gray-50 active:scale-[0.98] transition-all shadow-sm"
+            >
+              {cancelText}
+            </button>
+          )}
           <button
             onClick={onConfirm}
             className={`flex-1 py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-widest text-white active:scale-[0.98] transition-all shadow-sm ${
