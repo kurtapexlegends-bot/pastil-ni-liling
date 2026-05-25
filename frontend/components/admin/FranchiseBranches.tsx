@@ -45,9 +45,14 @@ export default function FranchiseBranches({ hubs, franchisees, saveHub, deleteHu
     setIsModalOpen(true);
   };
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSaving) return;
+    setIsSaving(true);
     const success = await saveHub(hubForm);
+    setIsSaving(false);
     if (success) {
       setIsModalOpen(false);
       toast.success(hubForm.id ? "Branch updated successfully" : "Branch created successfully");

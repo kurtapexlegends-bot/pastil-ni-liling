@@ -61,8 +61,8 @@ export default function AdminSidebar({ activeTab, setActiveTab, handleLogout, is
         />
       )}
 
-      <aside className={`border-r border-gray-100 bg-white flex flex-col justify-between p-6 select-none shrink-0 h-screen overflow-y-auto transition-transform duration-300 lg:translate-x-0 lg:w-64 lg:static lg:flex z-50
-        ${isOpen ? 'fixed inset-y-0 left-0 w-64 translate-x-0 shadow-2xl' : 'fixed inset-y-0 left-0 w-64 -translate-x-full lg:flex'}
+      <aside className={`border-r border-gray-100 bg-white flex flex-col justify-between p-5 select-none shrink-0 h-screen overflow-y-auto transition-transform duration-300 lg:translate-x-0 lg:w-56 lg:static lg:flex z-50
+        ${isOpen ? 'fixed inset-y-0 left-0 w-56 translate-x-0 shadow-2xl' : 'fixed inset-y-0 left-0 w-56 -translate-x-full lg:flex'}
       `}>
         <div className="space-y-6">
           {/* Header/Logo Branding */}

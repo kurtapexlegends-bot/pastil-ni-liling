@@ -16,12 +16,18 @@ export default function ProductCard({ product, onAddToCart, onClick }: ProductCa
       className="group bg-white rounded-2xl border border-gray-100 p-3.5 shadow-sm hover:shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 cursor-pointer"
     >
       <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
-        <Image
-          src={product.image_url || "/hero.png"}
+        <img
+          src={
+            product.image_url 
+              ? product.image_url.startsWith('http://localhost/storage') 
+                ? product.image_url.replace('http://localhost/storage', 'http://127.0.0.1:8000/storage')
+                : product.image_url.startsWith('/') 
+                  ? `http://127.0.0.1:8000${product.image_url}` 
+                  : product.image_url
+              : "/hero.png"
+          }
           alt={product.name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-md px-2.5 py-0.5 rounded-lg text-[10px] font-semibold text-brand-earth shadow-sm">
           ₱{product.price}

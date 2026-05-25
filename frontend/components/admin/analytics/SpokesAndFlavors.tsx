@@ -98,7 +98,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
                 </p>
               </div>
             ) : (
-              branches.map((branch) => {
+              branches.map((branch, idx) => {
                 const maxRev = Math.max(...branches.map((b) => b.revenue)) || 10000;
                 const minRev = Math.min(...branches.map((b) => b.revenue)) || 0;
                 const revSpan = maxRev - minRev || 1;
@@ -123,7 +123,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
 
                 return (
                   <div
-                    key={branch.id}
+                    key={`branch-${branch.id}-${idx}`}
                     className={`absolute rounded-full border flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg active:scale-95 ${bubbleBg}`}
                     style={{
                       left: `${leftPos}%`,
@@ -214,7 +214,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
               No flavor catalogs detected.
             </div>
           ) : (
-            trends.map((trend) => {
+            trends.map((trend, idx) => {
               const growth = Number(trend.projected_weekly_growth || 0);
               const isPositive = growth >= 0;
 
@@ -229,7 +229,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
 
               return (
                 <div
-                  key={trend.flavor}
+                  key={`trend-${trend.flavor}-${idx}`}
                   className="group border border-gray-100 hover:border-brand-green/30 hover:shadow-md hover:shadow-brand-green/5 transition-all duration-300 bg-white p-3.5 rounded-xl flex flex-col justify-between space-y-2.5 relative overflow-hidden"
                 >
                   <div className="space-y-1.5">
