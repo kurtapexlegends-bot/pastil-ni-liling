@@ -42,7 +42,7 @@ class WebsiteSetting extends Model
      * Set a website setting by key.
      * Automatically converts arrays/objects into JSON.
      */
-    public static function setByKey(string $key, $value): self
+    public static function setByKey(string $key, mixed $value): self
     {
         $valueToStore = (is_array($value) || is_object($value)) 
             ? json_encode($value, JSON_UNESCAPED_UNICODE) 

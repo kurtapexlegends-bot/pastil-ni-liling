@@ -1,0 +1,15 @@
+{
+  "id": "b7d96259-3714-47bc-811d-aaf5e6cf18a8",
+  "name": "Pastil ni Liling",
+  "projectResources": {
+    "resources": [
+      {
+        "gitFolder": {
+          "folderUri": "file:///c%3A/laragon/www/Pastil%20ni%20Liling",
+          "defaultBranch": "master",
+          "allowWrite": true
+        }
+      }
+    ]
+  }
+}

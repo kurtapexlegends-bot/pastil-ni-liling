@@ -22,6 +22,7 @@ class PayrollService
         $basePay = 0;
         $totalHours = 0;
 
+        /** @var WorkShift $shift */
         foreach ($shifts as $shift) {
             $hours = $this->calculateShiftHours($shift);
             $totalHours += $hours;
