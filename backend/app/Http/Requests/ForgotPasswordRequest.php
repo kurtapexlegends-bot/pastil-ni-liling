@@ -27,6 +27,16 @@ class ForgotPasswordRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'email.exists' => 'We could not find a user with that email address.',
+        ];
+    }
+
     protected function prepareForValidation()
     {
         if ($this->has('email')) {

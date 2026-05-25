@@ -64,26 +64,48 @@ export default function AdminDashboard() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
-    if (!token || !userData) {
-      router.push("/login");
+    if (!token || !userData || userData === "undefined" || userData === "null") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      deleteCookie("token");
+      deleteCookie("user_role");
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
       return;
     }
-    const parsedUser = JSON.parse(userData);
-    const roles = parsedUser.roles || [];
-    const hasAdminAccess = roles.some((r: any) => r.name === "Admin" || r.name === "HQ operations");
-    if (!hasAdminAccess) {
-      router.push("/dashboard");
-      return;
+    try {
+      const parsedUser = JSON.parse(userData);
+      const roles = parsedUser?.roles || [];
+      const hasAdminAccess = roles.some((r: any) => r.name === "Admin" || r.name === "HQ operations");
+      if (!hasAdminAccess) {
+        deleteCookie("token");
+        deleteCookie("user_role");
+        if (typeof window !== "undefined") {
+          window.location.href = "/dashboard";
+        }
+        return;
+      }
+      setHasToken(true);
+      setAuthLoading(false);
+    } catch (e) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      deleteCookie("token");
+      deleteCookie("user_role");
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
     }
-    setHasToken(true);
-    setAuthLoading(false);
   }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     deleteCookie("token");
     deleteCookie("user_role");
-    router.push("/login");
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
   };
 
   const handleOrderTransition = async (id: number, status: string, isB2B: boolean = false) => {
@@ -99,7 +121,14 @@ export default function AdminDashboard() {
     }
   };
 
-  if (!hasToken && authLoading) return null;
+  if (!hasToken && authLoading) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] flex flex-col justify-center items-center font-sans">
+        <div className="w-10 h-10 rounded-full border-4 border-brand-green border-t-transparent animate-spin mb-4"></div>
+        <p className="text-[10px] font-black uppercase tracking-widest text-brand-earth/40 animate-pulse">{"Authenticating Administrator..."}</p>
+      </div>
+    );
+  }
 
   const isDataLoading = 
     (activeTab === 'products' && isLoadingProducts) ||
