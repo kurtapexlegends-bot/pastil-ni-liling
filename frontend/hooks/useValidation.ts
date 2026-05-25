@@ -7,7 +7,29 @@ export type ValidationSchema<T> = {
 };
 
 export function useValidation<T extends Record<string, any>>(schema: ValidationSchema<T>) {
-  const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
+  const [errors, _setErrors] = useState<Partial<Record<keyof T, string>>>({});
+
+  const setErrors = useCallback((newErrors: any) => {
+    _setErrors(prev => {
+      const target = typeof newErrors === 'function' ? newErrors(prev) : newErrors;
+      if (!target) return {};
+      
+      const normalized: any = {};
+      for (const key in target) {
+        if (Object.prototype.hasOwnProperty.call(target, key)) {
+          const val = target[key];
+          if (Array.isArray(val)) {
+            normalized[key] = val[0] || '';
+          } else if (typeof val === 'string') {
+            normalized[key] = val;
+          } else if (val) {
+            normalized[key] = String(val);
+          }
+        }
+      }
+      return normalized;
+    });
+  }, []);
 
   const validateField = useCallback((name: keyof T, value: any, formState: T): string | null => {
     const rules = schema[name];
@@ -15,12 +37,12 @@ export function useValidation<T extends Record<string, any>>(schema: ValidationS
       for (const rule of rules) {
         const error = rule(value, formState);
         if (error) {
-          setErrors(prev => ({ ...prev, [name]: error }));
+          _setErrors(prev => ({ ...prev, [name]: error }));
           return error;
         }
       }
     }
-    setErrors(prev => {
+    _setErrors(prev => {
       const newErrors = { ...prev };
       delete newErrors[name];
       return newErrors;
@@ -46,7 +68,7 @@ export function useValidation<T extends Record<string, any>>(schema: ValidationS
       }
     });
 
-    setErrors(prev => ({ ...prev, ...stepErrors }));
+    _setErrors(prev => ({ ...prev, ...stepErrors }));
     return isValid;
   }, [schema]);
 
@@ -54,7 +76,7 @@ export function useValidation<T extends Record<string, any>>(schema: ValidationS
     return validateStep(Object.keys(schema) as (keyof T)[], formState);
   }, [validateStep, schema]);
 
-  return { errors, validateField, validateStep, validateAll, setErrors, clearErrors: () => setErrors({}) };
+  return { errors, validateField, validateStep, validateAll, setErrors, clearErrors: () => _setErrors({}) };
 }
 
 // Built-in constraint validators for easy global use
@@ -67,7 +89,7 @@ export const constraints = {
     (v && v.trim().length > max) ? (message || `Must not exceed ${max} characters.`) : null,
   pattern: (regex: RegExp, message: string) => (v: string) => 
     (v && !regex.test(v)) ? message : null,
-  email: (message = "Enter a valid email address (e.g. name@domain.com).") => 
+  email: (message = "Enter a valid email address (e.g. email@example.com).") => 
     constraints.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, message),
   phonePH: (message = "Enter a valid 11-digit mobile number starting with 09.") => 
     (v: string) => {

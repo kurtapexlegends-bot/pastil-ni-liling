@@ -116,7 +116,7 @@ export default function RegisterPage() {
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
               />
-              {errors.name && <p className="text-[10px] text-red-500 font-bold">{errors.name[0]}</p>}
+              {errors.name && <p className="text-[10px] text-red-500 font-bold">{Array.isArray(errors.name) ? errors.name[0] : errors.name}</p>}
             </div>
 
             <div className="space-y-2">
@@ -129,7 +129,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
               />
-              {errors.email && <p className="text-[10px] text-red-500 font-bold">{errors.email[0]}</p>}
+              {errors.email && <p className="text-[10px] text-red-500 font-bold">{Array.isArray(errors.email) ? errors.email[0] : errors.email}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -173,7 +173,7 @@ export default function RegisterPage() {
                   </button>
                 </div>
               </div>
-              {errors.password && <p className="text-[10px] text-red-500 font-bold col-span-2">{errors.password[0]}</p>}
+              {errors.password && <p className="text-[10px] text-red-500 font-bold col-span-2">{Array.isArray(errors.password) ? errors.password[0] : errors.password}</p>}
             </div>
 
             {errors.general && <p className="text-xs font-bold text-red-500 text-center">{errors.general}</p>}
