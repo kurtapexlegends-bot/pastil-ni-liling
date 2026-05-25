@@ -17,7 +17,8 @@ class ProductController extends Controller
             return Product::where('is_active', true)
                 ->orderBy('category')
                 ->orderBy('name')
-                ->get();
+                ->get()
+                ->toArray();
         });
 
         return response()->json([

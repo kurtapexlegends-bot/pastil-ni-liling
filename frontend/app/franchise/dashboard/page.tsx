@@ -40,17 +40,17 @@ export default function FranchiseDashboard() {
   };
 
   const { data: ordersRes, mutate: mutateOrders } = useSWR(user ? "http://127.0.0.1:8000/api/franchise/commissary-orders" : null, fetcher);
-  const orders = ordersRes?.success ? ordersRes.data : [];
+  const orders = ordersRes?.success && Array.isArray(ordersRes.data) ? ordersRes.data : [];
 
   const { data: invRes, mutate: mutateInventory } = useSWR(user ? "http://127.0.0.1:8000/api/franchise/inventory" : null, fetcher, { refreshInterval: 60000 });
   const hub = invRes?.success ? invRes.hub : null;
-  const hubInventory = invRes?.success ? invRes.data : [];
+  const hubInventory = invRes?.success && Array.isArray(invRes.data) ? invRes.data : [];
 
   const { data: prodRes, mutate: mutateProducts } = useSWR(activePortalTab === 'logistics' && user ? "http://127.0.0.1:8000/api/products" : null, fetcher);
-  const products = prodRes?.success ? prodRes.data.filter((p: any) => p.is_wholesale) : [];
+  const products = prodRes?.success && Array.isArray(prodRes.data) ? prodRes.data.filter((p: any) => p.is_wholesale) : [];
 
   const { data: custRes, mutate: mutateCustomerOrders } = useSWR(activePortalTab === 'logistics' && user ? "http://127.0.0.1:8000/api/franchise/orders" : null, fetcher, { refreshInterval: 60000 });
-  const customerOrders = custRes?.success ? custRes.data : [];
+  const customerOrders = custRes?.success && Array.isArray(custRes.data) ? custRes.data : [];
 
   const {
     cartItems, isCartOpen, setIsCartOpen, isCheckingOut,
