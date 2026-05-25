@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import SalesAndMargins from './analytics/SalesAndMargins';
 import SupplyAndWaste from './analytics/SupplyAndWaste';
 import SpokesAndFlavors from './analytics/SpokesAndFlavors';
+import { deleteCookie } from '@/components/cookieHelper';
 
 interface MarginData {
   total_revenue: number;
@@ -62,16 +63,30 @@ interface AnalyticsData {
   trends: FlavorTrend[];
 }
 
-const fetcher = (url: string) => {
+const fetcher = async (url: string) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Missing authentication token.');
-  return fetch(url, {
+  
+  const res = await fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-  }).then(res => res.json());
+  });
+
+  if (res.status === 401) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    deleteCookie('token');
+    deleteCookie('user_role');
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+    throw new Error('Session expired. Please log in again.');
+  }
+
+  return res.json();
 };
 
 export default function AnalyticsEngine() {

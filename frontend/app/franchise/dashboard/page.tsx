@@ -70,27 +70,47 @@ export default function FranchiseDashboard() {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
     
-    if (!token || !userData) {
-      router.push("/login");
+    if (!token || !userData || userData === "undefined" || userData === "null") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      deleteCookie("token");
+      deleteCookie("user_role");
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
       return;
     }
 
-    const parsedUser = JSON.parse(userData);
-    const isFranchiseAccess = parsedUser.roles?.some((r: any) => r.name === "Franchisee" || r.name === "Branch Cashier") || false;
-    
-    if (!isFranchiseAccess) {
-      router.push("/dashboard");
-      return;
-    }
+    try {
+      const parsedUser = JSON.parse(userData);
+      const isFranchiseAccess = parsedUser.roles?.some((r: any) => r.name === "Franchisee" || r.name === "Branch Cashier") || false;
+      
+      if (!isFranchiseAccess) {
+        deleteCookie("token");
+        deleteCookie("user_role");
+        if (typeof window !== "undefined") {
+          window.location.href = "/dashboard";
+        }
+        return;
+      }
 
-    setUser(parsedUser);
-    if (parsedUser.roles?.some((r: any) => r.name === "Branch Cashier")) {
-      setActivePortalTab('pos');
-    } else {
-      setActivePortalTab('logistics');
-    }
+      setUser(parsedUser);
+      if (parsedUser.roles?.some((r: any) => r.name === "Branch Cashier")) {
+        setActivePortalTab('pos');
+      } else {
+        setActivePortalTab('logistics');
+      }
 
-    setLoading(false);
+      setLoading(false);
+    } catch (e) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      deleteCookie("token");
+      deleteCookie("user_role");
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    }
   }, [router]);
 
 
@@ -129,7 +149,9 @@ export default function FranchiseDashboard() {
     localStorage.clear();
     deleteCookie("token");
     deleteCookie("user_role");
-    router.push('/login');
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
   };
 
   if (loading) {

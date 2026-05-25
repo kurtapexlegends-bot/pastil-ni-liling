@@ -49,7 +49,7 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
 
   const areaPathD =
     points.length > 0
-      ? `${pathD} L ${points.at(-1)!.x} ${svgHeight - paddingY} L ${points.at(0)!.x} ${svgHeight - paddingY} Z`
+      ? `${pathD} L ${points[points.length - 1].x} ${svgHeight - paddingY} L ${points[0].x} ${svgHeight - paddingY} Z`
       : '';
 
   return (
@@ -181,7 +181,7 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
 
           {/* Float Tooltip overlay */}
           {(() => {
-            const activePoint = hoveredSalesIndex !== null ? points.at(hoveredSalesIndex)! : null;
+            const activePoint = (hoveredSalesIndex !== null && hoveredSalesIndex >= 0 && hoveredSalesIndex < points.length) ? points[hoveredSalesIndex] : null;
             if (!activePoint) return null;
             return (
               <div
