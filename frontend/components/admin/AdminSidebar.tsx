@@ -72,8 +72,8 @@ export default function AdminSidebar({ activeTab, setActiveTab, handleLogout, is
                 <span className="text-[11px] font-bold text-brand-green uppercase">HQ</span>
               </div>
               <div>
-                <h1 className="text-xs font-black text-brand-earth uppercase tracking-wider leading-none">Liling's Pastil</h1>
-                <p className="text-[9px] font-bold text-brand-earth/30 uppercase tracking-widest mt-0.5">Control Center</p>
+                <h1 className="text-xs font-black text-brand-earth uppercase tracking-wider leading-none">{"Liling's Pastil"}</h1>
+                <p className="text-[9px] font-bold text-brand-earth/30 uppercase tracking-widest mt-0.5">{"Control Center"}</p>
               </div>
             </div>
             {onClose && (

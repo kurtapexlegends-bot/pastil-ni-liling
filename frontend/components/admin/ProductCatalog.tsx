@@ -107,13 +107,13 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
           <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Product details</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Category</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Retail price</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Wholesale price</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Stock qty</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Status</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">Actions</th>
+                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Product details"}</th>
+                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Category"}</th>
+                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Retail price"}</th>
+                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Wholesale price"}</th>
+                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Stock qty"}</th>
+                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Status"}</th>
+                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Actions"}</th>
               </tr>
             </thead>
             <tbody>
@@ -144,7 +144,7 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
                           className="w-9 h-9 rounded-lg object-cover" 
                         />
                       ) : (
-                        <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center text-[10px] font-bold text-brand-earth/40 uppercase">Jar</div>
+                        <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center text-[10px] font-bold text-brand-earth/40 uppercase">{"Jar"}</div>
                       )}
                       <div>
                         <p className="text-xs font-semibold text-brand-earth">{product.name}</p>

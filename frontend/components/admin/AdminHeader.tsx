@@ -32,6 +32,38 @@ export default function AdminHeader({ activeTab, onToggleSidebar }: AdminHeaderP
     website_content: "Modify public-facing marketing material"
   } as const;
 
+  const getTabTitle = (tab: string) => {
+    switch (tab) {
+      case "analytics": return titles.analytics;
+      case "applications": return titles.applications;
+      case "orders": return titles.orders;
+      case "products": return titles.products;
+      case "hubs": return titles.hubs;
+      case "supply_chain": return titles.supply_chain;
+      case "employees": return titles.employees;
+      case "compliance": return titles.compliance;
+      case "payroll": return titles.payroll;
+      case "website_content": return titles.website_content;
+      default: return "";
+    }
+  };
+
+  const getTabDesc = (tab: string) => {
+    switch (tab) {
+      case "analytics": return descriptions.analytics;
+      case "applications": return descriptions.applications;
+      case "orders": return descriptions.orders;
+      case "products": return descriptions.products;
+      case "hubs": return descriptions.hubs;
+      case "supply_chain": return descriptions.supply_chain;
+      case "employees": return descriptions.employees;
+      case "compliance": return descriptions.compliance;
+      case "payroll": return descriptions.payroll;
+      case "website_content": return descriptions.website_content;
+      default: return "";
+    }
+  };
+
   return (
     <header className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
       <div className="flex items-center gap-3">
@@ -46,10 +78,10 @@ export default function AdminHeader({ activeTab, onToggleSidebar }: AdminHeaderP
         )}
         <div>
           <h2 className="text-lg font-bold text-brand-earth uppercase tracking-wide leading-tight">
-            {titles[activeTab as keyof typeof titles]}
+            {getTabTitle(activeTab)}
           </h2>
           <p className="text-[10px] text-brand-earth/40 font-semibold uppercase tracking-wider mt-0.5 leading-snug">
-            {descriptions[activeTab as keyof typeof descriptions]}
+            {getTabDesc(activeTab)}
           </p>
         </div>
       </div>
