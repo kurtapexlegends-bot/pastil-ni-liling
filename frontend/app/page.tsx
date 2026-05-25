@@ -100,7 +100,7 @@ export default function Home() {
       <Navbar variant="landing" />
 
       {/* Hero Section - Balanced & Focused */}
-      <main className="pt-24 pb-16 md:pt-32 md:pb-32 px-6 flex-1">
+      <main className="pt-20 pb-16 md:pt-24 md:pb-24 px-6 flex-1">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div className="space-y-6 md:space-y-8 animate-in fade-in duration-1000">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green/5 border border-brand-green/10 text-[9px] font-bold uppercase tracking-widest text-brand-green">

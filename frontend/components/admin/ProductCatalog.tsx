@@ -37,7 +37,8 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
       stock: 0,
       category: "pastil",
       is_wholesale: false,
-      is_active: true
+      is_active: true,
+      image_url: ""
     });
     setIsModalOpen(true);
   };
@@ -52,7 +53,8 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
       stock: product.stock,
       category: product.category,
       is_wholesale: !!product.is_wholesale,
-      is_active: !!product.is_active
+      is_active: !!product.is_active,
+      image_url: product.image_url || ""
     });
     setIsModalOpen(true);
   };
