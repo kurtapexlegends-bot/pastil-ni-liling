@@ -30,11 +30,11 @@ const franchiseSchema: ValidationSchema<any> = {
   ],
   email: [
     constraints.required('Email Address is required.'),
-    constraints.email('Enter a valid email address (e.g. name@domain.com).')
+    constraints.email('Enter a valid email address (e.g. email@example.com).')
   ],
   phone: [
     constraints.required('Phone Number is required.'),
-    constraints.phonePH('Enter a valid 11-digit mobile number starting with 09 (e.g. 09171234567).')
+    constraints.phonePH('Enter a valid 11-digit mobile number starting with 09 (e.g. 09123456789).')
   ],
   target_location: [
     constraints.required('Target Location is required.'),
@@ -285,23 +285,23 @@ export default function FranchisePage() {
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">First Name</label>
                       <input name="first_name" value={formData.first_name} onChange={handleInputChange} className={getInputClassName('first_name')} placeholder="John" required />
-                      {errors.first_name && <p className="text-[9px] text-red-500 font-semibold">{errors.first_name[0]}</p>}
+                      {errors.first_name && <p className="text-[9px] text-red-500 font-semibold">{errors.first_name}</p>}
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Last Name</label>
                       <input name="last_name" value={formData.last_name} onChange={handleInputChange} className={getInputClassName('last_name')} placeholder="Smith" required />
-                      {errors.last_name && <p className="text-[9px] text-red-500 font-semibold">{errors.last_name[0]}</p>}
+                      {errors.last_name && <p className="text-[9px] text-red-500 font-semibold">{errors.last_name}</p>}
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Email Address</label>
                     <input type="email" name="email" value={formData.email} onChange={handleInputChange} className={getInputClassName('email')} placeholder="@example.com" required />
-                    {errors.email && <p className="text-[9px] text-red-500 font-semibold">{errors.email[0]}</p>}
+                    {errors.email && <p className="text-[9px] text-red-500 font-semibold">{errors.email}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Phone Number</label>
                     <input name="phone" value={formData.phone} onChange={handleInputChange} className={getInputClassName('phone')} placeholder="0912 345 6789" required />
-                    {errors.phone && <p className="text-[9px] text-red-500 font-semibold">{errors.phone[0]}</p>}
+                    {errors.phone && <p className="text-[9px] text-red-500 font-semibold">{errors.phone}</p>}
                   </div>
                   <button type="button" onClick={nextStep} className="w-full bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-earth/10 flex items-center justify-center gap-1.5">
                     Continue
@@ -319,7 +319,7 @@ export default function FranchisePage() {
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Target Location</label>
                     <input name="target_location" value={formData.target_location} onChange={handleInputChange} className={getInputClassName('target_location')} placeholder="e.g. Davao City, Poblacion" required />
-                    {errors.target_location && <p className="text-[9px] text-red-500 font-semibold">{errors.target_location[0]}</p>}
+                    {errors.target_location && <p className="text-[9px] text-red-500 font-semibold">{errors.target_location}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Investment Capacity</label>
@@ -330,7 +330,7 @@ export default function FranchisePage() {
                       <option value="200k-500k">₱200,000 - ₱500,000</option>
                       <option value="500k+">₱500,000+</option>
                     </select>
-                    {errors.investment_capacity && <p className="text-[9px] text-red-500 font-semibold">{errors.investment_capacity[0]}</p>}
+                    {errors.investment_capacity && <p className="text-[9px] text-red-500 font-semibold">{errors.investment_capacity}</p>}
                   </div>
                   <div className="flex gap-4 pt-2">
                     <button type="button" onClick={prevStep} className="flex-1 bg-gray-100 hover:bg-gray-200 text-brand-earth py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5">
