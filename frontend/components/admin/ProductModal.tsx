@@ -117,6 +117,11 @@ export default function ProductModal({
             <input 
               type="number" 
               value={productForm.stock}
+              onKeyDown={(e) => {
+                if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                  e.preventDefault();
+                }
+              }}
               onChange={(e) => {
                 let rawValue = e.target.value;
                 // If it was exactly '0' and they typed '1', it might come through as '01'.
@@ -155,10 +160,30 @@ export default function ProductModal({
               type="number" 
               step="0.01"
               value={productForm.price}
+              onKeyDown={(e) => {
+                if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                  e.preventDefault();
+                }
+              }}
               onChange={(e) => {
-                const val = e.target.value === '' ? ('' as any) : parseFloat(e.target.value);
+                let rawValue = e.target.value;
+                if (productForm.price === 0 && rawValue.startsWith('0') && rawValue.length > 1) {
+                  rawValue = rawValue.substring(1);
+                }
+                const val = rawValue === '' ? ('' as any) : parseFloat(rawValue);
                 setProductForm(prev => ({ ...prev, price: val }));
                 validateField("price", val, { ...productForm, price: val });
+              }}
+              onFocus={(e) => {
+                if (productForm.price === 0) {
+                  setProductForm(prev => ({ ...prev, price: '' as any }));
+                }
+              }}
+              onBlur={(e) => {
+                 if (productForm.price as any === '') {
+                   setProductForm(prev => ({ ...prev, price: 0 }));
+                   validateField("price", 0, { ...productForm, price: 0 });
+                 }
               }}
               min="0"
               className={`w-full border rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:outline-none transition-all shadow-sm ${errors.price ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200/50' : 'border-gray-100 focus:border-brand-earth/30'}`}
@@ -172,7 +197,29 @@ export default function ProductModal({
               type="number" 
               step="0.01"
               value={productForm.wholesale_price}
-              onChange={(e) => setProductForm(prev => ({ ...prev, wholesale_price: e.target.value === '' ? ('' as any) : parseFloat(e.target.value) }))}
+              onKeyDown={(e) => {
+                if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                  e.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                let rawValue = e.target.value;
+                if (productForm.wholesale_price === 0 && rawValue.startsWith('0') && rawValue.length > 1) {
+                  rawValue = rawValue.substring(1);
+                }
+                const val = rawValue === '' ? ('' as any) : parseFloat(rawValue);
+                setProductForm(prev => ({ ...prev, wholesale_price: val }));
+              }}
+              onFocus={(e) => {
+                if (productForm.wholesale_price === 0) {
+                  setProductForm(prev => ({ ...prev, wholesale_price: '' as any }));
+                }
+              }}
+              onBlur={(e) => {
+                 if (productForm.wholesale_price as any === '') {
+                   setProductForm(prev => ({ ...prev, wholesale_price: 0 }));
+                 }
+              }}
               disabled={!productForm.is_wholesale}
               min="0"
               className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm disabled:bg-gray-50 disabled:text-gray-400"
@@ -218,8 +265,16 @@ export default function ProductModal({
           <div className="flex items-center gap-4">
             {productForm.image_url ? (
               <div className="relative w-16 h-16 rounded-xl border border-gray-100 overflow-hidden shrink-0 group">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={productForm.image_url} alt="Preview" className="w-full h-full object-cover" />
+                <img 
+                  src={productForm.image_url.startsWith('http://localhost/storage') 
+                    ? productForm.image_url.replace('http://localhost/storage', 'http://127.0.0.1:8000/storage')
+                    : productForm.image_url.startsWith('/') 
+                      ? `http://127.0.0.1:8000${productForm.image_url}` 
+                      : productForm.image_url
+                  } 
+                  alt="Preview" 
+                  className="w-full h-full object-cover" 
+                />
                 <button
                   type="button"
                   onClick={() => setProductForm(prev => ({ ...prev, image_url: '' }))}
@@ -276,7 +331,8 @@ export default function ProductModal({
           </button>
           <button 
             type="submit" 
-            className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-earth/10"
+            disabled={!productForm.name.trim() || !productForm.price || !productForm.description?.trim() || !productForm.image_url || (productForm.is_wholesale && !productForm.wholesale_price)}
+            className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-earth/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand-earth"
           >
             Save Product
           </button>

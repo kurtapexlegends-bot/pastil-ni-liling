@@ -57,9 +57,14 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
     setIsModalOpen(true);
   };
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSaving) return;
+    setIsSaving(true);
     const success = await saveProduct(productForm);
+    setIsSaving(false);
     if (success) {
       setIsModalOpen(false);
       toast.success(productForm.id ? "Product updated successfully" : "Product added successfully");
@@ -128,7 +133,16 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
                   <tr key={product.id} className="hover:bg-gray-50/30 transition-colors">
                     <td className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
                       {product.image_url ? (
-                        <Image src={product.image_url} alt={product.name} width={36} height={36} className="rounded-lg object-cover" />
+                        <img 
+                          src={product.image_url.startsWith('http://localhost/storage') 
+                            ? product.image_url.replace('http://localhost/storage', 'http://127.0.0.1:8000/storage')
+                            : product.image_url.startsWith('/') 
+                              ? `http://127.0.0.1:8000${product.image_url}` 
+                              : product.image_url
+                          } 
+                          alt={product.name} 
+                          className="w-9 h-9 rounded-lg object-cover" 
+                        />
                       ) : (
                         <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center text-[10px] font-bold text-brand-earth/40 uppercase">Jar</div>
                       )}
