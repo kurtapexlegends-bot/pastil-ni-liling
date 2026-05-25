@@ -49,7 +49,7 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
 
   const areaPathD =
     points.length > 0
-      ? `${pathD} L ${points[points.length - 1].x} ${svgHeight - paddingY} L ${points[0].x} ${svgHeight - paddingY} Z`
+      ? `${pathD} L ${points.at(-1)!.x} ${svgHeight - paddingY} L ${points.at(0)!.x} ${svgHeight - paddingY} Z`
       : '';
 
   return (
@@ -60,10 +60,10 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-xs font-black uppercase tracking-wider text-brand-earth">
-                Sales Performance
+                {"Sales Performance"}
               </h3>
               <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">
-                Daily revenue tracking across retail POS, wholesale spokes, and delivery channels
+                {"Daily revenue tracking across retail POS, wholesale spokes, and delivery channels"}
               </p>
             </div>
             <div className="flex gap-3 text-[8px] font-bold uppercase tracking-wider">
@@ -180,45 +180,49 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
           </svg>
 
           {/* Float Tooltip overlay */}
-          {hoveredSalesIndex !== null && (
-            <div
-              className="absolute z-30 bg-brand-earth text-white p-3 rounded-lg shadow-lg border border-white/10 text-[9px] pointer-events-none transition-all duration-150"
-              style={{
-                left: `${(points[hoveredSalesIndex].x / svgWidth) * 100}%`,
-                top: `${(points[hoveredSalesIndex].y / svgHeight) * 100 - 32}%`,
-                transform: 'translateX(-50%)',
-              }}
-            >
-              <p className="font-black text-brand-yellow uppercase tracking-widest text-[8px] mb-1">
-                {points[hoveredSalesIndex].day} Performance
-              </p>
-              <div className="space-y-0.5">
-                <p className="flex justify-between gap-4 font-bold text-white/60">
-                  Wholesale:{' '}
-                  <span className="text-white">
-                    ₱{points[hoveredSalesIndex].wholesale.toLocaleString()}
-                  </span>
+          {(() => {
+            const activePoint = hoveredSalesIndex !== null ? points.at(hoveredSalesIndex)! : null;
+            if (!activePoint) return null;
+            return (
+              <div
+                className="absolute z-30 bg-brand-earth text-white p-3 rounded-lg shadow-lg border border-white/10 text-[9px] pointer-events-none transition-all duration-150"
+                style={{
+                  left: `${(activePoint.x / svgWidth) * 100}%`,
+                  top: `${(activePoint.y / svgHeight) * 100 - 32}%`,
+                  transform: 'translateX(-50%)',
+                }}
+              >
+                <p className="font-black text-brand-yellow uppercase tracking-widest text-[8px] mb-1">
+                  {activePoint.day} Performance
                 </p>
-                <p className="flex justify-between gap-4 font-bold text-white/60">
-                  Retail Order:{' '}
-                  <span className="text-white">
-                    ₱{points[hoveredSalesIndex].retail.toLocaleString()}
-                  </span>
-                </p>
-                <p className="flex justify-between gap-4 font-bold text-white/60">
-                  POS Shift Sales:{' '}
-                  <span className="text-white">
-                    ₱{points[hoveredSalesIndex].pos.toLocaleString()}
-                  </span>
-                </p>
-                <div className="h-px bg-white/10 my-1"></div>
-                <p className="flex justify-between gap-4 font-black text-brand-green">
-                  Net Gross:{' '}
-                  <span>₱{points[hoveredSalesIndex].totalRev.toLocaleString()}</span>
-                </p>
+                <div className="space-y-0.5">
+                  <p className="flex justify-between gap-4 font-bold text-white/60">
+                    {"Wholesale:"}{' '}
+                    <span className="text-white">
+                      ₱{activePoint.wholesale.toLocaleString()}
+                    </span>
+                  </p>
+                  <p className="flex justify-between gap-4 font-bold text-white/60">
+                    {"Retail Order:"}{' '}
+                    <span className="text-white">
+                      ₱{activePoint.retail.toLocaleString()}
+                    </span>
+                  </p>
+                  <p className="flex justify-between gap-4 font-bold text-white/60">
+                    {"POS Shift Sales:"}{' '}
+                    <span className="text-white">
+                      ₱{activePoint.pos.toLocaleString()}
+                    </span>
+                  </p>
+                  <div className="h-px bg-white/10 my-1"></div>
+                  <p className="flex justify-between gap-4 font-black text-brand-green">
+                    {"Net Gross:"}{' '}
+                    <span>₱{activePoint.totalRev.toLocaleString()}</span>
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       </div>
 
@@ -226,10 +230,10 @@ export default function SalesAndMargins({ salesTimeline, grossMargins }: SalesAn
       <div className="bg-white border border-gray-100 p-4 md:p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-6">
         <div>
           <h3 className="text-xs font-black uppercase tracking-wider">
-            Revenue & Cost Breakdown
+            {"Revenue & Cost Breakdown"}
           </h3>
           <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest mt-0.5">
-            Allocation of sales revenue towards ingredients, labor, waste, and expenses
+            {"Allocation of sales revenue towards ingredients, labor, waste, and expenses"}
           </p>
         </div>
 
