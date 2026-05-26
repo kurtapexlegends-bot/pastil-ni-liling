@@ -219,11 +219,12 @@ export default function MobileMockup({ formData, products, activeSubTab }: Mobil
                 {!Array.isArray(formData.featured_products) || formData.featured_products.length === 0 ? (
                   <p className="text-[7px] font-semibold text-brand-earth/40 italic py-2">Catalog empty.</p>
                 ) : (
-                  formData.featured_products.map((id) => {
-                    const prod = Array.isArray(products) ? products.find(p => p.id === id) : undefined;
-                    if (!prod) return null;
-                    return (
-                      <div key={id} className="w-[85px] shrink-0 space-y-1.5 select-none animate-in slide-in-from-bottom fade-in duration-500">
+                  (() => {
+                    const featuredProducts = Array.isArray(products)
+                      ? products.filter(p => p.id !== null && p.id !== undefined && Array.isArray(formData.featured_products) && formData.featured_products.includes(p.id))
+                      : [];
+                    return featuredProducts.map((prod) => (
+                      <div key={prod.id} className="w-[85px] shrink-0 space-y-1.5 select-none animate-in slide-in-from-bottom fade-in duration-500">
                         <div className="aspect-[4/3] rounded-lg bg-gray-50 overflow-hidden relative border border-gray-100 shadow-sm">
                            <Image 
                             src={prod.image_url || '/hero.png'} 
@@ -241,8 +242,8 @@ export default function MobileMockup({ formData, products, activeSubTab }: Mobil
                           <div className="text-[5px] font-bold mt-0.5">₱{prod.price}</div>
                         </div>
                       </div>
-                    );
-                  })
+                    ));
+                  })()
                 )}
               </div>
             </div>
