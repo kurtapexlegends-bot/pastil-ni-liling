@@ -113,9 +113,14 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
                     { title: formData.franchise_benefit3_title || 'High Demand', desc: formData.franchise_benefit3_desc || 'beloved staple favorite.' },
                     { title: formData.franchise_benefit4_title || 'Marketing Power', desc: formData.franchise_benefit4_desc || 'brand awareness.' },
                   ].map((item, idx) => (
-                    <div key={idx} className="space-y-0.5 border-l border-brand-green/20 pl-1.5 animate-in fade-in duration-300">
-                      <h4 className="text-[5.5px] font-black uppercase tracking-wider leading-none">{item.title}</h4>
-                      <p className="text-[4.5px] text-brand-earth/40 leading-normal">{item.desc}</p>
+                    <div key={idx} className="flex gap-1.5 animate-in fade-in duration-300">
+                      <div className="w-4 h-4 rounded bg-brand-green/10 flex items-center justify-center shrink-0 border border-brand-green/20 select-none">
+                        <span className="text-[6px] font-black text-brand-green">✓</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        <h4 className="text-[5.5px] font-bold uppercase tracking-wider leading-none text-brand-earth">{item.title}</h4>
+                        <p className="text-[4.5px] text-brand-earth/40 leading-normal">{item.desc}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -158,17 +163,26 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
           /* LANDING HOME DESKTOP VIEW */
           <>
             {/* NAVBAR */}
-            <div className="bg-white/85 px-4 py-2.5 border-b border-gray-100 flex items-center justify-between shrink-0 select-none">
-              <div className="flex items-center gap-1">
-                <div className="w-4 h-4 rounded-full bg-brand-green/10 flex items-center justify-center shrink-0">
-                  <span className="text-[5px] font-black text-brand-green">HQ</span>
+            <div className="bg-white px-4 py-2 border-b border-gray-100 flex items-center justify-between shrink-0 select-none">
+              <div className="flex items-center gap-1.5">
+                <div className="w-4.5 h-4.5 rounded-full overflow-hidden relative border border-gray-100 shrink-0">
+                  <Image src="/logo.jpg" alt="Logo" fill className="object-cover" />
                 </div>
-                <span className="text-[7px] font-black uppercase tracking-tighter">Liling's Pastil</span>
+                <div className="flex flex-col">
+                  <span className="text-[6.5px] font-bold uppercase tracking-tight text-brand-earth leading-none">Pastil ni Liling</span>
+                  <span className="text-[4px] font-bold uppercase tracking-wider text-brand-green leading-none mt-0.5">Authentic Mindanao</span>
+                </div>
               </div>
-              <div className="flex gap-3 text-[6px] font-bold uppercase tracking-wider text-brand-earth/50">
-                <span>Menu</span>
-                <span>Franchise</span>
-                <span>Store</span>
+              <div className="flex items-center gap-4">
+                <div className="flex gap-3 text-[5px] font-bold uppercase tracking-wider text-brand-earth/60">
+                  <span>Retail Menu</span>
+                  <span>Franchise</span>
+                  <span>Our Story</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[4.5px] font-bold uppercase text-brand-earth/70">Sign In</span>
+                  <span className="bg-brand-earth text-white px-2 py-1 rounded-full text-[4.5px] font-bold uppercase tracking-wider">Order Online</span>
+                </div>
               </div>
             </div>
 
@@ -176,12 +190,12 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
             <div className="px-5 pt-8 pb-10 border-b border-gray-100 bg-white select-none">
               <div className="grid grid-cols-12 gap-4 items-center">
                 <div className="col-span-7 space-y-3">
-                  <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-green/5 border border-brand-green/10 text-[5px] font-bold uppercase tracking-wider text-brand-green">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-green/5 border border-brand-green/10 text-[5px] font-bold uppercase tracking-widest text-brand-green">
                     <span className="w-1 rounded-full bg-brand-green aspect-square"></span>
                     {formData.hero_badge || 'Sarap na Babalik-balikan'}
                   </div>
                   
-                  <h1 className="text-xs font-extrabold tracking-tight leading-tight">
+                  <h1 className="text-[15px] font-extrabold tracking-tight leading-[1.1] text-brand-earth max-w-[150px]">
                     {formData.hero_title_white ? (
                       formData.hero_title_white.split('\n').map((line, i) => <span key={i}>{line}<br/></span>)
                     ) : (
@@ -190,28 +204,58 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
                     <span className="text-brand-green">{formData.hero_title_green || 'doorstep.'}</span>
                   </h1>
 
-                  <p className="text-[7px] text-brand-earth/50 leading-relaxed font-medium">
+                  <p className="text-[7px] text-brand-earth/60 leading-relaxed font-medium max-w-[172px]">
                     {formData.hero_subtitle || 'Experience authentic flavors crafted with tradition...'}
                   </p>
 
                   <div className="flex gap-2 pt-1">
-                    <span className="bg-brand-green text-white px-3 py-1.5 rounded-full text-[5px] font-black uppercase tracking-wider text-center shadow-md">
+                    <span className="bg-brand-green text-white px-3 py-1.5 rounded-full text-[5px] font-bold uppercase tracking-widest text-center shadow-md">
                       {formData.hero_cta_text || 'Explore Catalog'}
                     </span>
-                    <span className="bg-white border border-gray-200 text-brand-earth px-3 py-1.5 rounded-full text-[5px] font-black uppercase tracking-wider text-center">
-                      Franchise
+                    <span className="bg-white border border-gray-200 text-brand-earth px-3 py-1.5 rounded-full text-[5px] font-bold uppercase tracking-widest text-center">
+                      Franchise Inquiry
                     </span>
+                  </div>
+
+                  {/* Trusted Avatars */}
+                  <div className="flex items-center gap-3 pt-2 select-none">
+                    <div className="flex -space-x-1.5 shrink-0">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="w-4.5 h-4.5 rounded-full border border-white shadow-sm overflow-hidden bg-gray-200 relative">
+                          <Image src={`https://i.pravatar.cc/100?u=${i+20}`} alt="User" fill className="object-cover grayscale-[0.3]" />
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[5px] font-bold text-brand-earth/40 uppercase tracking-widest leading-tight">
+                      Trusted by <span className="text-brand-earth">10,000+</span> <br />satisfied customers
+                    </p>
                   </div>
                 </div>
                 
                 {/* Floating Image mockup */}
-                <div className="col-span-5 relative rounded-2xl overflow-hidden shadow-md aspect-square bg-gray-50 border border-gray-100">
-                  <Image 
-                    src="/hero.png" 
-                    alt="Hero" 
-                    fill
-                    className="object-cover"
-                  />
+                <div className="col-span-5 relative">
+                  <div className="relative rounded-[2rem] overflow-hidden shadow-[0_16px_32px_-8px_rgba(45,74,34,0.15)] border-2 border-white bg-gray-50 aspect-square">
+                    <Image 
+                      src="/hero.png" 
+                      alt="Hero" 
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  {/* Subtle Floating Info */}
+                  <div className="absolute -bottom-3 -right-3 bg-white p-2 rounded-xl shadow-lg border border-gray-100 flex items-center gap-2 select-none z-10 scale-75 origin-bottom-right">
+                    <div className="bg-brand-green/10 w-6 h-6 rounded-lg flex items-center justify-center shrink-0">
+                      <svg className="w-3.5 h-3.5 text-brand-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 22h20" />
+                        <path d="M20 15a8 8 0 0 0-16 0" />
+                        <path d="M12 2v3M9 3v2M15 3v2" />
+                      </svg>
+                    </div>
+                    <div className="leading-tight text-left">
+                      <p className="text-[5px] font-black uppercase tracking-widest text-brand-earth/40 leading-none">Freshly Made</p>
+                      <p className="text-[6.5px] font-bold text-brand-earth mt-0.5 leading-none">Daily Batch Pastil</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -220,7 +264,7 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
             <div className="p-5 bg-white border-b border-gray-50 select-none space-y-3">
               <p className="text-[7px] font-bold text-brand-green uppercase tracking-wider leading-none">Featured Catalog</p>
               
-              <div className="grid grid-cols-3 gap-2 pb-1 select-none">
+              <div className="grid grid-cols-3 gap-3 pb-1 select-none">
                 {!Array.isArray(formData.featured_products) || formData.featured_products.length === 0 ? (
                   <p className="text-[7px] font-semibold text-brand-earth/40 italic py-2 col-span-3">Catalog empty.</p>
                 ) : (
@@ -228,17 +272,23 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
                     const prod = Array.isArray(products) ? products.find(p => p.id === id) : undefined;
                     if (!prod) return null;
                     return (
-                      <div key={id} className="bg-gray-50 border border-gray-100 rounded-lg p-1 space-y-1 select-none">
-                        <div className="aspect-[4/3] rounded-md bg-gray-200 relative overflow-hidden">
-                          <Image
-                            src={prod.image_url || '/hero.png'}
-                            alt={prod.name}
-                            fill
-                            className="object-cover opacity-80"
+                      <div key={id} className="space-y-1.5 select-none animate-in slide-in-from-bottom fade-in duration-500">
+                        <div className="aspect-[4/3] rounded-lg bg-gray-50 overflow-hidden relative border border-gray-100 shadow-sm">
+                           <Image 
+                            src={prod.image_url || '/hero.png'} 
+                            alt={prod.name} 
+                            fill 
+                            className="object-cover opacity-80" 
                           />
                         </div>
-                        <p className="text-[5px] font-black truncate leading-tight mt-0.5">{prod.name}</p>
-                        <p className="text-[5px] font-black text-brand-green leading-none">₱{prod.price}</p>
+                        <div className="space-y-0.5">
+                          <div className="text-[4.5px] font-bold uppercase tracking-[0.1em] text-brand-green">
+                            {prod.category === 'pastil' ? 'The Signature' : (prod.category === 'bagoong' ? 'Bottled Premium' : 'Side Kick')}
+                          </div>
+                          <h3 className="text-[6.5px] font-black tracking-tight leading-tight truncate">{prod.name}</h3>
+                          <p className="text-[5px] text-brand-earth/50 leading-normal line-clamp-2">{prod.description}</p>
+                          <div className="text-[5.5px] font-bold mt-0.5">₱{prod.price}</div>
+                        </div>
                       </div>
                     );
                   })
@@ -264,23 +314,23 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
                   { label: "Cities Reached", value: formData.stats_cities || "20+" },
                   { label: "Franchise Apps", value: formData.stats_applications || "200+" },
                 ].map((stat, idx) => (
-                  <div key={idx} className="space-y-0.5 select-none bg-white p-2 rounded-xl border border-gray-100 shadow-sm animate-in slide-in-from-bottom-2 duration-300">
-                    <div className="text-[9px] font-black tracking-tighter text-brand-earth">{stat.value}</div>
-                    <div className="text-[4px] font-bold uppercase tracking-wider text-brand-earth/40 leading-none">{stat.label}</div>
+                  <div key={idx} className="space-y-0.5 select-none animate-in slide-in-from-bottom-2 duration-300">
+                    <div className="text-[10px] font-black tracking-tighter text-brand-earth">{stat.value}</div>
+                    <div className="text-[4px] font-bold uppercase tracking-widest text-brand-earth/40 leading-none">{stat.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* FOOTER */}
-            <div className="bg-white px-5 py-6 space-y-4 text-[6px]">
-              <div className="grid grid-cols-3 gap-4 items-start">
-                <div className="space-y-2">
+            <div className="bg-white border-t border-gray-100 px-5 py-8 space-y-6 text-[5px]">
+              <div className="grid grid-cols-4 gap-4 items-start">
+                <div className="col-span-1 space-y-2">
                   <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-brand-earth/10 flex items-center justify-center shrink-0">
-                      <span className="text-[4px] font-black text-brand-earth">PL</span>
+                    <div className="w-3.5 h-3.5 rounded-full overflow-hidden relative border border-gray-100 shrink-0">
+                      <Image src="/logo.jpg" alt="Logo" fill className="object-cover" />
                     </div>
-                    <span className="text-[6px] font-black uppercase tracking-tighter">Pastil ni Liling</span>
+                    <span className="text-[6px] font-bold uppercase tracking-tighter">Pastil ni Liling</span>
                   </div>
                   <p className="text-[5px] text-brand-earth/50 leading-relaxed font-medium">
                     {formData.footer_desc || 'Bringing authentic Mindanao flavors to the mainstream. Quality you can trust, prices you can afford.'}
@@ -288,26 +338,36 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
                 </div>
 
                 <div className="space-y-1.5">
-                  <h4 className="text-[5px] font-bold uppercase tracking-widest text-brand-earth/80">Platform</h4>
-                  <ul className="space-y-1 text-brand-earth/40 font-semibold">
-                    <li>Menu</li>
-                    <li>Franchise</li>
-                    <li>Store</li>
+                  <h4 className="text-[5px] font-bold uppercase tracking-widest">Platform</h4>
+                  <ul className="space-y-1 text-[5px] font-bold uppercase tracking-widest opacity-40">
+                    <li>Browse Menu</li>
+                    <li>Franchise Program</li>
+                    <li>Find a Store</li>
                   </ul>
                 </div>
 
                 <div className="space-y-1.5">
-                  <h4 className="text-[5px] font-bold uppercase tracking-widest text-brand-earth/80">Support</h4>
-                  <ul className="space-y-1 text-brand-earth/40 font-semibold">
+                  <h4 className="text-[5px] font-bold uppercase tracking-widest">Support</h4>
+                  <ul className="space-y-1 text-[5px] font-bold uppercase tracking-widest opacity-40">
                     <li>Help Center</li>
                     <li>Terms of Use</li>
+                    <li>Privacy Policy</li>
                   </ul>
+                </div>
+
+                <div className="space-y-1.5 text-right">
+                  <h4 className="text-[5px] font-bold uppercase tracking-widest">Connect</h4>
+                  <div className="flex justify-end gap-1.5 opacity-40">
+                    {['FB', 'IG', 'TW'].map(s => (
+                      <div key={s} className="w-4.5 h-4.5 rounded-full border border-brand-earth flex items-center justify-center text-[4px] font-black cursor-pointer">{s}</div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-50 text-center">
+              <div className="pt-4 border-t border-gray-100 text-center">
                 <p 
-                  className="text-[5px] font-bold uppercase tracking-widest text-brand-earth/30 leading-normal"
+                  className="text-[4.5px] font-bold uppercase tracking-widest opacity-30 leading-normal"
                   dangerouslySetInnerHTML={{ __html: formData.footer_copyright || '&copy; 2026 Pastil ni Liling. Swak sa Bulsa...' }}
                 />
               </div>

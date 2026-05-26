@@ -178,7 +178,10 @@ export default function Home() {
 
       {/* Featured Showcase Showcase - Clean & Minimal */}
       <section className="bg-white py-20 md:py-32 border-y border-gray-100 overflow-hidden shrink-0">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-6 space-y-12">
+          <div className="text-center md:text-left">
+            <p className="text-xs font-bold text-brand-green uppercase tracking-widest leading-none">Featured Catalog</p>
+          </div>
           <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-6 md:gap-12 pb-8 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
             {showcaseItems.map((item, idx) => (
               <div 

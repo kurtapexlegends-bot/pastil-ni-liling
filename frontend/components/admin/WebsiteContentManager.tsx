@@ -288,8 +288,8 @@ export default function WebsiteContentManager() {
           <div ref={tabContainerRef} className="flex border-b border-gray-100 overflow-x-auto pb-2 gap-1 [&::-webkit-scrollbar]:hidden">
             {[
               { id: 'hero', label: 'Hero Block', icon: Layout },
-              { id: 'stats', label: 'Stats Ledger', icon: NumberSquareFour },
               { id: 'featured', label: 'Showcase', icon: Sparkle },
+              { id: 'stats', label: 'Stats Ledger', icon: NumberSquareFour },
               { id: 'announcement', label: 'Alerts', icon: Megaphone },
               { id: 'layout', label: 'Layout & Footer', icon: Globe },
               { id: 'franchise', label: 'Franchise Page', icon: Briefcase }
@@ -337,20 +337,20 @@ export default function WebsiteContentManager() {
             />
           )}
 
-          {/* 2. STATS LEDGER TAB */}
-          {activeSubTab === 'stats' && (
-            <StatsForm 
-              formData={formData} 
-              onChange={handleInputChange} 
-            />
-          )}
-
-          {/* 3. SHOWCASE CATALOG TAB */}
+          {/* 2. SHOWCASE CATALOG TAB */}
           {activeSubTab === 'featured' && (
             <FeaturedPicker 
               formData={formData} 
               products={products} 
               onToggleFeaturedProduct={toggleFeaturedProduct} 
+            />
+          )}
+
+          {/* 3. STATS LEDGER TAB */}
+          {activeSubTab === 'stats' && (
+            <StatsForm 
+              formData={formData} 
+              onChange={handleInputChange} 
             />
           )}
 
