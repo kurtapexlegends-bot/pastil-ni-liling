@@ -30,21 +30,35 @@ interface SiteSettings {
 
 const getBgStyle = (bgColor: string) => {
   switch (bgColor) {
-    case 'bg-brand-yellow': return { backgroundColor: 'var(--brand-yellow)' };
-    case 'bg-brand-green': return { backgroundColor: 'var(--brand-green)' };
-    case 'bg-brand-earth': return { backgroundColor: 'var(--brand-earth)' };
-    case 'bg-brand-red': return { backgroundColor: 'var(--brand-red)' };
-    case 'bg-brand-gray': return { backgroundColor: 'var(--brand-gray)' };
-    default: return { backgroundColor: 'var(--brand-yellow)' };
+    case 'bg-brand-yellow': 
+    case 'bg-yellow-500':
+      return { backgroundColor: '#d1a340' };
+    case 'bg-brand-green': 
+    case 'bg-green-700':
+      return { backgroundColor: '#7ca33a' };
+    case 'bg-brand-earth': 
+      return { backgroundColor: '#1b2d16' };
+    case 'bg-brand-red': 
+    case 'bg-red-700':
+      return { backgroundColor: '#a82e1a' };
+    case 'bg-brand-gray': 
+    case 'bg-zinc-100':
+      return { backgroundColor: '#efebe4' };
+    default: 
+      return { backgroundColor: '#d1a340' };
   }
 };
 
 const getTextStyle = (textColor: string) => {
   switch (textColor) {
-    case 'text-brand-earth': return { color: 'var(--brand-earth)' };
-    case 'text-white': return { color: '#ffffff' };
-    case 'text-brand-yellow': return { color: 'var(--brand-yellow)' };
-    default: return { color: 'var(--brand-earth)' };
+    case 'text-brand-earth': 
+      return { color: '#1b2d16' };
+    case 'text-white': 
+      return { color: '#ffffff' };
+    case 'text-brand-yellow': 
+      return { color: '#d1a340' };
+    default: 
+      return { color: '#1b2d16' };
   }
 };
 

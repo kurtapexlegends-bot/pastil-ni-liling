@@ -44,21 +44,35 @@ interface DesktopMockupProps {
 
 const getBgStyle = (bgColor: string) => {
   switch (bgColor) {
-    case 'bg-brand-yellow': return { backgroundColor: 'var(--brand-yellow)' };
-    case 'bg-brand-green': return { backgroundColor: 'var(--brand-green)' };
-    case 'bg-brand-earth': return { backgroundColor: 'var(--brand-earth)' };
-    case 'bg-brand-red': return { backgroundColor: 'var(--brand-red)' };
-    case 'bg-brand-gray': return { backgroundColor: 'var(--brand-gray)' };
-    default: return { backgroundColor: 'var(--brand-yellow)' };
+    case 'bg-brand-yellow': 
+    case 'bg-yellow-500':
+      return { backgroundColor: '#d1a340' };
+    case 'bg-brand-green': 
+    case 'bg-green-700':
+      return { backgroundColor: '#7ca33a' };
+    case 'bg-brand-earth': 
+      return { backgroundColor: '#1b2d16' };
+    case 'bg-brand-red': 
+    case 'bg-red-700':
+      return { backgroundColor: '#a82e1a' };
+    case 'bg-brand-gray': 
+    case 'bg-zinc-100':
+      return { backgroundColor: '#efebe4' };
+    default: 
+      return { backgroundColor: '#d1a340' };
   }
 };
 
 const getTextStyle = (textColor: string) => {
   switch (textColor) {
-    case 'text-brand-earth': return { color: 'var(--brand-earth)' };
-    case 'text-white': return { color: '#ffffff' };
-    case 'text-brand-yellow': return { color: 'var(--brand-yellow)' };
-    default: return { color: 'var(--brand-earth)' };
+    case 'text-brand-earth': 
+      return { color: '#1b2d16' };
+    case 'text-white': 
+      return { color: '#ffffff' };
+    case 'text-brand-yellow': 
+      return { color: '#d1a340' };
+    default: 
+      return { color: '#1b2d16' };
   }
 };
 
@@ -103,7 +117,7 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
             ...getBgStyle(announcement.bg_color), 
             ...getTextStyle(announcement.text_color) 
           }}
-          className="absolute top-16 left-1/2 -translate-x-1/2 z-40 px-3 py-1 rounded-full shadow-lg border border-black/5 flex items-center justify-between gap-1.5 max-w-[85%] select-none scale-90 origin-top shrink-0"
+          className="absolute top-20 left-1/2 -translate-x-1/2 z-40 px-3 py-1 rounded-full shadow-lg border border-black/5 flex items-center justify-between gap-1.5 max-w-[85%] select-none scale-90 origin-top shrink-0"
         >
           <span className="text-[8px] shrink-0">{iconEmoji}</span>
           <span className={`text-[6.5px] font-black tracking-wide leading-none truncate max-w-[130px] ${
@@ -250,7 +264,7 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
             </div>
 
             {/* HERO SECTION */}
-            <div className="px-5 pt-8 pb-10 border-b border-gray-100 bg-white select-none">
+            <div className="px-5 pt-3 pb-10 border-b border-gray-100 bg-white select-none">
               <div className="grid grid-cols-12 gap-4 items-center">
                 <div className="col-span-7 space-y-3">
                   <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-green/5 border border-brand-green/10 text-[5px] font-bold uppercase tracking-widest text-brand-green">
