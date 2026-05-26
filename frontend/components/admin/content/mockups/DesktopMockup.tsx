@@ -43,12 +43,49 @@ interface DesktopMockupProps {
 }
 
 export default function DesktopMockup({ formData, products, activeSubTab }: DesktopMockupProps) {
+  // Parse existing settings or fallback
+  const announcement = typeof formData.announcement_text === 'object' && formData.announcement_text !== null
+    ? formData.announcement_text
+    : (() => {
+        try {
+          if (typeof formData.announcement_text === 'string' && formData.announcement_text.startsWith('{')) {
+            const parsed = JSON.parse(formData.announcement_text);
+            return {
+              text: parsed.text || '',
+              bg_color: parsed.bg_color || 'bg-brand-yellow',
+              text_color: parsed.text_color || 'text-brand-earth',
+              animate: parsed.animate || 'none',
+              icon: parsed.icon || 'megaphone'
+            };
+          }
+        } catch (e) {}
+        return {
+          text: typeof formData.announcement_text === 'string' ? formData.announcement_text : '',
+          bg_color: 'bg-brand-yellow',
+          text_color: 'text-brand-earth',
+          animate: 'none',
+          icon: 'megaphone'
+        };
+      })();
+
+  const iconEmoji = announcement.icon === 'megaphone' ? '📢' 
+    : announcement.icon === 'sparkle' ? '✨'
+    : announcement.icon === 'gift' ? '🎁'
+    : announcement.icon === 'warning' ? '🔥'
+    : '📢';
+
   return (
     <div className="relative w-full max-w-[460px] h-[560px] bg-white rounded-3xl border border-gray-200/80 shadow-2xl overflow-hidden flex flex-col ring-4 ring-white/30 transition-all duration-300 animate-in zoom-in-95 duration-200">
       {/* Dynamic Top Announcement Strip */}
-      {formData.announcement_enabled && formData.announcement_text && (
-        <div className="bg-brand-yellow text-brand-earth text-[7px] font-bold py-1.5 px-3 text-center truncate leading-none select-none shrink-0">
-          {formData.announcement_text}
+      {formData.announcement_enabled && announcement.text && (
+        <div className={`${announcement.bg_color} ${announcement.text_color} text-[7px] font-black py-1.5 px-3 text-center select-none shadow-sm flex items-center justify-center gap-1 transition-all duration-300 relative z-50 overflow-hidden shrink-0`}>
+          <span className="shrink-0">{iconEmoji}</span>
+          <span className={`${
+            announcement.animate === 'bounce' ? 'animate-bounce inline-block' : 
+            announcement.animate === 'pulse' ? 'animate-pulse' : ''
+          } truncate`}>
+            {announcement.text}
+          </span>
         </div>
       )}
 

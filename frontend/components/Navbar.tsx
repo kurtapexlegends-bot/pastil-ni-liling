@@ -23,7 +23,7 @@ export default function Navbar({
   const pathname = usePathname();
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/50 transition-all">
+    <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/50 transition-all">
       <div className="flex items-center justify-between px-6 h-20 max-w-6xl mx-auto w-full relative">
         {/* LEFT LOGO & BRANDING */}
         <Link href="/" className="flex items-center gap-3 group cursor-pointer">

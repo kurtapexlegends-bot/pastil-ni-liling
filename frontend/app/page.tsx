@@ -53,6 +53,38 @@ export default function Home() {
   };
 
   const settings: SiteSettings = settingsRes?.success ? settingsRes.data : defaults;
+  
+  // Safe parsing of customized announcement JSON payload
+  const announcement = typeof settings.announcement_text === 'object' && settings.announcement_text !== null
+    ? settings.announcement_text
+    : (() => {
+        try {
+          if (typeof settings.announcement_text === 'string' && settings.announcement_text.startsWith('{')) {
+            const parsed = JSON.parse(settings.announcement_text);
+            return {
+              text: parsed.text || '',
+              bg_color: parsed.bg_color || 'bg-brand-yellow',
+              text_color: parsed.text_color || 'text-brand-earth',
+              animate: parsed.animate || 'none',
+              icon: parsed.icon || 'megaphone'
+            };
+          }
+        } catch (e) {}
+        return {
+          text: typeof settings.announcement_text === 'string' ? settings.announcement_text : '',
+          bg_color: 'bg-brand-yellow',
+          text_color: 'text-brand-earth',
+          animate: 'none',
+          icon: 'megaphone'
+        };
+      })();
+
+  const iconEmoji = announcement.icon === 'megaphone' ? '📢' 
+    : announcement.icon === 'sparkle' ? '✨'
+    : announcement.icon === 'gift' ? '🎁'
+    : announcement.icon === 'warning' ? '🔥'
+    : '📢';
+
   const allProducts = (productsRes?.success && Array.isArray(productsRes.data)) ? productsRes.data : [];
 
   // Filter products that are marked as featured by Admin
@@ -90,9 +122,15 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth selection:bg-brand-yellow/30 flex flex-col">
       {/* Dynamic Announcement Bar */}
-      {settings.announcement_enabled && settings.announcement_text && (
-        <div className="bg-brand-yellow text-brand-earth text-xs font-bold py-3 px-6 text-center select-none animate-in fade-in duration-500 shrink-0">
-          {settings.announcement_text}
+      {settings.announcement_enabled && announcement.text && (
+        <div className={`${announcement.bg_color} ${announcement.text_color} text-[11px] sm:text-xs font-extrabold py-3 px-6 text-center select-none shadow-sm flex items-center justify-center gap-2 transition-all duration-300 relative z-50 overflow-hidden shrink-0`}>
+          <span className="shrink-0">{iconEmoji}</span>
+          <span className={`${
+            announcement.animate === 'bounce' ? 'animate-bounce inline-block' : 
+            announcement.animate === 'pulse' ? 'animate-pulse' : ''
+          }`}>
+            {announcement.text}
+          </span>
         </div>
       )}
 

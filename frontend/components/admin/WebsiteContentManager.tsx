@@ -167,7 +167,14 @@ export default function WebsiteContentManager() {
   // Sync server data to form state on initial load / mutate
   useEffect(() => {
     if (settingsRes?.success) {
-      setFormData(settingsRes.data);
+      const data = { ...settingsRes.data };
+      if (data.hasOwnProperty('announcement_enabled')) {
+        data.announcement_enabled = data.announcement_enabled === true || 
+                                    data.announcement_enabled === 1 || 
+                                    data.announcement_enabled === '1' || 
+                                    data.announcement_enabled === 'true';
+      }
+      setFormData(data);
     }
   }, [settingsRes]);
 
@@ -358,8 +365,7 @@ export default function WebsiteContentManager() {
           {activeSubTab === 'announcement' && (
             <AnnouncementForm 
               formData={formData} 
-              onChange={handleInputChange} 
-              onCheckboxChange={handleCheckboxChange} 
+              onUpdate={(updatedFields) => setFormData(prev => ({ ...prev, ...updatedFields }))} 
             />
           )}
 

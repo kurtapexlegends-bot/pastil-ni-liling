@@ -29,6 +29,10 @@ class WebsiteSettingController extends Controller
             }
         }
 
+        if (isset($settings['announcement_enabled'])) {
+            $settings['announcement_enabled'] = filter_var($settings['announcement_enabled'], FILTER_VALIDATE_BOOLEAN);
+        }
+
         // Return default values for missing keys to ensure absolute UI stability
         $defaults = [
             'hero_badge' => 'Sarap na Babalik-balikan',
@@ -140,6 +144,9 @@ class WebsiteSettingController extends Controller
                 ];
 
                 if (in_array($key, $allowedKeys)) {
+                    if ($key === 'announcement_enabled') {
+                        $value = filter_var($value, FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
+                    }
                     WebsiteSetting::setByKey($key, $value);
                 }
             }
