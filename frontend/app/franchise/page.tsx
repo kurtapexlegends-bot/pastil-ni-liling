@@ -284,26 +284,26 @@ export default function FranchisePage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">First Name</label>
-                      <input name="first_name" value={formData.first_name} onChange={handleInputChange} className={getInputClassName('first_name')} placeholder="John" required />
+                      <input suppressHydrationWarning name="first_name" value={formData.first_name} onChange={handleInputChange} className={getInputClassName('first_name')} placeholder="John" required />
                       {errors.first_name && <p className="text-[9px] text-red-500 font-semibold">{errors.first_name}</p>}
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Last Name</label>
-                      <input name="last_name" value={formData.last_name} onChange={handleInputChange} className={getInputClassName('last_name')} placeholder="Smith" required />
+                      <input suppressHydrationWarning name="last_name" value={formData.last_name} onChange={handleInputChange} className={getInputClassName('last_name')} placeholder="Smith" required />
                       {errors.last_name && <p className="text-[9px] text-red-500 font-semibold">{errors.last_name}</p>}
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Email Address</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className={getInputClassName('email')} placeholder="@example.com" required />
+                    <input suppressHydrationWarning type="email" name="email" value={formData.email} onChange={handleInputChange} className={getInputClassName('email')} placeholder="@example.com" required />
                     {errors.email && <p className="text-[9px] text-red-500 font-semibold">{errors.email}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Phone Number</label>
-                    <input name="phone" value={formData.phone} onChange={handleInputChange} className={getInputClassName('phone')} placeholder="0912 345 6789" required />
+                    <input suppressHydrationWarning name="phone" value={formData.phone} onChange={handleInputChange} className={getInputClassName('phone')} placeholder="0912 345 6789" required />
                     {errors.phone && <p className="text-[9px] text-red-500 font-semibold">{errors.phone}</p>}
                   </div>
-                  <button type="button" onClick={nextStep} className="w-full bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-earth/10 flex items-center justify-center gap-1.5">
+                  <button suppressHydrationWarning type="button" onClick={nextStep} className="w-full bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-earth/10 flex items-center justify-center gap-1.5">
                     Continue
                     <CaretRight size={14} weight="bold" />
                   </button>
@@ -318,12 +318,12 @@ export default function FranchisePage() {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Target Location</label>
-                    <input name="target_location" value={formData.target_location} onChange={handleInputChange} className={getInputClassName('target_location')} placeholder="e.g. Davao City, Poblacion" required />
+                    <input suppressHydrationWarning name="target_location" value={formData.target_location} onChange={handleInputChange} className={getInputClassName('target_location')} placeholder="e.g. Davao City, Poblacion" required />
                     {errors.target_location && <p className="text-[9px] text-red-500 font-semibold">{errors.target_location}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Investment Capacity</label>
-                    <select name="investment_capacity" value={formData.investment_capacity} onChange={handleInputChange} className={getInputClassName('investment_capacity')} required>
+                    <select suppressHydrationWarning name="investment_capacity" value={formData.investment_capacity} onChange={handleInputChange} className={getInputClassName('investment_capacity')} required>
                       <option value="">Select Capacity Range</option>
                       <option value="50k-100k">₱50,000 - ₱100,000</option>
                       <option value="100k-200k">₱100,000 - ₱200,000</option>
@@ -333,11 +333,11 @@ export default function FranchisePage() {
                     {errors.investment_capacity && <p className="text-[9px] text-red-500 font-semibold">{errors.investment_capacity}</p>}
                   </div>
                   <div className="flex gap-4 pt-2">
-                    <button type="button" onClick={prevStep} className="flex-1 bg-gray-100 hover:bg-gray-200 text-brand-earth py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5">
+                    <button suppressHydrationWarning type="button" onClick={prevStep} className="flex-1 bg-gray-100 hover:bg-gray-200 text-brand-earth py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5">
                       <CaretLeft size={14} weight="bold" />
                       Back
                     </button>
-                    <button type="button" onClick={nextStep} className="flex-[2] bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-earth/10 flex items-center justify-center gap-1.5">
+                    <button suppressHydrationWarning type="button" onClick={nextStep} className="flex-[2] bg-brand-earth hover:bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-earth/10 flex items-center justify-center gap-1.5">
                       Next Step
                       <CaretRight size={14} weight="bold" />
                     </button>
@@ -353,7 +353,7 @@ export default function FranchisePage() {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/60">Business Experience (Optional)</label>
-                    <textarea name="experience_summary" value={formData.experience_summary} onChange={handleInputChange} className={`${getInputClassName('experience_summary')} h-28 resize-none placeholder:font-normal`} placeholder="Briefly explain any prior business or food stall experiences..."></textarea>
+                    <textarea suppressHydrationWarning name="experience_summary" value={formData.experience_summary} onChange={handleInputChange} className={`${getInputClassName('experience_summary')} h-28 resize-none placeholder:font-normal`} placeholder="Briefly explain any prior business or food stall experiences..."></textarea>
                   </div>
                   <div className="p-4 rounded-2xl bg-brand-green/5 border border-brand-green/10 space-y-1">
                     <p className="text-[9px] font-bold uppercase tracking-widest text-brand-green">Compliance Acknowledgement</p>
@@ -362,11 +362,11 @@ export default function FranchisePage() {
                     </p>
                   </div>
                   <div className="flex gap-4 pt-2">
-                    <button type="button" onClick={prevStep} className="flex-1 bg-gray-100 hover:bg-gray-200 text-brand-earth py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5">
+                    <button suppressHydrationWarning type="button" onClick={prevStep} className="flex-1 bg-gray-100 hover:bg-gray-200 text-brand-earth py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5">
                       <CaretLeft size={14} weight="bold" />
                       Back
                     </button>
-                    <button type="submit" disabled={loading} className="flex-[2] bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:opacity-90 active:scale-[0.99] transition-all shadow-md shadow-brand-green/10 disabled:opacity-50">
+                    <button suppressHydrationWarning type="submit" disabled={loading} className="flex-[2] bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:opacity-90 active:scale-[0.99] transition-all shadow-md shadow-brand-green/10 disabled:opacity-50">
                       {loading ? "Submitting application..." : "Submit Application"}
                     </button>
                   </div>
