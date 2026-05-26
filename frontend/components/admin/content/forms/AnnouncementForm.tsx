@@ -16,6 +16,12 @@ interface AnnouncementConfig {
   text_color: string;
   animate: 'none' | 'pulse' | 'bounce';
   icon: 'megaphone' | 'sparkle' | 'gift' | 'warning';
+  timer_enabled?: boolean;
+  timer_target?: string;
+  timer_prefix?: string;
+  timer_format?: 'd_h_m_s' | 'h_m_s';
+  timer_expired_behavior?: 'hide' | 'display';
+  timer_expired_text?: string;
 }
 
 export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFormProps) {
@@ -28,7 +34,13 @@ export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFor
           bg_color: (formData.announcement_text as any).bg_color || 'bg-brand-yellow',
           text_color: (formData.announcement_text as any).text_color || 'text-brand-earth',
           animate: (formData.announcement_text as any).animate || 'none',
-          icon: (formData.announcement_text as any).icon || 'megaphone'
+          icon: (formData.announcement_text as any).icon || 'megaphone',
+          timer_enabled: (formData.announcement_text as any).timer_enabled || false,
+          timer_target: (formData.announcement_text as any).timer_target || '',
+          timer_prefix: (formData.announcement_text as any).timer_prefix || 'Ends in:',
+          timer_format: (formData.announcement_text as any).timer_format || 'h_m_s',
+          timer_expired_behavior: (formData.announcement_text as any).timer_expired_behavior || 'display',
+          timer_expired_text: (formData.announcement_text as any).timer_expired_text || 'Expired!'
         };
       }
       if (typeof formData.announcement_text === 'string' && formData.announcement_text.startsWith('{')) {
@@ -38,7 +50,13 @@ export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFor
           bg_color: parsed.bg_color || 'bg-brand-yellow',
           text_color: parsed.text_color || 'text-brand-earth',
           animate: parsed.animate || 'none',
-          icon: parsed.icon || 'megaphone'
+          icon: parsed.icon || 'megaphone',
+          timer_enabled: parsed.timer_enabled || false,
+          timer_target: parsed.timer_target || '',
+          timer_prefix: parsed.timer_prefix || 'Ends in:',
+          timer_format: parsed.timer_format || 'h_m_s',
+          timer_expired_behavior: parsed.timer_expired_behavior || 'display',
+          timer_expired_text: parsed.timer_expired_text || 'Expired!'
         };
       }
     } catch (e) {}
@@ -48,7 +66,13 @@ export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFor
       bg_color: 'bg-brand-yellow',
       text_color: 'text-brand-earth',
       animate: 'none',
-      icon: 'megaphone'
+      icon: 'megaphone',
+      timer_enabled: false,
+      timer_target: '',
+      timer_prefix: 'Ends in:',
+      timer_format: 'h_m_s',
+      timer_expired_behavior: 'display',
+      timer_expired_text: 'Expired!'
     };
   };
 
@@ -61,7 +85,7 @@ export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFor
     });
   };
 
-  const handleFieldChange = (key: keyof AnnouncementConfig, value: string) => {
+  const handleFieldChange = (key: keyof AnnouncementConfig, value: any) => {
     handleFieldsChange({ [key]: value });
   };
 
@@ -171,6 +195,98 @@ export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFor
                   );
                 })}
               </div>
+            </div>
+
+            {/* Countdown Timer Config */}
+            <div className="sm:col-span-2 pt-4 border-t border-gray-100/80 space-y-4">
+              <div className="bg-gray-50/50 border border-gray-100 rounded-2xl p-4 space-y-3">
+                <label className="flex items-center gap-3 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={config.timer_enabled || false}
+                    onChange={(e) => handleFieldChange('timer_enabled', e.target.checked)}
+                    className="w-4 h-4 accent-brand-green rounded border-gray-200 cursor-pointer"
+                  />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-brand-earth">
+                    Enable Countdown Timer
+                  </span>
+                </label>
+                <p className="text-[9px] text-brand-earth/50 leading-relaxed font-medium">
+                  Show a ticking urgency countdown timer inside the alert capsule (e.g. "Ends in: 02h 45m 10s") to drive promo engagement.
+                </p>
+              </div>
+
+              {(config.timer_enabled || false) && (
+                <div className="grid sm:grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-brand-earth/60">
+                      Countdown Target Date & Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={config.timer_target || ''}
+                      onChange={(e) => handleFieldChange('timer_target', e.target.value)}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-semibold text-brand-earth focus:bg-white focus:border-brand-green outline-none transition-all cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-brand-earth/60">
+                      Timer Prefix Label
+                    </label>
+                    <input
+                      type="text"
+                      value={config.timer_prefix || 'Ends in:'}
+                      onChange={(e) => handleFieldChange('timer_prefix', e.target.value)}
+                      placeholder="e.g. Ends in:, Starts in:"
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-semibold text-brand-earth focus:bg-white focus:border-brand-green outline-none transition-all"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-brand-earth/60">
+                      Timer Display Format
+                    </label>
+                    <select
+                      value={config.timer_format || 'h_m_s'}
+                      onChange={(e) => handleFieldChange('timer_format', e.target.value)}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-semibold text-brand-earth focus:bg-white focus:border-brand-green outline-none transition-all cursor-pointer"
+                    >
+                      <option value="h_m_s">Hours, Minutes, Seconds (e.g. 72h 30m)</option>
+                      <option value="d_h_m_s">Days, Hours, Minutes, Seconds (e.g. 3d 00h 30m)</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-brand-earth/60">
+                      When Countdown Expires
+                    </label>
+                    <select
+                      value={config.timer_expired_behavior || 'display'}
+                      onChange={(e) => handleFieldChange('timer_expired_behavior', e.target.value)}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-semibold text-brand-earth focus:bg-white focus:border-brand-green outline-none transition-all cursor-pointer"
+                    >
+                      <option value="display">Keep alert visible & display status text</option>
+                      <option value="hide">Automatically hide the entire alert bar</option>
+                    </select>
+                  </div>
+
+                  {config.timer_expired_behavior !== 'hide' && (
+                    <div className="space-y-1.5 animate-in fade-in duration-200">
+                      <label className="text-[9px] font-black uppercase tracking-widest text-brand-earth/60">
+                        Expired Status Text
+                      </label>
+                      <input
+                        type="text"
+                        value={config.timer_expired_text || 'Expired!'}
+                        onChange={(e) => handleFieldChange('timer_expired_text', e.target.value)}
+                        placeholder="e.g. Expired!, Promo Ended"
+                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-semibold text-brand-earth focus:bg-white focus:border-brand-green outline-none transition-all"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
