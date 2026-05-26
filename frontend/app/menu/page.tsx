@@ -16,6 +16,12 @@ export default function MenuPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [orderMethod, setOrderMethod] = useState<"direct" | "apps">("direct");
+
+  const handleSelectProduct = (product: Product | null) => {
+    setSelectedProduct(product);
+    setOrderMethod("direct");
+  };
 
   // Load cart from localStorage
   useEffect(() => {
@@ -83,17 +89,17 @@ export default function MenuPage() {
       {/* Selected Product Modal */}
       {selectedProduct && (
         <div 
-          onClick={() => setSelectedProduct(null)}
+          onClick={() => handleSelectProduct(null)}
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-earth/40 backdrop-blur-sm animate-fade-in"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
             className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-xl grid md:grid-cols-2 animate-slide-up"
           >
-            <div className="relative aspect-square bg-gray-50 md:h-full">
+            <div className="relative aspect-square md:aspect-auto md:h-full w-full bg-gray-50 shrink-0">
               <Image src={selectedProduct.image_url || "/hero.png"} alt={selectedProduct.name} fill className="object-cover" />
               <button 
-                onClick={() => setSelectedProduct(null)}
+                onClick={() => handleSelectProduct(null)}
                 className="absolute top-4 left-4 w-8 h-8 bg-white/95 rounded-full flex items-center justify-center shadow-sm hover:bg-white active:scale-95 transition-all text-xs text-brand-earth/70"
               >
                 ✕
@@ -109,14 +115,75 @@ export default function MenuPage() {
                 <div className="text-xl font-bold text-brand-earth">₱{selectedProduct.price}</div>
               </div>
 
-              <div className="pt-4">
-                <button 
-                  onClick={() => handleAddToCart(selectedProduct)}
-                  className="w-full bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
-                >
-                  Add to Cart
-                </button>
+              {/* ordering channel selection */}
+              <div className="space-y-3">
+                <p className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">Select Order Option</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setOrderMethod("direct")}
+                    className={`p-3 rounded-xl border text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center text-center gap-1 cursor-pointer ${
+                      orderMethod === "direct"
+                        ? "bg-brand-earth text-white border-brand-earth shadow-sm"
+                        : "bg-white border-gray-100 text-brand-earth/50 hover:border-brand-green hover:text-brand-green"
+                    }`}
+                  >
+                    <span>Direct Delivery</span>
+                    <span className="text-[7px] font-medium lowercase opacity-60">From our local branch</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setOrderMethod("apps")}
+                    className={`p-3 rounded-xl border text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center text-center gap-1 cursor-pointer ${
+                      orderMethod === "apps"
+                        ? "bg-brand-earth text-white border-brand-earth shadow-sm"
+                        : "bg-white border-gray-100 text-brand-earth/50 hover:border-brand-green hover:text-brand-green"
+                    }`}
+                  >
+                    <span>Delivery Apps</span>
+                    <span className="text-[7px] font-medium lowercase opacity-60">Foodpanda & Grab</span>
+                  </button>
+                </div>
               </div>
+
+              {orderMethod === "direct" ? (
+                <div className="pt-2 space-y-2">
+                  <button 
+                    onClick={() => handleAddToCart(selectedProduct)}
+                    className="w-full bg-brand-green text-white py-3.5 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-brand-green/90 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-green/10"
+                  >
+                    Add to Basket
+                  </button>
+                  <p className="text-[7.5px] text-center font-bold text-brand-earth/40 uppercase tracking-wider leading-none">
+                    Select your nearest branch & payment option at checkout
+                  </p>
+                </div>
+              ) : (
+                <div className="pt-2 space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <a
+                      href="https://www.foodpanda.ph/?query=pastil+ni+liling"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-[#D70F64] hover:bg-[#D70F64]/95 text-white py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#D70F64]/10 text-center"
+                    >
+                      Foodpanda
+                    </a>
+                    <a
+                      href="https://food.grab.com/ph/en/restaurants?search=Pastil+ni+Liling"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-[#00B14F] hover:bg-[#00B14F]/95 text-white py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#00B14F]/10 text-center"
+                    >
+                      GrabFood
+                    </a>
+                  </div>
+                  <p className="text-[7.5px] text-center font-bold text-brand-earth/40 uppercase tracking-wider leading-none">
+                    Opens the delivery app in a new browser tab
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -185,7 +252,7 @@ export default function MenuPage() {
                 key={product.id} 
                 product={product} 
                 onAddToCart={handleAddToCart} 
-                onClick={setSelectedProduct}
+                onClick={handleSelectProduct}
               />
             ))}
           </div>
