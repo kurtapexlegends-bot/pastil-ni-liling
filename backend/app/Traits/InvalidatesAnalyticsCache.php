@@ -14,7 +14,7 @@ trait InvalidatesAnalyticsCache
     /**
      * Boot the trait to listen for eloquent events.
      */
-    protected static function bootedInvalidatesAnalyticsCache()
+    protected static function bootInvalidatesAnalyticsCache()
     {
         static::saved(function ($model) {
             Cache::forget('analytics_summary');

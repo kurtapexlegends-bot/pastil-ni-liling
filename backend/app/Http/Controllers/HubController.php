@@ -14,7 +14,7 @@ class HubController extends Controller
     public function index()
     {
         $hubs = Cache::rememberForever('active_hubs', function() {
-            return Hub::with('franchisee')->where('status', 'active')->get();
+            return Hub::with('franchisee')->where('status', 'active')->get()->toArray();
         });
 
         return response()->json([
