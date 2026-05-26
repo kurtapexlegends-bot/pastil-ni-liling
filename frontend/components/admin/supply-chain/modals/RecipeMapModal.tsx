@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Product, Ingredient } from "../../../../app/admin/types";
-import Modal from "../../../ui/Modal";
+import { Product, Ingredient } from "@/types/admin";
+import Modal from "@/components/ui/Modal";
 
 interface RecipeMapModalProps {
   isOpen: boolean;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Product } from '../../../../app/admin/types';
+import { Product } from '@/types/admin';
 
 interface SiteSettings {
   featured_products: number[];

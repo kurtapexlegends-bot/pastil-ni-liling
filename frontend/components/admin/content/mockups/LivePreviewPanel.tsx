@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, DeviceMobile, Monitor } from '@phosphor-icons/react';
-import { Product } from '../../../../app/admin/types';
+import { Product } from '@/types/admin';
 import MobileMockup from './MobileMockup';
 import DesktopMockup from './DesktopMockup';
 

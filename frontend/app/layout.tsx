@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
-import WarningSuppressor from "../components/WarningSuppressor";
-import SWRProvider from "../components/SWRProvider";
+import WarningSuppressor from "../components/layout/WarningSuppressor";
+import SWRProvider from "../components/layout/SWRProvider";
 import GlobalProviders from "../providers/GlobalProviders";
 import "./globals.css";
 

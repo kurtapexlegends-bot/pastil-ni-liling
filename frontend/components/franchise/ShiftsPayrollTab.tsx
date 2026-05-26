@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import BranchPayrollManager from "@/components/admin/BranchPayrollManager";
+import BranchPayrollManager from "@/components/admin/payroll/BranchPayrollManager";
 import AlertModal from "@/components/ui/AlertModal";
 
 interface ShiftsPayrollTabProps {

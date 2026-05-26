@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,12 +22,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Franchisee Branch Inventory and B2C Orders
     Route::middleware('role:Franchisee|Branch Cashier')->group(function () {
-        Route::get('/franchise/inventory', [\App\Http\Controllers\FranchiseController::class, 'getInventory']);
-        Route::get('/franchise/orders', [\App\Http\Controllers\FranchiseController::class, 'getHubOrders']);
-        Route::patch('/franchise/orders/{id}', [\App\Http\Controllers\FranchiseController::class, 'updateHubOrderStatus']);
+        Route::get('/franchise/inventory', [\App\Http\Controllers\Franchise\FranchiseController::class, 'getInventory']);
+        Route::get('/franchise/orders', [\App\Http\Controllers\Franchise\FranchiseController::class, 'getHubOrders']);
+        Route::patch('/franchise/orders/{id}', [\App\Http\Controllers\Franchise\FranchiseController::class, 'updateHubOrderStatus']);
         Route::post('/pos/sync', [\App\Http\Controllers\OrderController::class, 'syncPOSOrders']);
-        Route::post('/franchise/commissary-orders', [\App\Http\Controllers\CommissaryController::class, 'store']);
-        Route::get('/franchise/commissary-orders', [\App\Http\Controllers\CommissaryController::class, 'index']);
+        Route::post('/franchise/commissary-orders', [\App\Http\Controllers\Franchise\CommissaryController::class, 'store']);
+        Route::get('/franchise/commissary-orders', [\App\Http\Controllers\Franchise\CommissaryController::class, 'index']);
     });
 
     // Order Placement (Authenticated)
@@ -43,8 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/orders/{id}', [\App\Http\Controllers\Admin\AdminOrderController::class, 'updateStatus']);
 
         // Admin B2B Commissary Restocks
-        Route::get('/commissary-orders', [\App\Http\Controllers\CommissaryController::class, 'adminIndex']);
-        Route::patch('/commissary-orders/{id}', [\App\Http\Controllers\CommissaryController::class, 'adminUpdateStatus']);
+        Route::get('/commissary-orders', [\App\Http\Controllers\Franchise\CommissaryController::class, 'adminIndex']);
+        Route::patch('/commissary-orders/{id}', [\App\Http\Controllers\Franchise\CommissaryController::class, 'adminUpdateStatus']);
 
         // Product Catalog Management
         Route::get('/products', [\App\Http\Controllers\Admin\ProductController::class, 'index']);
@@ -60,44 +60,44 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/franchisees', [\App\Http\Controllers\Admin\AdminFranchiseeController::class, 'index']);
 
         // Supply Chain & Batch Integrity Management
-        Route::get('/inventory/batches', [\App\Http\Controllers\InventoryController::class, 'getBatches']);
-        Route::post('/inventory/batches', [\App\Http\Controllers\InventoryController::class, 'storeBatch']);
-        Route::post('/inventory/batches/markdown', [\App\Http\Controllers\InventoryController::class, 'triggerMarkdown']);
-        Route::get('/inventory/ingredients', [\App\Http\Controllers\InventoryController::class, 'getIngredients']);
-        Route::post('/inventory/ingredients', [\App\Http\Controllers\InventoryController::class, 'storeIngredient']);
-        Route::post('/inventory/ingredients/{id}/restock', [\App\Http\Controllers\InventoryController::class, 'restockIngredient']);
-        Route::get('/inventory/recipes', [\App\Http\Controllers\InventoryController::class, 'getRecipes']);
-        Route::post('/inventory/recipes', [\App\Http\Controllers\InventoryController::class, 'storeRecipe']);
+        Route::get('/inventory/batches', [\App\Http\Controllers\Admin\InventoryController::class, 'getBatches']);
+        Route::post('/inventory/batches', [\App\Http\Controllers\Admin\InventoryController::class, 'storeBatch']);
+        Route::post('/inventory/batches/markdown', [\App\Http\Controllers\Admin\InventoryController::class, 'triggerMarkdown']);
+        Route::get('/inventory/ingredients', [\App\Http\Controllers\Admin\InventoryController::class, 'getIngredients']);
+        Route::post('/inventory/ingredients', [\App\Http\Controllers\Admin\InventoryController::class, 'storeIngredient']);
+        Route::post('/inventory/ingredients/{id}/restock', [\App\Http\Controllers\Admin\InventoryController::class, 'restockIngredient']);
+        Route::get('/inventory/recipes', [\App\Http\Controllers\Admin\InventoryController::class, 'getRecipes']);
+        Route::post('/inventory/recipes', [\App\Http\Controllers\Admin\InventoryController::class, 'storeRecipe']);
 
         // Phase 4: Employee Personnel Controls (Multi-Tier RBAC)
-        Route::post('/employees', [\App\Http\Controllers\EmployeeController::class, 'store']);
-        Route::put('/employees/{id}', [\App\Http\Controllers\EmployeeController::class, 'update']);
-        Route::delete('/employees/{id}', [\App\Http\Controllers\EmployeeController::class, 'destroy']);
+        Route::post('/employees', [\App\Http\Controllers\Admin\EmployeeController::class, 'store']);
+        Route::put('/employees/{id}', [\App\Http\Controllers\Admin\EmployeeController::class, 'update']);
+        Route::delete('/employees/{id}', [\App\Http\Controllers\Admin\EmployeeController::class, 'destroy']);
 
         // Website Settings Content Management
-        Route::put('/website-settings', [\App\Http\Controllers\WebsiteSettingController::class, 'update']);
+        Route::put('/website-settings', [\App\Http\Controllers\Admin\WebsiteSettingController::class, 'update']);
     });
 
     // Routes shared by Admin, HQ operations, and Franchisee
     Route::middleware('role:Admin|HQ operations|Franchisee')->prefix('admin')->group(function () {
-        Route::get('/employees', [\App\Http\Controllers\EmployeeController::class, 'index']);
+        Route::get('/employees', [\App\Http\Controllers\Admin\EmployeeController::class, 'index']);
         Route::get('/hubs', [\App\Http\Controllers\Admin\HubController::class, 'index']);
     });
 
     // Phase 4: Digital Compliance & QC Audits
-    Route::get('/compliance/audits', [\App\Http\Controllers\ComplianceController::class, 'index']);
-    Route::post('/compliance/audits', [\App\Http\Controllers\ComplianceController::class, 'store']);
-    Route::patch('/compliance/audits/{id}', [\App\Http\Controllers\ComplianceController::class, 'updateStatus']);
-    Route::get('/compliance/anomalies', [\App\Http\Controllers\ComplianceController::class, 'getAnomalies']);
-    Route::patch('/compliance/anomalies/{id}/resolve', [\App\Http\Controllers\ComplianceController::class, 'resolveAnomaly']);
-
+    Route::get('/compliance/audits', [\App\Http\Controllers\Compliance\ComplianceController::class, 'index']);
+    Route::post('/compliance/audits', [\App\Http\Controllers\Compliance\ComplianceController::class, 'store']);
+    Route::patch('/compliance/audits/{id}', [\App\Http\Controllers\Compliance\ComplianceController::class, 'updateStatus']);
+    Route::get('/compliance/anomalies', [\App\Http\Controllers\Compliance\ComplianceController::class, 'getAnomalies']);
+    Route::patch('/compliance/anomalies/{id}/resolve', [\App\Http\Controllers\Compliance\ComplianceController::class, 'resolveAnomaly']);
+ 
     // Phase 4: Cashier Shift Sessions and Direct Payout Commission Ledger
-    Route::post('/payroll/shifts/clock-in', [\App\Http\Controllers\PayrollController::class, 'clockIn']);
-    Route::post('/payroll/shifts/clock-out', [\App\Http\Controllers\PayrollController::class, 'clockOut']);
-    Route::get('/payroll/shifts', [\App\Http\Controllers\PayrollController::class, 'getShifts']);
-    Route::get('/payroll/payouts/calculate', [\App\Http\Controllers\PayrollController::class, 'calculatePayout']);
-    Route::post('/payroll/payouts', [\App\Http\Controllers\PayrollController::class, 'storePayout']);
-    Route::get('/payroll/payouts', [\App\Http\Controllers\PayrollController::class, 'getPayouts']);
+    Route::post('/payroll/shifts/clock-in', [\App\Http\Controllers\Payroll\PayrollController::class, 'clockIn']);
+    Route::post('/payroll/shifts/clock-out', [\App\Http\Controllers\Payroll\PayrollController::class, 'clockOut']);
+    Route::get('/payroll/shifts', [\App\Http\Controllers\Payroll\PayrollController::class, 'getShifts']);
+    Route::get('/payroll/payouts/calculate', [\App\Http\Controllers\Payroll\PayrollController::class, 'calculatePayout']);
+    Route::post('/payroll/payouts', [\App\Http\Controllers\Payroll\PayrollController::class, 'storePayout']);
+    Route::get('/payroll/payouts', [\App\Http\Controllers\Payroll\PayrollController::class, 'getPayouts']);
 
     // Branch Operational Expenses
     Route::get('/expenses', [\App\Http\Controllers\ExpenseController::class, 'index']);
@@ -105,7 +105,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/expenses/{id}', [\App\Http\Controllers\ExpenseController::class, 'destroy']);
 
     // Phase 5: Business Intelligence & Predictive Analytics Engine
-    Route::get('/analytics/summary', [\App\Http\Controllers\AnalyticsController::class, 'getSummary']);
+    Route::get('/analytics/summary', [\App\Http\Controllers\Analytics\AnalyticsController::class, 'getSummary']);
 });
 
 // Product Routes
@@ -119,4 +119,4 @@ Route::post('/franchise/apply', [\App\Http\Controllers\FranchiseApplicationContr
 Route::get('/hubs', [\App\Http\Controllers\HubController::class, 'index']);
 
 // Website Settings Public Route
-Route::get('/website-settings', [\App\Http\Controllers\WebsiteSettingController::class, 'index']);
+Route::get('/website-settings', [\App\Http\Controllers\Admin\WebsiteSettingController::class, 'index']);

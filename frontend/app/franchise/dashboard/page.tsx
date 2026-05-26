@@ -5,11 +5,11 @@ import useSWR from "swr";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Warning, Package, Truck, DeviceTablet, ShieldCheck, Coins, List } from "@phosphor-icons/react";
-import CartDrawer from "@/components/CartDrawer";
+import CartDrawer from "@/components/layout/CartDrawer";
 import { Product, CartItem } from "@/types";
-import QCComplianceManager from "@/components/admin/QCComplianceManager";
-import ExpenseTracker from "@/components/admin/ExpenseTracker";
-import { deleteCookie } from "@/components/cookieHelper";
+import QCComplianceManager from "@/components/admin/compliance/QCComplianceManager";
+import ExpenseTracker from "@/components/admin/expenses/ExpenseTracker";
+import { deleteCookie } from "@/lib/cookies";
 import { usePOS } from "@/hooks/usePOS";
 import { useWholesaleCart } from "@/hooks/useWholesaleCart";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { Product } from "@/types";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/components/consumer/ProductCard";
 import { Truck, Package, Leaf } from "@phosphor-icons/react";
 
 interface LogisticsTabProps {

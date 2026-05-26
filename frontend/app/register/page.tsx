@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
-import { setCookie } from "@/components/cookieHelper";
+import { setCookie } from "@/lib/cookies";
 
 export default function RegisterPage() {
   const router = useRouter();

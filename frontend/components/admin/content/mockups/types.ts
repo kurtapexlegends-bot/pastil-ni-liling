@@ -1,4 +1,4 @@
-import { Product } from '../../../../app/admin/types';
+import { Product } from '@/types/admin';
 
 export interface SiteSettings {
   announcement_enabled: boolean;
