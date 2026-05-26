@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import useSWR from "swr";
 import Navbar from "@/components/Navbar";
 
@@ -27,7 +28,28 @@ interface SiteSettings {
   footer_copyright?: string;
 }
 
+const getBgStyle = (bgColor: string) => {
+  switch (bgColor) {
+    case 'bg-brand-yellow': return { backgroundColor: 'var(--brand-yellow)' };
+    case 'bg-brand-green': return { backgroundColor: 'var(--brand-green)' };
+    case 'bg-brand-earth': return { backgroundColor: 'var(--brand-earth)' };
+    case 'bg-brand-red': return { backgroundColor: 'var(--brand-red)' };
+    case 'bg-brand-gray': return { backgroundColor: 'var(--brand-gray)' };
+    default: return { backgroundColor: 'var(--brand-yellow)' };
+  }
+};
+
+const getTextStyle = (textColor: string) => {
+  switch (textColor) {
+    case 'text-brand-earth': return { color: 'var(--brand-earth)' };
+    case 'text-white': return { color: '#ffffff' };
+    case 'text-brand-yellow': return { color: 'var(--brand-yellow)' };
+    default: return { color: 'var(--brand-earth)' };
+  }
+};
+
 export default function Home() {
+  const [isAlertClosed, setIsAlertClosed] = useState(false);
   const { data: settingsRes } = useSWR("http://127.0.0.1:8000/api/website-settings", fetcher);
   const { data: productsRes } = useSWR("http://127.0.0.1:8000/api/products", fetcher);
 
@@ -122,15 +144,30 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth selection:bg-brand-yellow/30 flex flex-col">
       {/* Dynamic Announcement Bar */}
-      {settings.announcement_enabled && announcement.text && (
-        <div className={`${announcement.bg_color} ${announcement.text_color} text-[11px] sm:text-xs font-extrabold py-3 px-6 text-center select-none shadow-sm flex items-center justify-center gap-2 transition-all duration-300 relative z-50 overflow-hidden shrink-0`}>
-          <span className="shrink-0">{iconEmoji}</span>
-          <span className={`${
-            announcement.animate === 'bounce' ? 'animate-bounce inline-block' : 
-            announcement.animate === 'pulse' ? 'animate-pulse' : ''
-          }`}>
-            {announcement.text}
-          </span>
+      {settings.announcement_enabled && announcement.text && !isAlertClosed && (
+        <div 
+          style={{ 
+            ...getBgStyle(announcement.bg_color), 
+            ...getTextStyle(announcement.text_color) 
+          }}
+          className="fixed top-24 left-1/2 -translate-x-1/2 z-50 px-6 py-2.5 rounded-full shadow-[0_16px_36px_rgba(27,45,22,0.12)] border border-black/5 flex items-center justify-between gap-3 max-w-[90vw] md:max-w-xl select-none animate-in fade-in slide-in-from-top-4 duration-500 hover:scale-[1.02] transition-transform shrink-0"
+        >
+          <div className="flex items-center gap-2.5">
+            <span className="text-sm shrink-0">{iconEmoji}</span>
+            <span className={`text-[10px] sm:text-xs font-black tracking-wide leading-tight ${
+              announcement.animate === 'bounce' ? 'animate-bounce inline-block' : 
+              announcement.animate === 'pulse' ? 'animate-pulse' : ''
+            }`}>
+              {announcement.text}
+            </span>
+          </div>
+          <button 
+            type="button"
+            onClick={() => setIsAlertClosed(true)}
+            className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black opacity-60 hover:opacity-100 transition-opacity bg-black/5 cursor-pointer ml-1"
+          >
+            ✕
+          </button>
         </div>
       )}
 
