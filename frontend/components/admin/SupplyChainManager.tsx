@@ -164,13 +164,13 @@ export default function SupplyChainManager({
             <>
               <button
                 onClick={() => setIsIngredientModalOpen(true)}
-                className="bg-white border border-gray-100 text-brand-earth hover:bg-gray-50 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+                className="bg-white border border-gray-100 text-brand-earth hover:bg-gray-50 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
               >
                 Add Ingredient Type
               </button>
               <button
                 onClick={() => setIsRestockModalOpen(true)}
-                className="bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+                className="bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
               >
                 Restock Commissary
               </button>
@@ -182,13 +182,13 @@ export default function SupplyChainManager({
               <button
                 onClick={handleScanMarkdowns}
                 disabled={loading}
-                className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm disabled:opacity-50"
+                className="bg-white border border-amber-200 text-amber-700 hover:bg-amber-50/50 hover:border-amber-300 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm disabled:opacity-50 cursor-pointer"
               >
-                Scan Near-Expiries (Markdown)
+                Scan Near-Expiries
               </button>
               <button
                 onClick={() => setIsBatchModalOpen(true)}
-                className="bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+                className="bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
               >
                 Log Production Intake
               </button>
@@ -198,7 +198,7 @@ export default function SupplyChainManager({
           {activeSubTab === 'recipes' && (
             <button
               onClick={() => setIsRecipeModalOpen(true)}
-              className="bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+              className="bg-brand-green text-white hover:bg-brand-green/90 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
             >
               Configure Recipe Map
             </button>
