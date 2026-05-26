@@ -54,11 +54,15 @@ export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFor
 
   const config = getAnnouncementData();
 
-  const handleFieldChange = (key: keyof AnnouncementConfig, value: string) => {
-    const updatedConfig = { ...config, [key]: value };
+  const handleFieldsChange = (updates: Partial<AnnouncementConfig>) => {
+    const updatedConfig = { ...config, ...updates };
     onUpdate({
       announcement_text: JSON.stringify(updatedConfig)
     });
+  };
+
+  const handleFieldChange = (key: keyof AnnouncementConfig, value: string) => {
+    handleFieldsChange({ [key]: value });
   };
 
   return (
@@ -109,16 +113,15 @@ export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFor
                 value={`${config.bg_color}|${config.text_color}`}
                 onChange={(e) => {
                   const [bg, text] = e.target.value.split('|');
-                  handleFieldChange('bg_color', bg);
-                  handleFieldChange('text_color', text);
+                  handleFieldsChange({ bg_color: bg, text_color: text });
                 }}
                 className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-semibold text-brand-earth focus:bg-white focus:border-brand-green outline-none transition-all cursor-pointer"
               >
                 <option value="bg-brand-yellow|text-brand-earth">Warm Mustard Yellow (Default)</option>
                 <option value="bg-brand-green|text-white">Forest Fresh Green</option>
                 <option value="bg-brand-earth|text-brand-yellow">Deep Golden Soil</option>
-                <option value="bg-red-700|text-white">Spicy Pepper Red</option>
-                <option value="bg-zinc-100|text-brand-earth">Minimalist Bone Gray</option>
+                <option value="bg-brand-red|text-white">Spicy Pepper Red</option>
+                <option value="bg-brand-gray|text-brand-earth">Minimalist Bone Gray</option>
               </select>
             </div>
 

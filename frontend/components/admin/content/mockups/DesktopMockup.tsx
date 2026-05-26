@@ -42,6 +42,26 @@ interface DesktopMockupProps {
   activeSubTab: string;
 }
 
+const getBgStyle = (bgColor: string) => {
+  switch (bgColor) {
+    case 'bg-brand-yellow': return { backgroundColor: 'var(--brand-yellow)' };
+    case 'bg-brand-green': return { backgroundColor: 'var(--brand-green)' };
+    case 'bg-brand-earth': return { backgroundColor: 'var(--brand-earth)' };
+    case 'bg-brand-red': return { backgroundColor: 'var(--brand-red)' };
+    case 'bg-brand-gray': return { backgroundColor: 'var(--brand-gray)' };
+    default: return { backgroundColor: 'var(--brand-yellow)' };
+  }
+};
+
+const getTextStyle = (textColor: string) => {
+  switch (textColor) {
+    case 'text-brand-earth': return { color: 'var(--brand-earth)' };
+    case 'text-white': return { color: '#ffffff' };
+    case 'text-brand-yellow': return { color: 'var(--brand-yellow)' };
+    default: return { color: 'var(--brand-earth)' };
+  }
+};
+
 export default function DesktopMockup({ formData, products, activeSubTab }: DesktopMockupProps) {
   // Parse existing settings or fallback
   const announcement = typeof formData.announcement_text === 'object' && formData.announcement_text !== null
@@ -76,14 +96,20 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
 
   return (
     <div className="relative w-full max-w-[460px] h-[560px] bg-white rounded-3xl border border-gray-200/80 shadow-2xl overflow-hidden flex flex-col ring-4 ring-white/30 transition-all duration-300 animate-in zoom-in-95 duration-200">
-      {/* Dynamic Top Announcement Strip */}
+      {/* Dynamic Floating Pill Alert Overlay */}
       {formData.announcement_enabled && announcement.text && (
-        <div className={`${announcement.bg_color} ${announcement.text_color} text-[7px] font-black py-1.5 px-3 text-center select-none shadow-sm flex items-center justify-center gap-1 transition-all duration-300 relative z-50 overflow-hidden shrink-0`}>
-          <span className="shrink-0">{iconEmoji}</span>
-          <span className={`${
+        <div 
+          style={{ 
+            ...getBgStyle(announcement.bg_color), 
+            ...getTextStyle(announcement.text_color) 
+          }}
+          className="absolute top-16 left-1/2 -translate-x-1/2 z-40 px-3 py-1 rounded-full shadow-lg border border-black/5 flex items-center justify-between gap-1.5 max-w-[85%] select-none scale-90 origin-top shrink-0"
+        >
+          <span className="text-[8px] shrink-0">{iconEmoji}</span>
+          <span className={`text-[6.5px] font-black tracking-wide leading-none truncate max-w-[130px] ${
             announcement.animate === 'bounce' ? 'animate-bounce inline-block' : 
             announcement.animate === 'pulse' ? 'animate-pulse' : ''
-          } truncate`}>
+          }`}>
             {announcement.text}
           </span>
         </div>
@@ -234,7 +260,7 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
                   
                   <h1 className="text-[15px] font-extrabold tracking-tight leading-[1.1] text-brand-earth max-w-[150px]">
                     {formData.hero_title_white ? (
-                      formData.hero_title_white.split('\n').map((line, i) => <span key={i}>{line}<br/></span>)
+                      formData.hero_title_white.split('\n').map((line: string, i: number) => <span key={i}>{line}<br/></span>)
                     ) : (
                       <span>Mindanao's finest<br/>delivered to your<br/></span>
                     )}
