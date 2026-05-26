@@ -34,6 +34,12 @@ interface SiteSettings {
   franchise_milestone_title?: string;
   franchise_milestone_desc?: string;
   franchise_footer_copyright?: string;
+  footer_social_fb?: string;
+  footer_social_ig?: string;
+  footer_social_tw?: string;
+  footer_contact_phone?: string;
+  footer_contact_email?: string;
+  footer_contact_address?: string;
 }
 
 interface MobileMockupProps {
@@ -472,6 +478,11 @@ export default function MobileMockup({ formData, products, activeSubTab }: Mobil
                   <p className="text-[5px] text-brand-earth/50 leading-relaxed font-medium">
                     {formData.footer_desc || 'Bringing authentic Mindanao flavors to the mainstream. Quality you can trust, prices you can afford.'}
                   </p>
+                  <div className="space-y-0.5 text-[4px] text-brand-earth/40 pt-1 font-medium">
+                    {formData.footer_contact_phone && <p className="leading-none">T: {formData.footer_contact_phone}</p>}
+                    {formData.footer_contact_email && <p className="leading-none">E: {formData.footer_contact_email}</p>}
+                    {formData.footer_contact_address && <p className="leading-none">A: {formData.footer_contact_address}</p>}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -494,12 +505,18 @@ export default function MobileMockup({ formData, products, activeSubTab }: Mobil
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
+                 <div className="space-y-1.5">
                   <h4 className="text-[5px] font-bold uppercase tracking-widest">Connect</h4>
-                  <div className="flex gap-2 opacity-40">
-                    {['FB', 'IG', 'TW'].map(s => (
-                      <div key={s} className="w-4.5 h-4.5 rounded-full border border-brand-earth flex items-center justify-center text-[4px] font-black cursor-pointer">{s}</div>
-                    ))}
+                  <div className="flex gap-1.5 opacity-40">
+                    {formData.footer_social_fb && (
+                      <div className="w-4.5 h-4.5 rounded-full border border-brand-earth flex items-center justify-center text-[4px] font-black cursor-pointer">FB</div>
+                    )}
+                    {formData.footer_social_ig && (
+                      <div className="w-4.5 h-4.5 rounded-full border border-brand-earth flex items-center justify-center text-[4px] font-black cursor-pointer">IG</div>
+                    )}
+                    {formData.footer_social_tw && (
+                      <div className="w-4.5 h-4.5 rounded-full border border-brand-earth flex items-center justify-center text-[4px] font-black cursor-pointer">TW</div>
+                    )}
                   </div>
                 </div>
               </div>

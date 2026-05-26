@@ -52,6 +52,12 @@ class WebsiteSettingController extends Controller
             'trust_subtitle' => 'Join our mission to bring Mindanao\'s finest to every Filipino table through our expanding franchise network.',
             'footer_desc' => 'Bringing authentic Mindanao flavors to the mainstream. Quality you can trust, prices you can afford.',
             'footer_copyright' => '&copy; 2026 Pastil ni Liling. Swak sa Bulsa, Sarap na Babalik-balikan.',
+            'footer_social_fb' => 'https://facebook.com',
+            'footer_social_ig' => 'https://instagram.com',
+            'footer_social_tw' => 'https://twitter.com',
+            'footer_contact_phone' => '+63 917 123 4567',
+            'footer_contact_email' => 'hello@pastilnililing.com',
+            'footer_contact_address' => 'General Santos City, Philippines',
             'franchise_badge' => 'Business Opportunity',
             'franchise_title_white' => 'Grow with',
             'franchise_title_green' => 'Pastil ni Liling.',
@@ -140,7 +146,13 @@ class WebsiteSettingController extends Controller
                     'franchise_benefit4_desc',
                     'franchise_milestone_title',
                     'franchise_milestone_desc',
-                    'franchise_footer_copyright'
+                    'franchise_footer_copyright',
+                    'footer_social_fb',
+                    'footer_social_ig',
+                    'footer_social_tw',
+                    'footer_contact_phone',
+                    'footer_contact_email',
+                    'footer_contact_address'
                 ];
 
                 if (in_array($key, $allowedKeys)) {

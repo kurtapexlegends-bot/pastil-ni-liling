@@ -60,6 +60,12 @@ interface SiteSettings {
   franchise_milestone_title?: string;
   franchise_milestone_desc?: string;
   franchise_footer_copyright?: string;
+  footer_social_fb?: string;
+  footer_social_ig?: string;
+  footer_social_tw?: string;
+  footer_contact_phone?: string;
+  footer_contact_email?: string;
+  footer_contact_address?: string;
 }
 
 const fetcher = (url: string) => {
@@ -108,7 +114,13 @@ export default function WebsiteContentManager() {
     franchise_benefit4_desc: '',
     franchise_milestone_title: '',
     franchise_milestone_desc: '',
-    franchise_footer_copyright: ''
+    franchise_footer_copyright: '',
+    footer_social_fb: '',
+    footer_social_ig: '',
+    footer_social_tw: '',
+    footer_contact_phone: '',
+    footer_contact_email: '',
+    footer_contact_address: ''
   });
 
   const [saving, setSaving] = useState(false);
