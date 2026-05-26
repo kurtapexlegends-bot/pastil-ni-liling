@@ -5,9 +5,9 @@ import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
 import { MagnifyingGlass } from "@phosphor-icons/react";
-import ProductCard from "@/components/ProductCard";
-import CartDrawer from "@/components/CartDrawer";
-import Navbar from "@/components/Navbar";
+import ProductCard from "@/components/consumer/ProductCard";
+import CartDrawer from "@/components/layout/CartDrawer";
+import Navbar from "@/components/layout/Navbar";
 import { Product, CartItem } from "@/types";
 
 export default function MenuPage() {

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import useSWR from "swr";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import CountdownTimer from "@/components/ui/CountdownTimer";
 
 interface SiteSettings {

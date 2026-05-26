@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Product, Hub } from "../../../../app/admin/types";
-import Modal from "../../../ui/Modal";
+import { Product, Hub } from "@/types/admin";
+import Modal from "@/components/ui/Modal";
 
 interface ProductionIntakeModalProps {
   isOpen: boolean;

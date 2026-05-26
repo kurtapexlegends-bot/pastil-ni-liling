@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // Types
-import { Product, Hub } from "./types";
+import { Product, Hub } from "@/types/admin";
 
 // Hooks
 import { useAdminProducts } from "../../hooks/admin/useAdminProducts";
@@ -16,14 +16,14 @@ import { useConfirm } from "../../hooks/useConfirm";
 import { toast } from "sonner";
 
 // Components
-import DashboardLayout from "../../components/admin/DashboardLayout";
-import StatsGrid from "../../components/admin/StatsGrid";
+import DashboardLayout from "../../components/admin/layout/DashboardLayout";
+import StatsGrid from "../../components/admin/layout/StatsGrid";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import DashboardSkeleton from "@/components/ui/DashboardSkeleton";
-import { deleteCookie } from "@/components/cookieHelper";
+import { deleteCookie } from "@/lib/cookies";
 
 // Lazy Loaded Modules
-const AnalyticsEngine = dynamic(() => import("../../components/admin/AnalyticsEngine"), {
+const AnalyticsEngine = dynamic(() => import("../../components/admin/analytics/AnalyticsEngine"), {
   ssr: false,
   loading: () => (
     <div className="h-96 flex flex-col items-center justify-center text-xs font-semibold text-brand-earth/40 animate-pulse bg-white rounded-2xl border border-gray-100 shadow-sm">
@@ -32,15 +32,15 @@ const AnalyticsEngine = dynamic(() => import("../../components/admin/AnalyticsEn
     </div>
   )
 });
-const FranchiseApplications = dynamic(() => import("../../components/admin/FranchiseApplications"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
-const OrderManagement = dynamic(() => import("../../components/admin/OrderManagement"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
-const ProductCatalog = dynamic(() => import("../../components/admin/ProductCatalog"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
-const FranchiseBranches = dynamic(() => import("../../components/admin/FranchiseBranches"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
-const SupplyChainManager = dynamic(() => import("../../components/admin/SupplyChainManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
-const EmployeeManager = dynamic(() => import("../../components/admin/EmployeeManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
-const QCComplianceManager = dynamic(() => import("../../components/admin/QCComplianceManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
-const BranchPayrollManager = dynamic(() => import("../../components/admin/BranchPayrollManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
-const WebsiteContentManager = dynamic(() => import("@/components/admin/WebsiteContentManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const FranchiseApplications = dynamic(() => import("../../components/admin/branches/FranchiseApplications"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const OrderManagement = dynamic(() => import("../../components/admin/orders/OrderManagement"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const ProductCatalog = dynamic(() => import("../../components/admin/catalog/ProductCatalog"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const FranchiseBranches = dynamic(() => import("../../components/admin/branches/FranchiseBranches"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const SupplyChainManager = dynamic(() => import("../../components/admin/supply-chain/SupplyChainManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const EmployeeManager = dynamic(() => import("../../components/admin/employees/EmployeeManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const QCComplianceManager = dynamic(() => import("../../components/admin/compliance/QCComplianceManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const BranchPayrollManager = dynamic(() => import("../../components/admin/payroll/BranchPayrollManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const WebsiteContentManager = dynamic(() => import("@/components/admin/content/WebsiteContentManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
 
 export default function AdminDashboard() {
   const router = useRouter();

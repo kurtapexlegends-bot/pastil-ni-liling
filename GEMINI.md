@@ -8,6 +8,7 @@
 - **Structure (Backend):** Maintain logical separation of concerns (routes, controllers, services, models). Encapsulate complex business logic in dedicated `App\Services` or `App\Actions`, keeping Controllers strictly as slim request/response orchestrators.
 - **Structure (Frontend):** Enforce strict modular componentization. Avoid large monolithic files (e.g., pages exceeding 500 lines). Decompose dashboard views and large page templates into granular, focused UI and state components inside `components/` grouped by feature/domain for maximum maintainability and testing scope.
 - **Componentization (Reusability):** Decompose structural UI elements (e.g., Sidebars, Headers, Modules) into unified, global reusable components. Never bundle these layout concerns directly in page templates; maintain them as single, independent files so they can be reused and edited separately.
+- **Feature Encapsulation (Structural Reorganization):** Restructure directories strictly by functional domain under `components/` (e.g., `components/admin/catalog/`, `components/admin/payroll/`). Avoid leaving feature orchestrators (e.g., `SupplyChainManager.tsx`) sitting loose at domain roots. Enforce clean, decoupled type and utility imports using strict absolute aliases (e.g., `@/types/admin`, `@/lib/cookies`) to simplify directory navigation as the system scales.
 
 ## 2. Security & Authentication
 - **Access Control:** Implement robust RBAC from day one.

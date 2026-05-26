@@ -5,10 +5,10 @@ import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import { deleteCookie } from "@/components/cookieHelper";
+import Navbar from "@/components/layout/Navbar";
+import { deleteCookie } from "@/lib/cookies";
 import { ShoppingBag } from "@phosphor-icons/react";
-import CustomerDashboardSkeleton from "@/components/CustomerDashboardSkeleton";
+import CustomerDashboardSkeleton from "@/components/consumer/CustomerDashboardSkeleton";
 
 const fetcher = (url: string) => {
   const token = localStorage.getItem("token");

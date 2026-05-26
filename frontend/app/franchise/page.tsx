@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import { useValidation, constraints, ValidationSchema } from "@/hooks/useValidation";
 import { 
   Coins, 

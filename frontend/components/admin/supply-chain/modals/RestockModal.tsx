@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Ingredient } from "../../../../app/admin/types";
-import Modal from "../../../ui/Modal";
+import { Ingredient } from "@/types/admin";
+import Modal from "@/components/ui/Modal";
 
 interface RestockModalProps {
   isOpen: boolean;
