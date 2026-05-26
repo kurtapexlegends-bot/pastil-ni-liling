@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Product } from '../../../../app/admin/types';
 
@@ -42,6 +42,86 @@ interface DesktopMockupProps {
   activeSubTab: string;
 }
 
+interface CountdownTimerProps {
+  targetDate: string;
+  prefix?: string;
+  format?: 'd_h_m_s' | 'h_m_s';
+  expiredBehavior?: 'hide' | 'display';
+  expiredText?: string;
+  onExpire?: () => void;
+  className?: string;
+}
+
+const CountdownTimer = ({ 
+  targetDate, 
+  prefix = 'Ends in:', 
+  format = 'h_m_s', 
+  expiredBehavior = 'display', 
+  expiredText = 'Expired!', 
+  onExpire,
+  className
+}: CountdownTimerProps) => {
+  const [timeLeft, setTimeLeft] = useState('');
+  const [isDone, setIsDone] = useState(false);
+
+  useEffect(() => {
+    if (isDone && onExpire) {
+      onExpire();
+    }
+  }, [isDone, onExpire]);
+
+  useEffect(() => {
+    if (!targetDate) return;
+
+    const calculateTime = () => {
+      const difference = +new Date(targetDate) - +new Date();
+      if (difference <= 0) {
+        setIsDone(true);
+        return expiredText;
+      }
+
+      setIsDone(false);
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = format === 'd_h_m_s' 
+        ? Math.floor((difference / (1000 * 60 * 60)) % 24)
+        : Math.floor(difference / (1000 * 60 * 60));
+      const minutes = Math.floor((difference / 1000 / 60) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+
+      const pad = (num: number) => String(num).padStart(2, '0');
+
+      const label = prefix ? `${prefix} ` : '';
+
+      if (format === 'd_h_m_s' && days > 0) {
+        return `${label}${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+      }
+
+      return `${label}${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+    };
+
+    setTimeLeft(calculateTime());
+
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTime());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [targetDate, prefix, format, expiredText]);
+
+  if (!targetDate) return null;
+  if (isDone && expiredBehavior === 'hide') return null;
+
+  return (
+    <span 
+      style={{ opacity: 0.85 }}
+      className={className || "text-[5px] font-black uppercase tracking-wider px-1 py-0.5 rounded bg-black/10 shrink-0 ml-1"}
+    >
+      {timeLeft}
+    </span>
+  );
+};
+
 const getBgStyle = (bgColor: string) => {
   switch (bgColor) {
     case 'bg-brand-yellow': 
@@ -77,6 +157,8 @@ const getTextStyle = (textColor: string) => {
 };
 
 export default function DesktopMockup({ formData, products, activeSubTab }: DesktopMockupProps) {
+  const [isTimerExpired, setIsTimerExpired] = useState(false);
+
   // Parse existing settings or fallback
   const announcement = typeof formData.announcement_text === 'object' && formData.announcement_text !== null
     ? formData.announcement_text
@@ -89,7 +171,13 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
               bg_color: parsed.bg_color || 'bg-brand-yellow',
               text_color: parsed.text_color || 'text-brand-earth',
               animate: parsed.animate || 'none',
-              icon: parsed.icon || 'megaphone'
+              icon: parsed.icon || 'megaphone',
+              timer_enabled: parsed.timer_enabled || false,
+              timer_target: parsed.timer_target || '',
+              timer_prefix: parsed.timer_prefix || 'Ends in:',
+              timer_format: parsed.timer_format || 'h_m_s',
+              timer_expired_behavior: parsed.timer_expired_behavior || 'display',
+              timer_expired_text: parsed.timer_expired_text || 'Expired!'
             };
           }
         } catch (e) {}
@@ -98,9 +186,19 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
           bg_color: 'bg-brand-yellow',
           text_color: 'text-brand-earth',
           animate: 'none',
-          icon: 'megaphone'
+          icon: 'megaphone',
+          timer_enabled: false,
+          timer_target: '',
+          timer_prefix: 'Ends in:',
+          timer_format: 'h_m_s',
+          timer_expired_behavior: 'display',
+          timer_expired_text: 'Expired!'
         };
       })();
+
+  useEffect(() => {
+    setIsTimerExpired(false);
+  }, [announcement.timer_target, announcement.timer_enabled]);
 
   const iconEmoji = announcement.icon === 'megaphone' ? '📢' 
     : announcement.icon === 'sparkle' ? '✨'
@@ -111,7 +209,7 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
   return (
     <div className="relative w-full max-w-[460px] h-[560px] bg-white rounded-3xl border border-gray-200/80 shadow-2xl overflow-hidden flex flex-col ring-4 ring-white/30 transition-all duration-300 animate-in zoom-in-95 duration-200">
       {/* Dynamic Floating Pill Alert Overlay */}
-      {formData.announcement_enabled && announcement.text && (
+      {formData.announcement_enabled && announcement.text && !(announcement.timer_enabled && announcement.timer_expired_behavior === 'hide' && isTimerExpired) && (
         <div 
           style={{ 
             ...getBgStyle(announcement.bg_color), 
@@ -126,6 +224,16 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
           }`}>
             {announcement.text}
           </span>
+          {announcement.timer_enabled && announcement.timer_target && (
+            <CountdownTimer 
+              targetDate={announcement.timer_target} 
+              prefix={announcement.timer_prefix}
+              format={announcement.timer_format}
+              expiredBehavior={announcement.timer_expired_behavior}
+              expiredText={announcement.timer_expired_text}
+              onExpire={() => setIsTimerExpired(true)}
+            />
+          )}
         </div>
       )}
 
