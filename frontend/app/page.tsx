@@ -26,6 +26,12 @@ interface SiteSettings {
   trust_subtitle?: string;
   footer_desc?: string;
   footer_copyright?: string;
+  footer_social_fb?: string;
+  footer_social_ig?: string;
+  footer_social_tw?: string;
+  footer_contact_phone?: string;
+  footer_contact_email?: string;
+  footer_contact_address?: string;
 }
 
 interface CountdownTimerProps {
@@ -166,7 +172,13 @@ export default function Home() {
     trust_title: 'The Fastest Growing Pastil Brand.',
     trust_subtitle: 'Join our mission to bring Mindanao\'s finest to every Filipino table through our expanding franchise network.',
     footer_desc: 'Bringing authentic Mindanao flavors to the mainstream. Quality you can trust, prices you can afford.',
-    footer_copyright: '&copy; 2026 Pastil ni Liling. Swak sa Bulsa, Sarap na Babalik-balikan.'
+    footer_copyright: '&copy; 2026 Pastil ni Liling. Swak sa Bulsa, Sarap na Babalik-balikan.',
+    footer_social_fb: 'https://facebook.com',
+    footer_social_ig: 'https://instagram.com',
+    footer_social_tw: 'https://twitter.com',
+    footer_contact_phone: '+63 917 123 4567',
+    footer_contact_email: 'hello@pastilnililing.com',
+    footer_contact_address: 'General Santos City, Philippines'
   };
 
   const settings: SiteSettings = settingsRes?.success ? settingsRes.data : defaults;
@@ -443,6 +455,11 @@ export default function Home() {
             <p className="text-xs text-brand-earth/50 leading-relaxed font-medium">
               {settings.footer_desc || 'Bringing authentic Mindanao flavors to the mainstream. Quality you can trust, prices you can afford.'}
             </p>
+            <div className="space-y-1.5 text-[10px] sm:text-xs text-brand-earth/50 pt-3 font-medium">
+              {settings.footer_contact_phone && <p className="leading-none">T: {settings.footer_contact_phone}</p>}
+              {settings.footer_contact_email && <p className="leading-none">E: {settings.footer_contact_email}</p>}
+              {settings.footer_contact_address && <p className="leading-none">A: {settings.footer_contact_address}</p>}
+            </div>
           </div>
           
           <div className="space-y-6">
@@ -466,9 +483,15 @@ export default function Home() {
           <div className="space-y-6 text-left md:text-right">
             <h4 className="text-[10px] font-bold uppercase tracking-widest">Connect</h4>
             <div className="flex justify-start md:justify-end gap-4 opacity-40">
-              {['FB', 'IG', 'TW'].map(s => (
-                <div key={s} className="w-8 h-8 rounded-full border border-brand-earth flex items-center justify-center text-[8px] font-black hover:opacity-100 transition-opacity cursor-pointer">{s}</div>
-              ))}
+              {settings.footer_social_fb && (
+                <a href={settings.footer_social_fb} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-brand-earth flex items-center justify-center text-[8px] font-black hover:opacity-100 transition-opacity cursor-pointer">FB</a>
+              )}
+              {settings.footer_social_ig && (
+                <a href={settings.footer_social_ig} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-brand-earth flex items-center justify-center text-[8px] font-black hover:opacity-100 transition-opacity cursor-pointer">IG</a>
+              )}
+              {settings.footer_social_tw && (
+                <a href={settings.footer_social_tw} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-brand-earth flex items-center justify-center text-[8px] font-black hover:opacity-100 transition-opacity cursor-pointer">TW</a>
+              )}
             </div>
           </div>
         </div>
