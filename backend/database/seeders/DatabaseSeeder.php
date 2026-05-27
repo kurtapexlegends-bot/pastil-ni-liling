@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             HubSeeder::class,
             WebsiteSettingSeeder::class,
+            AnalyticsDataSeeder::class,
         ]);
     }
 }
