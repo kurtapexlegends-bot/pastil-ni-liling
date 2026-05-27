@@ -27,7 +27,7 @@ class InventoryBatchTest extends TestCase
         // 1. Create Roles & Admin User
         Role::create(['name' => 'Admin']);
         $this->admin = User::factory()->create([
-            'email' => 'admin@pastilnililing.com',
+            'email' => 'admin@pnl.com',
             'password' => bcrypt('password')
         ]);
         $this->admin->assignRole('Admin');
