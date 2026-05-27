@@ -23,7 +23,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create initial Admin user
         $admin = User::updateOrCreate(
-            ['email' => 'admin@pastilnililing.com'],
+            ['email' => 'admin@pnl.com'],
             [
                 'name' => 'Pastil Admin',
                 'password' => Hash::make('password'),
@@ -33,7 +33,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create initial HQ operations user
         $hqOps = User::updateOrCreate(
-            ['email' => 'hq_ops@pastilnililing.com'],
+            ['email' => 'hq_ops@pnl.com'],
             [
                 'name' => 'Liling HQ Operations Director',
                 'password' => Hash::make('password'),
@@ -43,7 +43,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create initial Franchisee user
         $franchisee = User::updateOrCreate(
-            ['email' => 'franchise@pastilnililing.com'],
+            ['email' => 'franchise@pnl.com'],
             [
                 'name' => 'Liling Manila Franchisee',
                 'password' => Hash::make('password'),
@@ -53,7 +53,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create initial Branch Cashier user
         $cashier = User::updateOrCreate(
-            ['email' => 'cashier@pastilnililing.com'],
+            ['email' => 'cashier@pnl.com'],
             [
                 'name' => 'Liling Diliman Cashier',
                 'password' => Hash::make('password'),

@@ -13,7 +13,7 @@ class HubSeeder extends Seeder
      */
     public function run(): void
     {
-        $franchisee = User::where('email', 'franchise@pastilnililing.com')->first();
+        $franchisee = User::where('email', 'franchise@pnl.com')->first();
 
         if ($franchisee) {
             Hub::updateOrCreate(
