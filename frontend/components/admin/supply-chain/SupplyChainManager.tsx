@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Ingredient, InventoryBatch, ProductIngredient, Product, Hub } from "@/types/admin";
+import SegmentedControl from "@/components/ui/SegmentedControl";
 import AddIngredientModal from "./modals/AddIngredientModal";
 import RestockModal from "./modals/RestockModal";
 import ProductionIntakeModal from "./modals/ProductionIntakeModal";
@@ -134,32 +135,15 @@ export default function SupplyChainManager({
     <div className="space-y-6">
       {/* Sub tabs & HQ Scan Button */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex border-b border-gray-100 gap-6">
-          <button
-            onClick={() => setActiveSubTab('ingredients')}
-            className={`pb-3 text-xs font-semibold uppercase tracking-wider transition-colors ${
-              activeSubTab === 'ingredients' ? 'border-b-2 border-brand-green text-brand-green font-bold' : 'text-brand-earth/40 hover:text-brand-earth'
-            }`}
-          >
-            Commissary Ingredients
-          </button>
-          <button
-            onClick={() => setActiveSubTab('batches')}
-            className={`pb-3 text-xs font-semibold uppercase tracking-wider transition-colors ${
-              activeSubTab === 'batches' ? 'border-b-2 border-brand-green text-brand-green font-bold' : 'text-brand-earth/40 hover:text-brand-earth'
-            }`}
-          >
-            FIFO Batches Tracker
-          </button>
-          <button
-            onClick={() => setActiveSubTab('recipes')}
-            className={`pb-3 text-xs font-semibold uppercase tracking-wider transition-colors ${
-              activeSubTab === 'recipes' ? 'border-b-2 border-brand-green text-brand-green font-bold' : 'text-brand-earth/40 hover:text-brand-earth'
-            }`}
-          >
-            Recipe Formulations
-          </button>
-        </div>
+        <SegmentedControl
+          value={activeSubTab}
+          onChange={setActiveSubTab}
+          options={[
+            { id: "ingredients", label: "Commissary Ingredients" },
+            { id: "batches", label: "FIFO Batches Tracker" },
+            { id: "recipes", label: "Recipe Formulations" }
+          ]}
+        />
 
         <div className="flex gap-2">
           {activeSubTab === 'ingredients' && (
