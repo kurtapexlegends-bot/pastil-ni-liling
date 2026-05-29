@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Order } from "@/types/admin";
 import { Receipt, Truck, ShoppingCart } from "@phosphor-icons/react";
+import { formatCurrency } from "@/lib/format";
 
 interface OrderManagementProps {
   orders: Order[];
@@ -126,7 +127,7 @@ export default function OrderManagement({ orders, b2bOrders, updateOrderStatus, 
                       </div>
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100 font-semibold text-brand-earth text-xs">
-                      ₱{Number(order.total_amount).toFixed(2)}
+                      {formatCurrency(order.total_amount)}
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100">
                       <span className={`px-2 py-0.5 rounded-lg text-[8px] font-semibold uppercase tracking-wider ${

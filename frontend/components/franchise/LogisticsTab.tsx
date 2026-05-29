@@ -3,6 +3,7 @@
 import { Product } from "@/types";
 import ProductCard from "@/components/consumer/ProductCard";
 import { Truck, Package, Leaf } from "@phosphor-icons/react";
+import { formatCurrency } from "@/lib/format";
 
 interface LogisticsTabProps {
   customerOrders: any[];
@@ -73,7 +74,7 @@ export default function LogisticsTab({
                     {order.items?.map((item: any) => (
                       <div key={item.id} className="flex justify-between items-center text-[11px] text-brand-earth/70">
                         <span className="font-semibold">{item.quantity}x {item.product?.name}</span>
-                        <span className="font-bold">₱{(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
+                        <span className="font-bold">{formatCurrency(parseFloat(item.price) * item.quantity)}</span>
                       </div>
                     ))}
                   </div>
@@ -82,7 +83,7 @@ export default function LogisticsTab({
                 <div className="pt-4 border-t border-gray-100/60 flex justify-between items-center">
                   <div className="text-left">
                     <p className="text-[8px] font-bold uppercase tracking-widest text-brand-earth/30">Total</p>
-                    <p className="text-sm font-bold text-brand-earth">₱{parseFloat(order.total_amount).toFixed(2)}</p>
+                    <p className="text-sm font-bold text-brand-earth">{formatCurrency(order.total_amount)}</p>
                   </div>
 
                   <div className="flex gap-2">
@@ -215,7 +216,7 @@ export default function LogisticsTab({
                   >
                     <div className="space-y-1">
                       <p className="text-[9px] font-bold text-brand-earth/30 uppercase tracking-widest">Order #{order.id}</p>
-                      <p className="text-sm font-bold text-brand-earth">₱{parseFloat(order.total_amount).toFixed(2)}</p>
+                      <p className="text-sm font-bold text-brand-earth">{formatCurrency(order.total_amount)}</p>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest border ${order.status === 'delivered' ? 'bg-emerald-50 text-emerald-700 border-emerald-100/50' : 'bg-amber-50 text-amber-700 border-amber-100/50'}`}>
                       {order.status}

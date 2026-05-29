@@ -9,6 +9,7 @@ import Navbar from "@/components/layout/Navbar";
 import { deleteCookie } from "@/lib/cookies";
 import { ShoppingBag } from "@phosphor-icons/react";
 import CustomerDashboardSkeleton from "@/components/consumer/CustomerDashboardSkeleton";
+import { formatCurrency } from "@/lib/format";
 
 const fetcher = (url: string) => {
   const token = localStorage.getItem("token");
@@ -132,14 +133,14 @@ export default function UserDashboard() {
                     {order.items.map((item: any) => (
                       <div key={item.id} className="flex justify-between items-center text-xs font-medium">
                         <span className="text-brand-earth/60">{item.quantity}x {item.product.name}</span>
-                        <span className="font-bold">₱{parseFloat(item.price).toFixed(2)}</span>
+                        <span className="font-bold">{formatCurrency(item.price)}</span>
                       </div>
                     ))}
                   </div>
 
                   <footer className="flex items-center justify-between">
                     <p className="text-[10px] font-black uppercase tracking-widest text-brand-earth/40">Total Amount</p>
-                    <p className="text-xl font-black tracking-tighter">₱{parseFloat(order.total_amount).toFixed(2)}</p>
+                    <p className="text-xl font-black tracking-tighter">{formatCurrency(order.total_amount)}</p>
                   </footer>
                 </div>
               ))

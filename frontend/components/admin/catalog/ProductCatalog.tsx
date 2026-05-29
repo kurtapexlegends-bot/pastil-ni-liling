@@ -2,6 +2,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Product } from "@/types/admin";
 import { Package, Plus } from "@phosphor-icons/react";
+import { formatCurrency, formatThousands } from "@/lib/format";
 import ProductModal from "./ProductModal";
 import { useConfirm } from "../../../hooks/useConfirm";
 import { toast } from "sonner";
@@ -157,17 +158,17 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
                       {product.category.replace(/_/g, ' ')}
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100 text-xs font-semibold text-brand-earth">
-                      ₱{Number(product.price).toFixed(2)}
+                      {formatCurrency(product.price)}
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100 text-xs">
                       {product.is_wholesale ? (
-                        <span className="font-semibold text-brand-green">₱{Number(product.wholesale_price || 0).toFixed(2)}</span>
+                        <span className="font-semibold text-brand-green">{formatCurrency(product.wholesale_price || 0)}</span>
                       ) : (
                         <span className="text-[9px] text-brand-earth/30">N/A</span>
                       )}
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100 text-xs text-brand-earth/60 font-medium">
-                      {product.stock} units
+                      {formatThousands(product.stock)} units
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100">
                       <span className={`px-2 py-0.5 rounded-lg text-[8px] font-semibold uppercase tracking-wider ${

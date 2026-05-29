@@ -1,6 +1,7 @@
 "use client";
 
 import { Warning, Package, CircleNotch, Storefront } from "@phosphor-icons/react";
+import { formatCurrency } from "@/lib/format";
 
 interface POSCartItem {
   id: number;
@@ -120,7 +121,7 @@ export default function POSCashierTab({
                   <div className="space-y-1">
                     <span className="text-[8px] bg-brand-earth/5 text-brand-earth/50 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">{item.product?.category}</span>
                     <h3 className="text-sm font-bold text-brand-earth tracking-tight leading-tight">{item.product?.name}</h3>
-                    <p className="text-sm font-bold text-brand-green mt-1">₱{parseFloat(item.product?.price).toFixed(2)}</p>
+                    <p className="text-sm font-bold text-brand-green mt-1">{formatCurrency(item.product?.price)}</p>
                   </div>
                   <span className={`text-[9px] font-bold px-3 py-1 rounded-full border ${
                     item.stock_quantity === 0 
@@ -171,7 +172,7 @@ export default function POSCashierTab({
                     <div className="space-y-0.5">
                       <p className="font-semibold text-brand-earth tracking-tight">{item.name}</p>
                       <div className="flex gap-2 items-center">
-                        <p className="text-[10px] text-brand-earth/40 font-semibold">₱{parseFloat(item.price).toFixed(2)} each</p>
+                        <p className="text-[10px] text-brand-earth/40 font-semibold">{formatCurrency(item.price)} each</p>
                         <span className="text-[9px] text-brand-earth/30">|</span>
                         <select
                           value={item.flavor_modifier || "Original"}
@@ -202,7 +203,7 @@ export default function POSCashierTab({
                           +
                         </button>
                       </div>
-                      <span className="font-bold text-brand-earth w-14 text-right">₱{(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
+                      <span className="font-bold text-brand-earth w-14 text-right">{formatCurrency(parseFloat(item.price) * item.quantity)}</span>
                       <button 
                         type="button" 
                         onClick={() => removeFromPOSCart(item.id)}
@@ -268,7 +269,7 @@ export default function POSCashierTab({
                 <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-brand-earth/40">Amount Due</span>
                   <span className="text-lg font-bold text-brand-earth">
-                    ₱{currentTotal.toFixed(2)}
+                    {formatCurrency(currentTotal)}
                   </span>
                 </div>
 

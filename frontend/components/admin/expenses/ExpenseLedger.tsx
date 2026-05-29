@@ -1,4 +1,5 @@
 import { Expense } from "./types";
+import { formatCurrency } from "@/lib/format";
 
 interface ExpenseLedgerProps {
   expenses: Expense[];
@@ -45,7 +46,7 @@ export function ExpenseLedger({ expenses, loading, handleDelete }: ExpenseLedger
                   <td className="py-3 text-xs text-brand-earth/50 max-w-[200px] truncate" title={exp.description || ""}>
                     {exp.description || "-"}
                   </td>
-                  <td className="py-3 text-xs font-bold text-brand-earth text-right">₱{parseFloat(exp.amount).toFixed(2)}</td>
+                  <td className="py-3 text-xs font-bold text-brand-earth text-right">{formatCurrency(exp.amount)}</td>
                   <td className="py-3 text-right">
                     <button
                       onClick={() => handleDelete(exp.id)}
