@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Order } from "@/types/admin";
 import { Receipt, Truck, ShoppingCart } from "@phosphor-icons/react";
 import { formatCurrency } from "@/lib/format";
+import SegmentedControl from "@/components/ui/SegmentedControl";
 
 interface OrderManagementProps {
   orders: Order[];
@@ -18,30 +19,14 @@ export default function OrderManagement({ orders, b2bOrders, updateOrderStatus, 
     <div className="space-y-6">
       {/* Sleek, Premium Mode Toggle Bar */}
       <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-        <div className="flex space-x-2 bg-gray-50/80 p-1 rounded-xl border border-gray-100 shrink-0">
-          <button
-            onClick={() => setViewMode('b2c')}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all duration-200 ${
-              viewMode === 'b2c'
-                ? 'bg-brand-earth text-white shadow-sm'
-                : 'text-brand-earth/50 hover:text-brand-earth hover:bg-gray-100/50'
-            }`}
-          >
-            <ShoppingCart size={14} weight="bold" />
-            Customer Sales (B2C)
-          </button>
-          <button
-            onClick={() => setViewMode('b2b')}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all duration-200 ${
-              viewMode === 'b2b'
-                ? 'bg-brand-earth text-white shadow-sm'
-                : 'text-brand-earth/50 hover:text-brand-earth hover:bg-gray-100/50'
-            }`}
-          >
-            <Truck size={14} weight="bold" />
-            Commissary Restocks (B2B)
-          </button>
-        </div>
+        <SegmentedControl
+          value={viewMode}
+          onChange={setViewMode}
+          options={[
+            { id: "b2c", label: "Customer Sales (B2C)", icon: ShoppingCart },
+            { id: "b2b", label: "Commissary Restocks (B2B)", icon: Truck }
+          ] as const}
+        />
 
         <div className="text-right hidden sm:block">
           <p className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/30">Total Active Requests</p>
