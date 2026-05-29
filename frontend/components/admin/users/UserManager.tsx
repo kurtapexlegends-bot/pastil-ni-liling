@@ -162,11 +162,7 @@ export default function UserManager() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">User Directory</h2>
-          <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Configure access tokens, user credentials, and custom RBAC permission settings.</p>
-        </div>
+      <div className="flex justify-end">
         <button
           onClick={() => {
             setEditingId(null);
@@ -176,7 +172,7 @@ export default function UserManager() {
             setRole("Branch Cashier");
             setIsOpen(true);
           }}
-          className="bg-brand-earth hover:bg-brand-earth/90 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-lg shadow-sm transition-all"
+          className="bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-xl shadow-sm transition-all cursor-pointer active:scale-[0.98]"
         >
           Add User
         </button>

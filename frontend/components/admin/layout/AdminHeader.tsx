@@ -7,29 +7,29 @@ interface AdminHeaderProps {
 
 export default function AdminHeader({ activeTab, onToggleSidebar }: AdminHeaderProps) {
   const titles = {
-    analytics: "Enterprise Business Intelligence",
-    applications: "Franchise Partnerships",
-    orders: "Order Pipeline",
-    products: "Product Catalog",
-    hubs: "Physical Franchise Spokes",
-    supply_chain: "Commissary Logistics & Batches",
-    users: "Personnel Access Control",
-    compliance: "Digital QC Audits",
-    payroll: "Branch Payroll & Shift Logs",
-    website_content: "Website Content Manager"
+    analytics: "Business Analytics",
+    applications: "Franchise Applications",
+    orders: "Orders Dashboard",
+    products: "Product Management",
+    hubs: "Branch Management",
+    supply_chain: "Inventory & Batch Logistics",
+    users: "User Registry",
+    compliance: "Quality Control & Audits",
+    payroll: "Staff Payroll",
+    website_content: "Website Content"
   } as const;
 
   const descriptions = {
-    analytics: "Real-time gross margins, comparative spoke performance, and flavor forecaster",
-    applications: "Review investment capabilities and applicant targets",
-    orders: "Real-time dispatch and delivery monitoring across hubs",
-    products: "HQ Centralized command and live branch sync",
-    hubs: "Interactive control of regional operations hubs",
-    supply_chain: "FIFO Batch integrity tracking and recipe formula config",
-    users: "Define custom RBAC permission locks and terminate user credentials",
-    compliance: "Review weekly branch cleanliness logs and recipe standard checks",
-    payroll: "Dry run direct payouts and track cashier 5% POS sales commissions",
-    website_content: "Modify public-facing marketing material"
+    analytics: "Track sales revenue, profit margins, and food waste",
+    applications: "Review and manage incoming franchise applications",
+    orders: "Monitor customer orders (B2C) and commissary restocks (B2B)",
+    products: "Add, edit, or remove products and wholesale items",
+    hubs: "Manage regional branches and assign franchise partners",
+    supply_chain: "Track raw materials, manufacture batches, and recipes",
+    users: "Manage user accounts, roles, and permissions",
+    compliance: "Review weekly kitchen hygiene logs and recipe adherence checks",
+    payroll: "Track cashier shifts, sales commissions, and payroll logs",
+    website_content: "Customize public-facing marketing texts and banner settings"
   } as const;
 
   const getTabTitle = (tab: string) => {
