@@ -19,8 +19,8 @@ export function ShiftLogs({ shifts }: ShiftLogsProps) {
   return (
     <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-4">
       <div>
-        <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Branch Cashier Work Shift Registry</h2>
-        <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Real-time attendance logs, hourly shifts record, and branch logouts.</p>
+        <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Work Shift Registry</h2>
+        <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Track branch cashier attendance logs, shift hours, and clock-out status.</p>
       </div>
 
       {shifts.length === 0 ? (

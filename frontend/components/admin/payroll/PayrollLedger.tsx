@@ -10,8 +10,8 @@ export function PayrollLedger({ payouts, setPrintData }: PayrollLedgerProps) {
   return (
     <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-4">
       <div>
-        <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Settled Direct Payout Ledger</h2>
-        <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Permanent payout records containing base pay + cashier walk-in POS commissions.</p>
+        <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Payout Ledger</h2>
+        <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Permanent records of completed staff payouts, base pay, and commissions.</p>
       </div>
 
       {payouts.length === 0 ? (

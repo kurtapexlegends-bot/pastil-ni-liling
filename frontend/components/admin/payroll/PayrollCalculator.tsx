@@ -40,8 +40,8 @@ export function PayrollCalculator({
   return (
     <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-6">
       <div>
-        <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Dry Run / Direct Payout Calculator</h2>
-        <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Calculate shift base pay, 5% POS walk-in cashier sales commissions, and generate payouts.</p>
+        <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Payout Calculator</h2>
+        <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Calculate shift earnings and 5% sales commissions to generate staff payslips.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
