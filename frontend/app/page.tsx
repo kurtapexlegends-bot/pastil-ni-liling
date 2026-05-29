@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import useSWR from "swr";
 import Navbar from "@/components/layout/Navbar";
 import CountdownTimer from "@/components/ui/CountdownTimer";
+import Footer from "@/components/layout/Footer";
 
 interface SiteSettings {
   hero_badge: string;
@@ -366,64 +367,7 @@ export default function Home() {
       </section>
 
       {/* Footer - Elegant & Informative */}
-      <footer className="bg-white border-t border-gray-200 shrink-0">
-        <div className="max-w-6xl mx-auto px-6 pt-20 pb-12 grid md:grid-cols-4 gap-12">
-          <div className="col-span-1 md:col-span-1 space-y-6">
-            <div className="flex items-center gap-3">
-              <Image src="/logo.jpg" alt="Logo" width={32} height={32} className="rounded-full grayscale-[0.2]" />
-              <span className="text-sm font-bold uppercase tracking-tighter">Pastil ni Liling</span>
-            </div>
-            <p className="text-xs text-brand-earth/50 leading-relaxed font-medium">
-              {settings.footer_desc || 'Bringing authentic Mindanao flavors to the mainstream. Quality you can trust, prices you can afford.'}
-            </p>
-            <div className="space-y-1.5 text-[10px] sm:text-xs text-brand-earth/50 pt-3 font-medium">
-              {settings.footer_contact_phone && <p className="leading-none">T: {settings.footer_contact_phone}</p>}
-              {settings.footer_contact_email && <p className="leading-none">E: {settings.footer_contact_email}</p>}
-              {settings.footer_contact_address && <p className="leading-none">A: {settings.footer_contact_address}</p>}
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            <h4 className="text-[10px] font-bold uppercase tracking-widest">Platform</h4>
-            <ul className="space-y-3 text-[10px] font-bold uppercase tracking-widest opacity-40">
-              <li><Link href="/menu" className="hover:opacity-100 transition-opacity">Browse Menu</Link></li>
-              <li><Link href="/franchise" className="hover:opacity-100 transition-opacity">Franchise Program</Link></li>
-              <li><Link href="/locations" className="hover:opacity-100 transition-opacity">Find a Store</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-6">
-            <h4 className="text-[10px] font-bold uppercase tracking-widest">Support</h4>
-            <ul className="space-y-3 text-[10px] font-bold uppercase tracking-widest opacity-40">
-              <li><Link href="/help" className="hover:opacity-100 transition-opacity">Help Center</Link></li>
-              <li><Link href="/terms" className="hover:opacity-100 transition-opacity">Terms of Use</Link></li>
-              <li><Link href="/privacy" className="hover:opacity-100 transition-opacity">Privacy Policy</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-6 text-left md:text-right">
-            <h4 className="text-[10px] font-bold uppercase tracking-widest">Connect</h4>
-            <div className="flex justify-start md:justify-end gap-4 opacity-40">
-              {settings.footer_social_fb && (
-                <a href={settings.footer_social_fb} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-brand-earth flex items-center justify-center text-[8px] font-black hover:opacity-100 transition-opacity cursor-pointer">FB</a>
-              )}
-              {settings.footer_social_ig && (
-                <a href={settings.footer_social_ig} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-brand-earth flex items-center justify-center text-[8px] font-black hover:opacity-100 transition-opacity cursor-pointer">IG</a>
-              )}
-              {settings.footer_social_tw && (
-                <a href={settings.footer_social_tw} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-brand-earth flex items-center justify-center text-[8px] font-black hover:opacity-100 transition-opacity cursor-pointer">TW</a>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        <div className="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100 text-center">
-          <p 
-            className="text-[9px] font-bold uppercase tracking-widest opacity-30"
-            dangerouslySetInnerHTML={{ __html: settings.footer_copyright || '&copy; 2026 Pastil ni Liling. Swak sa Bulsa, Sarap na Babalik-balikan.' }}
-          />
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

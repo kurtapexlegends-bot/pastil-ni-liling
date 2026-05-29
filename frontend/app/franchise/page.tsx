@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { useValidation, constraints, ValidationSchema } from "@/hooks/useValidation";
 import { 
   Coins, 
@@ -378,12 +379,8 @@ export default function FranchisePage() {
         </div>
       </main>
 
-      <footer className="py-8 border-t border-gray-100 text-center w-full mt-auto">
-        <p 
-          className="text-[9px] font-bold uppercase tracking-widest text-brand-earth/30"
-          dangerouslySetInnerHTML={{ __html: settings.franchise_footer_copyright || '&copy; 2026 Pastil ni Liling Franchise Program. Swak sa Bulsa...' }}
-        />
-      </footer>
+      {/* Footer - Elegant & Informative */}
+      <Footer />
     </div>
   );
 }
