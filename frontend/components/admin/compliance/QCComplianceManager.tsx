@@ -140,32 +140,25 @@ export default function QCComplianceManager() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-        <div>
-          <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Quality Control & Compliance Audits</h2>
-          <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Submit and review weekly kitchen hygiene logs, taste adherence tests, and offline POS sync reconciliation logs.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          {activeSubTab === 'audits' && (
-            <button
-              onClick={() => setIsOpen(true)}
-              className="bg-brand-earth hover:bg-brand-earth/90 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-lg shadow-sm transition-all"
-            >
-              New Compliance Log
-            </button>
-          )}
-        </div>
+      {/* Sleek, Premium Mode Toggle Bar */}
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center bg-white p-3 rounded-2xl border border-gray-100/80 shadow-sm gap-4">
+        <SegmentedControl
+          value={activeSubTab}
+          onChange={setActiveSubTab}
+          options={[
+            { id: "audits", label: "QC Standard Audits" },
+            { id: "anomalies", label: `POS Sync Reconciliation (${anomalies.length})` }
+          ]}
+        />
+        {activeSubTab === 'audits' && (
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-xl shadow-sm transition-all cursor-pointer shrink-0 active:scale-[0.98]"
+          >
+            New Compliance Log
+          </button>
+        )}
       </div>
-
-      {/* Tabs */}
-      <SegmentedControl
-        value={activeSubTab}
-        onChange={setActiveSubTab}
-        options={[
-          { id: "audits", label: "QC Standard Audits" },
-          { id: "anomalies", label: `POS Sync Reconciliation (${anomalies.length})` }
-        ]}
-      />
 
       {loading ? (
         <div className="h-64 bg-white border border-gray-100 rounded-xl flex items-center justify-center">
