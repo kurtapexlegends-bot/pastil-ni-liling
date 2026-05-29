@@ -6,11 +6,11 @@ interface OrderManagementProps {
   orders: Order[];
   b2bOrders: any[];
   updateOrderStatus: (id: number, status: string, isB2B?: boolean) => Promise<void>;
+  viewMode: 'b2c' | 'b2b';
+  setViewMode: (mode: 'b2c' | 'b2b') => void;
 }
 
-export default function OrderManagement({ orders, b2bOrders, updateOrderStatus }: OrderManagementProps) {
-  const [viewMode, setViewMode] = useState<'b2c' | 'b2b'>('b2c');
-
+export default function OrderManagement({ orders, b2bOrders, updateOrderStatus, viewMode, setViewMode }: OrderManagementProps) {
   const activeOrders = viewMode === 'b2c' ? orders : b2bOrders;
 
   return (

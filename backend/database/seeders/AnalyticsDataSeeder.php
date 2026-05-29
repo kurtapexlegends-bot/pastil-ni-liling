@@ -13,6 +13,8 @@ use App\Models\OrderItem;
 use App\Models\Expense;
 use App\Models\WorkShift;
 use App\Models\ComplianceAudit;
+use App\Models\CommissaryOrder;
+use App\Models\CommissaryOrderItem;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -25,6 +27,7 @@ class AnalyticsDataSeeder extends Seeder
         $admin = User::where('email', 'admin@pnl.com')->first();
         $franchisee = User::where('email', 'franchise@pnl.com')->first();
         $cashier = User::where('email', 'cashier@pnl.com')->first();
+        $customer = User::where('email', 'customer@pnl.com')->first();
         
         $hub = Hub::where('franchisee_id', $franchisee->id)->first();
         if (!$hub) {
@@ -254,7 +257,7 @@ class AnalyticsDataSeeder extends Seeder
                 $totalAmt = ($qtyOriginal * $pOriginal->price) + ($qtySpicy * $pSpicy->price) + ($qtyChili * $pChiliOil->price);
 
                 $order = Order::create([
-                    'user_id' => $franchisee->id, // customer reference
+                    'user_id' => $customer->id, // customer reference
                     'hub_id' => $hub->id,
                     'type' => 'retail',
                     'channel' => 'e_commerce',
@@ -341,5 +344,54 @@ class AnalyticsDataSeeder extends Seeder
                 }
             }
         }
+
+        // 9. Seed Commissary Orders (B2B Procurement)
+        $cOrder1 = CommissaryOrder::create([
+            'idempotency_key' => 'seed-idempotency-commissary-1',
+            'user_id' => $franchisee->id,
+            'hub_id' => $hub->id,
+            'total_amount' => 5600.00, // 2800.00 * 2
+            'status' => 'delivered',
+            'shipping_address' => '123 Taft Ave, Manila',
+            'contact_number' => '09156789123',
+            'payment_method' => 'cod',
+            'notes' => 'Weekly branch restock of bulk pastil jars.',
+            'created_at' => Carbon::now()->subDays(4),
+            'updated_at' => Carbon::now()->subDays(4),
+        ]);
+
+        CommissaryOrderItem::create([
+            'commissary_order_id' => $cOrder1->id,
+            'product_id' => $pWholesalePastil->id,
+            'quantity' => 2,
+            'wholesale_price' => 2800.00,
+            'subtotal' => 5600.00,
+            'created_at' => Carbon::now()->subDays(4),
+            'updated_at' => Carbon::now()->subDays(4),
+        ]);
+
+        $cOrder2 = CommissaryOrder::create([
+            'idempotency_key' => 'seed-idempotency-commissary-2',
+            'user_id' => $franchisee->id,
+            'hub_id' => $hub->id,
+            'total_amount' => 4200.00, // 1400.00 * 3
+            'status' => 'preparing',
+            'shipping_address' => '123 Taft Ave, Manila',
+            'contact_number' => '09156789123',
+            'payment_method' => 'cod',
+            'notes' => 'Urgent replenishment of premium chili garlic oil jars.',
+            'created_at' => Carbon::now()->subHours(2),
+            'updated_at' => Carbon::now()->subHours(2),
+        ]);
+
+        CommissaryOrderItem::create([
+            'commissary_order_id' => $cOrder2->id,
+            'product_id' => $pWholesaleChili->id,
+            'quantity' => 3,
+            'wholesale_price' => 1400.00,
+            'subtotal' => 4200.00,
+            'created_at' => Carbon::now()->subHours(2),
+            'updated_at' => Carbon::now()->subHours(2),
+        ]);
     }
 }
