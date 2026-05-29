@@ -1,7 +1,7 @@
 import { List } from "@phosphor-icons/react";
 
 interface AdminHeaderProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content';
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'users' | 'compliance' | 'payroll' | 'analytics' | 'website_content';
   onToggleSidebar?: () => void;
 }
 
@@ -13,7 +13,7 @@ export default function AdminHeader({ activeTab, onToggleSidebar }: AdminHeaderP
     products: "Product Catalog",
     hubs: "Physical Franchise Spokes",
     supply_chain: "Commissary Logistics & Batches",
-    employees: "Personnel Access Control",
+    users: "Personnel Access Control",
     compliance: "Digital QC Audits",
     payroll: "Branch Payroll & Shift Logs",
     website_content: "Website Content Manager"
@@ -26,7 +26,7 @@ export default function AdminHeader({ activeTab, onToggleSidebar }: AdminHeaderP
     products: "HQ Centralized command and live branch sync",
     hubs: "Interactive control of regional operations hubs",
     supply_chain: "FIFO Batch integrity tracking and recipe formula config",
-    employees: "Define custom RBAC permission locks and terminate staff credentials",
+    users: "Define custom RBAC permission locks and terminate user credentials",
     compliance: "Review weekly branch cleanliness logs and recipe standard checks",
     payroll: "Dry run direct payouts and track cashier 5% POS sales commissions",
     website_content: "Modify public-facing marketing material"
@@ -40,7 +40,7 @@ export default function AdminHeader({ activeTab, onToggleSidebar }: AdminHeaderP
       case "products": return titles.products;
       case "hubs": return titles.hubs;
       case "supply_chain": return titles.supply_chain;
-      case "employees": return titles.employees;
+      case "users": return titles.users;
       case "compliance": return titles.compliance;
       case "payroll": return titles.payroll;
       case "website_content": return titles.website_content;
@@ -56,7 +56,7 @@ export default function AdminHeader({ activeTab, onToggleSidebar }: AdminHeaderP
       case "products": return descriptions.products;
       case "hubs": return descriptions.hubs;
       case "supply_chain": return descriptions.supply_chain;
-      case "employees": return descriptions.employees;
+      case "users": return descriptions.users;
       case "compliance": return descriptions.compliance;
       case "payroll": return descriptions.payroll;
       case "website_content": return descriptions.website_content;
