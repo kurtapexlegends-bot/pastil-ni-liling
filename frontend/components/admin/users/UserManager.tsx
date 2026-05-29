@@ -4,7 +4,8 @@ import { useState } from "react";
 import useSWR from "swr";
 import Modal from "../../ui/Modal";
 import ConfirmationModal from "../../ui/ConfirmationModal";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { Eye, EyeSlash, UsersThree } from "@phosphor-icons/react";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface UserRecord {
   id: number;
@@ -189,9 +190,11 @@ export default function UserManager() {
           <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest font-semibold">Syncing user directory...</p>
         </div>
       ) : usersList.length === 0 ? (
-        <div className="h-64 bg-white border border-gray-100 rounded-xl flex items-center justify-center">
-          <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest font-semibold">No users currently registered.</p>
-        </div>
+        <EmptyState
+          icon={UsersThree}
+          title="No Registered Users"
+          description="Authorized platform staff, hub operations personnel, and system administrator profiles will appear here."
+        />
       ) : (
         <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">

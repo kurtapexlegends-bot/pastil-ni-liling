@@ -463,7 +463,7 @@ export default function WebsiteContentManager() {
           {/* Backdrop */}
           <div 
             onClick={() => setShowMobilePreviewDrawer(false)}
-            className="absolute inset-0 bg-brand-earth/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-brand-earth/30 backdrop-blur-[2px] animate-fade-in"
           />
           {/* Slide Pane */}
           <div className="relative w-full max-w-[320px] h-full bg-[#fafafa] shadow-2xl flex flex-col justify-start items-center p-6 overflow-y-auto scrollbar-hide border-l border-gray-100 animate-in slide-in-from-right duration-300">
