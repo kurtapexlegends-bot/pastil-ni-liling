@@ -1,5 +1,7 @@
 import { Shift } from "./types";
 import { formatCurrency } from "@/lib/format";
+import EmptyState from "@/components/ui/EmptyState";
+import { Calendar } from "@phosphor-icons/react";
 
 interface ShiftLogsProps {
   shifts: Shift[];
@@ -24,7 +26,11 @@ export function ShiftLogs({ shifts }: ShiftLogsProps) {
       </div>
 
       {shifts.length === 0 ? (
-        <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest font-semibold text-center py-6">No shift logs found.</p>
+        <EmptyState 
+          icon={Calendar} 
+          title="No Shift Logs Found" 
+          description="Cashier work shifts, attendance hours, and active branch logs will appear here." 
+        />
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
