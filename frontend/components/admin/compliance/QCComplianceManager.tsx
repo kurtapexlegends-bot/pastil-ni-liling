@@ -110,7 +110,7 @@ export default function QCComplianceManager() {
     }
   };
 
-  const handleSubmitAudit = async (data: { hub_id: string; hygiene_score: number; recipe_adherence_score: number; notes: string }) => {
+  const handleSubmitAudit = async (data: { hub_id: string; hygiene_score: number; recipe_adherence_score: number; notes: string; kitchen_photo?: string }) => {
     setError("");
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -126,7 +126,7 @@ export default function QCComplianceManager() {
         hygiene_score: data.hygiene_score,
         recipe_adherence_score: data.recipe_adherence_score,
         notes: data.notes,
-        kitchen_photo: "/photos/kitchen_liling.jpg"
+        kitchen_photo: data.kitchen_photo || "/photos/kitchen_liling.jpg"
       })
     });
 
