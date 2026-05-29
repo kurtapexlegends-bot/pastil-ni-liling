@@ -1,27 +1,59 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useSWR from "swr";
 import { Audit, Anomaly, Hub } from "./types";
 import AuditList from "./AuditList";
 import AnomalyTable from "./AnomalyTable";
 import NewAuditModal from "./NewAuditModal";
 
+const fetcher = async (url: string) => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Missing authentication token.");
+  
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to sync compliance registry.");
+  }
+  return res.json();
+};
+
 export default function QCComplianceManager() {
   const [activeSubTab, setActiveSubTab] = useState<'audits' | 'anomalies'>('audits');
-  const [audits, setAudits] = useState<Audit[]>([]);
-  const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
-  const [hubs, setHubs] = useState<Hub[]>([]);
-  const [loading, setLoading] = useState(true);
+  
+  const { data: auditRes, mutate: mutateAudits } = useSWR(
+    "http://127.0.0.1:8000/api/compliance/audits",
+    fetcher
+  );
+  
+  const { data: hubRes } = useSWR(
+    "http://127.0.0.1:8000/api/admin/hubs",
+    fetcher
+  );
+
+  const { data: anomalyRes, mutate: mutateAnomalies } = useSWR(
+    "http://127.0.0.1:8000/api/compliance/anomalies",
+    fetcher
+  );
+
+  const audits = auditRes?.success ? auditRes.data : [];
+  const hubs = hubRes?.success ? hubRes.data : [];
+  const anomalies = anomalyRes?.success ? anomalyRes.data : [];
+  const loading = !auditRes && !hubRes && !anomalyRes;
+
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState("");
   const [userRole, setUserRole] = useState("");
 
-  const fetchData = async () => {
-    setLoading(true);
-    const token = localStorage.getItem("token");
+  useEffect(() => {
     const userRaw = localStorage.getItem("user");
-    if (!token) return;
-
     if (userRaw) {
       try {
         const parsedUser = JSON.parse(userRaw);
@@ -31,36 +63,6 @@ export default function QCComplianceManager() {
         console.error(e);
       }
     }
-
-    try {
-      const [auditRes, hubRes, anomalyRes] = await Promise.all([
-        fetch("http://127.0.0.1:8000/api/compliance/audits", {
-          headers: { "Authorization": `Bearer ${token}` }
-        }),
-        fetch("http://127.0.0.1:8000/api/admin/hubs", {
-          headers: { "Authorization": `Bearer ${token}` }
-        }),
-        fetch("http://127.0.0.1:8000/api/compliance/anomalies", {
-          headers: { "Authorization": `Bearer ${token}` }
-        })
-      ]);
-
-      const auditData = await auditRes.json();
-      const hubData = await hubRes.json();
-      const anomalyData = await anomalyRes.json();
-
-      if (auditData.success) setAudits(auditData.data);
-      if (hubData.success) setHubs(hubData.data);
-      if (anomalyData.success) setAnomalies(anomalyData.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
   }, []);
 
   const handleReview = async (id: number, status: 'approved' | 'flagged') => {
@@ -78,7 +80,7 @@ export default function QCComplianceManager() {
       });
       const data = await res.json();
       if (data.success) {
-        await fetchData();
+        mutateAudits();
       }
     } catch (err) {
       console.error(err);
@@ -100,7 +102,7 @@ export default function QCComplianceManager() {
       });
       const data = await res.json();
       if (data.success) {
-        await fetchData();
+        mutateAnomalies();
       }
     } catch (err) {
       console.error(err);
@@ -132,7 +134,7 @@ export default function QCComplianceManager() {
       throw new Error(resData.message || "Failed to submit compliance audit.");
     }
 
-    await fetchData();
+    mutateAudits();
   };
 
   return (
