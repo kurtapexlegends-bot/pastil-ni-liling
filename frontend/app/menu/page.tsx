@@ -8,6 +8,7 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import ProductCard from "@/components/consumer/ProductCard";
 import CartDrawer from "@/components/layout/CartDrawer";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { Product, CartItem } from "@/types";
 
 export default function MenuPage() {
@@ -266,12 +267,8 @@ export default function MenuPage() {
         )}
       </main>
 
-      {/* Footer Lite */}
-      <footer className="py-8 border-t border-gray-100 text-center bg-white mt-auto">
-        <p className="text-[8px] font-medium uppercase tracking-wider text-brand-earth/30">
-          &copy; 2026 Pastil ni Liling. All rights reserved.
-        </p>
-      </footer>
+      {/* Footer - Elegant & Informative */}
+      <Footer />
     </div>
   );
 }
