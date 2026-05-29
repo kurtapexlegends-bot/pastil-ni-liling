@@ -6,6 +6,7 @@ import { Audit, Anomaly, Hub } from "./types";
 import AuditList from "./AuditList";
 import AnomalyTable from "./AnomalyTable";
 import NewAuditModal from "./NewAuditModal";
+import SegmentedControl from "@/components/ui/SegmentedControl";
 
 const fetcher = async (url: string) => {
   const token = localStorage.getItem("token");
@@ -157,24 +158,14 @@ export default function QCComplianceManager() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-100">
-        <button
-          onClick={() => setActiveSubTab('audits')}
-          className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider transition-all border-b-2 ${
-            activeSubTab === 'audits' ? 'border-brand-green text-brand-green' : 'border-transparent text-brand-earth/40 hover:text-brand-earth'
-          }`}
-        >
-          QC Standard Audits
-        </button>
-        <button
-          onClick={() => setActiveSubTab('anomalies')}
-          className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider transition-all border-b-2 ${
-            activeSubTab === 'anomalies' ? 'border-brand-green text-brand-green' : 'border-transparent text-brand-earth/40 hover:text-brand-earth'
-          }`}
-        >
-          POS Sync Reconciliation ({anomalies.length})
-        </button>
-      </div>
+      <SegmentedControl
+        value={activeSubTab}
+        onChange={setActiveSubTab}
+        options={[
+          { id: "audits", label: "QC Standard Audits" },
+          { id: "anomalies", label: `POS Sync Reconciliation (${anomalies.length})` }
+        ]}
+      />
 
       {loading ? (
         <div className="h-64 bg-white border border-gray-100 rounded-xl flex items-center justify-center">
