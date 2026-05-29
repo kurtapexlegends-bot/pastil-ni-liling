@@ -162,10 +162,15 @@ export default function WebsiteContentManager() {
     };
   }, [activeSubTab, formData]);
 
-  // Fetch website configurations
+  // Fetch website configurations with auto-revalidation disabled to protect active form edits from background resets
   const { data: settingsRes, error: settingsErr, mutate: mutateSettings, isLoading: loadingSettings } = useSWR(
     'http://127.0.0.1:8000/api/website-settings',
-    fetcher
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      revalidateIfStale: false
+    }
   );
 
   // Fetch live products for featured selection
