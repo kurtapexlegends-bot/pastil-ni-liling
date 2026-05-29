@@ -1,5 +1,6 @@
 import { PayoutLedger } from "./types";
-import { Printer } from "@phosphor-icons/react";
+import { Printer, Receipt } from "@phosphor-icons/react";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface PayrollLedgerProps {
   payouts: PayoutLedger[];
@@ -15,7 +16,11 @@ export function PayrollLedger({ payouts, setPrintData }: PayrollLedgerProps) {
       </div>
 
       {payouts.length === 0 ? (
-        <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest font-semibold text-center py-6">No payouts settled yet.</p>
+        <EmptyState 
+          icon={Receipt} 
+          title="No Payouts Settled" 
+          description="Permanent records of completed staff payouts, base pay, and commissions will appear here once finalized." 
+        />
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
