@@ -48,6 +48,7 @@ export default function AdminDashboard() {
   // Layout State
   const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content'>('analytics');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [orderViewMode, setOrderViewMode] = useState<'b2c' | 'b2b'>('b2c');
   
   // Auth State
   const [hasToken, setHasToken] = useState(false);
@@ -157,6 +158,8 @@ export default function AdminDashboard() {
               hubs={hubs} 
               ingredients={ingredients} 
               batches={batches} 
+              b2bOrders={b2bOrders}
+              orderViewMode={orderViewMode}
             />
 
             <div key={activeTab} className="animate-slide-up space-y-6">
@@ -171,6 +174,8 @@ export default function AdminDashboard() {
                   orders={orders} 
                   b2bOrders={b2bOrders} 
                   updateOrderStatus={handleOrderTransition} 
+                  viewMode={orderViewMode}
+                  setViewMode={setOrderViewMode}
                 />
               )}
               

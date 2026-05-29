@@ -60,5 +60,15 @@ class RolesAndPermissionsSeeder extends Seeder
             ]
         );
         $cashier->assignRole($cashierRole);
+
+        // Create initial Customer user
+        $customer = User::updateOrCreate(
+            ['email' => 'customer@pnl.com'],
+            [
+                'name' => 'Liling Customer',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $customer->assignRole($customerRole);
     }
 }
