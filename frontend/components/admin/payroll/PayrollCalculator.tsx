@@ -44,7 +44,7 @@ export function PayrollCalculator({
         <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Calculate shift earnings and 5% sales commissions to generate staff payslips.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
         <div className="space-y-1">
           <label className="text-[8px] font-bold text-brand-earth/40 uppercase tracking-widest">Select Branch Cashier</label>
           <select
@@ -100,29 +100,29 @@ export function PayrollCalculator({
       </button>
 
       {calcResult && (
-        <div className="border border-brand-green/20 bg-brand-green/5 p-5 rounded-xl space-y-4">
+        <div className="border border-brand-green/20 bg-brand-green/5 p-5 rounded-xl space-y-4 animate-slide-up">
           <h3 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Payroll Settlement Preview</h3>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <span className="text-[8px] font-bold text-brand-earth/30 uppercase tracking-widest">Total Shifts Hours</span>
-              <p className="text-base font-black text-brand-earth mt-1">{calcResult.total_hours} hrs</p>
+              <p className="text-sm md:text-base font-black text-brand-earth mt-1">{calcResult.total_hours} hrs</p>
             </div>
 
             <div>
               <span className="text-[8px] font-bold text-brand-earth/30 uppercase tracking-widest">Base Hourly Pay</span>
-              <p className="text-base font-black text-brand-earth mt-1">₱ {calcResult.base_pay.toLocaleString()}</p>
+              <p className="text-sm md:text-base font-black text-brand-earth mt-1">₱ {calcResult.base_pay.toLocaleString()}</p>
             </div>
 
-            <div>
+            <div className="col-span-2 border-t border-brand-green/10 pt-3">
               <span className="text-[8px] font-bold text-brand-earth/30 uppercase tracking-widest">POS Cashier Sales (5% Comm)</span>
-              <p className="text-base font-black text-brand-earth mt-1">₱ {calcResult.commission_pay.toLocaleString()}</p>
-              <span className="text-[7px] text-brand-earth/40 uppercase tracking-widest">on ₱ {calcResult.total_pos_sales.toLocaleString()} sales</span>
+              <p className="text-sm md:text-base font-black text-brand-earth mt-1">₱ {calcResult.commission_pay.toLocaleString()}</p>
+              <span className="text-[7px] text-brand-earth/40 uppercase tracking-widest block">on ₱ {calcResult.total_pos_sales.toLocaleString()} sales</span>
             </div>
 
-            <div className="border-l border-brand-green/20 pl-4">
+            <div className="col-span-2 bg-brand-green/10 border border-brand-green/20 rounded-xl p-3">
               <span className="text-[8px] font-bold text-brand-earth/30 uppercase tracking-widest text-brand-green">Total Payroll Pay</span>
-              <p className="text-base font-black text-brand-green mt-1">₱ {calcResult.total_pay.toLocaleString()}</p>
+              <p className="text-base md:text-lg font-black text-brand-green mt-1">₱ {calcResult.total_pay.toLocaleString()}</p>
             </div>
           </div>
 
