@@ -1,5 +1,7 @@
 import React from 'react';
 import { Anomaly } from './types';
+import EmptyState from '@/components/ui/EmptyState';
+import { ShieldCheck } from '@phosphor-icons/react';
 
 interface AnomalyTableProps {
   anomalies: Anomaly[];
@@ -11,20 +13,22 @@ const getStatusBadge = (status: string) => {
   switch (status) {
     case "approved":
     case "resolved":
-      return "bg-green-50 text-green-700 border-green-100";
+      return "bg-green-50 text-green-700 border-green-100/60";
     case "flagged":
-      return "bg-red-50 text-red-700 border-red-100";
+      return "bg-red-50 text-red-700 border-red-100/60";
     default:
-      return "bg-amber-50 text-amber-700 border-amber-100";
+      return "bg-amber-50 text-amber-700 border-amber-100/60";
   }
 };
 
 export default function AnomalyTable({ anomalies, userRole, onResolveAnomaly }: AnomalyTableProps) {
   if (anomalies.length === 0) {
     return (
-      <div className="h-64 bg-white border border-gray-100 rounded-xl flex items-center justify-center">
-        <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest font-semibold">No POS sync reconciliation anomalies recorded.</p>
-      </div>
+      <EmptyState
+        icon={ShieldCheck}
+        title="POS Sync Reconciled"
+        description="Offline sales records are fully verified. No inventory sync anomalies or discrepancies recorded."
+      />
     );
   }
 
