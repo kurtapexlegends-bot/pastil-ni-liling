@@ -38,20 +38,20 @@ export function AnalyticsStats({ totalRevenue, avgMargin, foodWasteRatio, branch
 }
 
 // ==========================================
-// 2. Employees Stats Grid
+// 2. Users Stats Grid
 // ==========================================
-interface EmployeesStatsProps {
+interface UsersStatsProps {
   totalStaff: number;
   hqOpsCount: number;
   franchiseeCount: number;
   cashierCount: number;
 }
 
-export function EmployeesStats({ totalStaff, hqOpsCount, franchiseeCount, cashierCount }: EmployeesStatsProps) {
+export function UsersStats({ totalStaff, hqOpsCount, franchiseeCount, cashierCount }: UsersStatsProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 animate-fade-in">
       <StatsCard
-        label="Total Staff Active"
+        label="Total Users Active"
         value={`${totalStaff} Personnel`}
       />
       <StatsCard

@@ -1,20 +1,45 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import Modal from "../../ui/Modal";
 import ConfirmationModal from "../../ui/ConfirmationModal";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 
-interface Employee {
+interface UserRecord {
   id: number;
   name: string;
   email: string;
   roles: Array<{ name: string }>;
 }
 
-export default function EmployeeManager() {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
+const fetcher = async (url: string) => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Missing authentication token.");
+  
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to sync user registry.");
+  }
+  return res.json();
+};
+
+export default function UserManager() {
+  const { data: userRes, error: swrError, mutate } = useSWR(
+    "http://127.0.0.1:8000/api/admin/employees",
+    fetcher
+  );
+
+  const usersList = userRes?.success ? userRes.data : [];
+  const loading = !userRes && !swrError;
+
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState("");
   
@@ -28,29 +53,6 @@ export default function EmployeeManager() {
   const [confirmState, setConfirmState] = useState<{isOpen: boolean, title: string, message: string, action: () => void}>({
     isOpen: false, title: "", message: "", action: () => {}
   });
-
-  const fetchEmployees = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const res = await fetch("http://127.0.0.1:8000/api/admin/employees", {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setEmployees(data.data);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +83,7 @@ export default function EmployeeManager() {
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.message || "Failed to save personnel details.");
+        throw new Error(data.message || "Failed to save user credentials.");
       }
 
       setIsOpen(false);
@@ -90,26 +92,28 @@ export default function EmployeeManager() {
       setPassword("");
       setRole("Branch Cashier");
       setEditingId(null);
-      fetchEmployees();
+      
+      // Instantly mutate SWR cache to update grids and directory lists in real-time
+      mutate();
     } catch (err: any) {
       setError(err.message);
     }
   };
 
-  const handleEdit = (emp: Employee) => {
-    setEditingId(emp.id);
-    setName(emp.name);
-    setEmail(emp.email);
+  const handleEdit = (user: UserRecord) => {
+    setEditingId(user.id);
+    setName(user.name);
+    setEmail(user.email);
     setPassword("");
-    setRole(emp.roles[0]?.name || "Branch Cashier");
+    setRole(user.roles[0]?.name || "Branch Cashier");
     setIsOpen(true);
   };
 
   const handleDelete = (id: number) => {
     setConfirmState({
       isOpen: true,
-      title: "Terminate Employee",
-      message: "Are you sure you want to terminate this employee's credentials? This action cannot be undone.",
+      title: "Terminate User Session",
+      message: "Are you sure you want to terminate this user's credentials? This action cannot be undone.",
       action: async () => {
         const token = localStorage.getItem("token");
         if (!token) return;
@@ -121,9 +125,9 @@ export default function EmployeeManager() {
           });
           const data = await res.json();
           if (data.success) {
-            fetchEmployees();
+            mutate();
           } else {
-            setError(data.message || "Failed to terminate employee.");
+            setError(data.message || "Failed to terminate user credentials.");
           }
         } catch (err) {
           console.error(err);
@@ -160,7 +164,7 @@ export default function EmployeeManager() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Employee Directory</h2>
+          <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">User Directory</h2>
           <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Configure access tokens, user credentials, and custom RBAC permission settings.</p>
         </div>
         <button
@@ -174,7 +178,7 @@ export default function EmployeeManager() {
           }}
           className="bg-brand-earth hover:bg-brand-earth/90 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-lg shadow-sm transition-all"
         >
-          Add Personnel
+          Add User
         </button>
       </div>
 
@@ -186,11 +190,11 @@ export default function EmployeeManager() {
 
       {loading ? (
         <div className="h-64 bg-white border border-gray-100 rounded-xl flex items-center justify-center">
-          <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest font-semibold">Syncing employee registry...</p>
+          <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest font-semibold">Syncing user directory...</p>
         </div>
-      ) : employees.length === 0 ? (
+      ) : usersList.length === 0 ? (
         <div className="h-64 bg-white border border-gray-100 rounded-xl flex items-center justify-center">
-          <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest font-semibold">No employees currently registered.</p>
+          <p className="text-[10px] text-brand-earth/30 uppercase tracking-widest font-semibold">No users currently registered.</p>
         </div>
       ) : (
         <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
@@ -205,24 +209,24 @@ export default function EmployeeManager() {
               </tr>
             </thead>
             <tbody>
-              {employees.map((emp) => (
-                <tr key={emp.id} className="border-b border-gray-50 hover:bg-gray-50/20 transition-colors">
-                  <td className="p-4 text-[10px] font-bold text-brand-earth">{emp.name}</td>
-                  <td className="p-4 text-[10px] font-medium text-brand-earth/60">{emp.email}</td>
+              {usersList.map((user: UserRecord) => (
+                <tr key={user.id} className="border-b border-gray-50 hover:bg-gray-50/20 transition-colors">
+                  <td className="p-4 text-[10px] font-bold text-brand-earth">{user.name}</td>
+                  <td className="p-4 text-[10px] font-medium text-brand-earth/60">{user.email}</td>
                   <td className="p-4">
-                    <span className={`inline-block border text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${getRoleBadgeColor(emp.roles[0]?.name || "Branch Cashier")}`}>
-                      {getRoleLabel(emp.roles[0]?.name || "Branch Cashier")}
+                    <span className={`inline-block border text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${getRoleBadgeColor(user.roles[0]?.name || "Branch Cashier")}`}>
+                      {getRoleLabel(user.roles[0]?.name || "Branch Cashier")}
                     </span>
                   </td>
                   <td className="p-4 text-right space-x-2">
                     <button
-                      onClick={() => handleEdit(emp)}
+                      onClick={() => handleEdit(user)}
                       className="border border-gray-100 bg-white hover:bg-gray-50 text-brand-earth font-bold uppercase tracking-wider text-[8px] px-2.5 py-1.5 rounded-md shadow-sm transition-all"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(emp.id)}
+                      onClick={() => handleDelete(user.id)}
                       className="border border-red-100 hover:bg-red-50 text-red-500 font-bold uppercase tracking-wider text-[8px] px-2.5 py-1.5 rounded-md transition-all"
                     >
                       Terminate
@@ -239,7 +243,7 @@ export default function EmployeeManager() {
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title={editingId ? "Update Employee Details" : "Register New Employee"}
+        title={editingId ? "Update User Details" : "Register New User"}
       >
         {error && (
           <div className="p-3 mb-4 bg-red-50 border border-red-100 rounded-lg text-[9px] font-semibold text-red-600 uppercase tracking-wide">
@@ -268,7 +272,7 @@ export default function EmployeeManager() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
-              placeholder="e.g. example@pastilnililing.com"
+              placeholder="e.g. example@pnl.com"
             />
           </div>
 
@@ -321,7 +325,7 @@ export default function EmployeeManager() {
               type="submit"
               className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-earth/10"
             >
-              Save Personnel
+              Save User
             </button>
           </div>
         </form>

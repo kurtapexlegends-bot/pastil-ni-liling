@@ -5,7 +5,7 @@ import { deleteCookie } from '@/lib/cookies';
 import { FranchiseApplication, Order, Product, Hub } from "@/types/admin";
 import { 
   AnalyticsStats, 
-  EmployeesStats, 
+  UsersStats, 
   ComplianceStats, 
   PayrollStats, 
   ApplicationsStats, 
@@ -17,7 +17,7 @@ import {
 } from "./stats/TabStatsGrids";
 
 interface StatsGridProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content';
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'users' | 'compliance' | 'payroll' | 'analytics' | 'website_content';
   applications: FranchiseApplication[];
   orders: Order[];
   products: Product[];
@@ -55,9 +55,9 @@ const fetcher = async (url: string) => {
 };
 
 export default function StatsGrid({ activeTab, applications, orders, products, hubs, ingredients = [], batches = [], b2bOrders = [], orderViewMode = 'b2c' }: StatsGridProps) {
-  // 1. Fetch Employees Data
+  // 1. Fetch Users Data
   const { data: empRes } = useSWR(
-    activeTab === 'employees' ? 'http://127.0.0.1:8000/api/admin/employees' : null,
+    activeTab === 'users' ? 'http://127.0.0.1:8000/api/admin/employees' : null,
     fetcher
   );
   const employeesList = empRes?.success ? empRes.data : [];
@@ -123,9 +123,9 @@ export default function StatsGrid({ activeTab, applications, orders, products, h
           branchesCount={branchesCount} 
         />
       );
-    case 'employees':
+    case 'users':
       return (
-        <EmployeesStats 
+        <UsersStats 
           totalStaff={totalStaff} 
           hqOpsCount={hqOpsCount} 
           franchiseeCount={franchiseeCount} 

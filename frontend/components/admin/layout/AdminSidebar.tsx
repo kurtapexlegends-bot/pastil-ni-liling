@@ -15,8 +15,8 @@ import {
 } from '@phosphor-icons/react';
 
 interface AdminSidebarProps {
-  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content';
-  setActiveTab: (tab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content') => void;
+  activeTab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'users' | 'compliance' | 'payroll' | 'analytics' | 'website_content';
+  setActiveTab: (tab: 'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'users' | 'compliance' | 'payroll' | 'analytics' | 'website_content') => void;
   handleLogout: () => void;
   isOpen?: boolean;
   onClose?: () => void;
@@ -44,7 +44,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, handleLogout, is
       title: 'Administration',
       items: [
         { id: 'applications', label: 'Applications', icon: Handshake },
-        { id: 'employees', label: 'Employees', icon: UsersThree },
+        { id: 'users', label: 'Users', icon: UsersThree },
         { id: 'compliance', label: 'Compliance', icon: ShieldCheck },
         { id: 'payroll', label: 'Payroll', icon: Coins }
       ]

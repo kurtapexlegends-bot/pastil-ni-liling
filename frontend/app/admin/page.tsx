@@ -37,7 +37,7 @@ const OrderManagement = dynamic(() => import("../../components/admin/orders/Orde
 const ProductCatalog = dynamic(() => import("../../components/admin/catalog/ProductCatalog"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
 const FranchiseBranches = dynamic(() => import("../../components/admin/branches/FranchiseBranches"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
 const SupplyChainManager = dynamic(() => import("../../components/admin/supply-chain/SupplyChainManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
-const EmployeeManager = dynamic(() => import("../../components/admin/employees/EmployeeManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
+const UserManager = dynamic(() => import("../../components/admin/users/UserManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
 const QCComplianceManager = dynamic(() => import("../../components/admin/compliance/QCComplianceManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
 const BranchPayrollManager = dynamic(() => import("../../components/admin/payroll/BranchPayrollManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
 const WebsiteContentManager = dynamic(() => import("@/components/admin/content/WebsiteContentManager"), { loading: () => <p className="p-8 text-xs text-brand-earth/40 animate-pulse">{"Loading module..."}</p> });
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   
   // Layout State
-  const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'employees' | 'compliance' | 'payroll' | 'analytics' | 'website_content'>('analytics');
+  const [activeTab, setActiveTab] = useState<'applications' | 'orders' | 'products' | 'hubs' | 'supply_chain' | 'users' | 'compliance' | 'payroll' | 'analytics' | 'website_content'>('analytics');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [orderViewMode, setOrderViewMode] = useState<'b2c' | 'b2b'>('b2c');
   
@@ -214,7 +214,7 @@ export default function AdminDashboard() {
                 />
               )}
 
-              {activeTab === 'employees' && <EmployeeManager />}
+              {activeTab === 'users' && <UserManager />}
               {activeTab === 'compliance' && <QCComplianceManager />}
               {activeTab === 'payroll' && <BranchPayrollManager />}
               {activeTab === 'website_content' && <WebsiteContentManager />}
