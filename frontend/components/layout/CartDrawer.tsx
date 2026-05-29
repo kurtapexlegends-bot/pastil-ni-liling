@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Package } from "@phosphor-icons/react";
 import { CartItem } from "@/types";
+import { formatCurrency } from "@/lib/format";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -94,7 +95,7 @@ export default function CartDrawer({
                 <div className="flex-1 flex flex-col justify-between py-0.5">
                   <div>
                     <h3 className="text-xs font-semibold text-brand-earth leading-tight">{item.name}</h3>
-                    <p className="text-[10px] font-semibold text-brand-green mt-0.5">₱{item.price}</p>
+                    <p className="text-[10px] font-semibold text-brand-green mt-0.5">{formatCurrency(item.price)}</p>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5 bg-gray-50 rounded-lg px-2.5 py-0.5 border border-gray-100">
@@ -124,7 +125,7 @@ export default function CartDrawer({
         <footer className="p-4 md:p-6 bg-gray-50 space-y-4 border-t border-gray-100">
           <div className="flex justify-between items-center">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/40">Subtotal</p>
-            <p className="text-xl font-bold text-brand-earth">₱{subtotal.toFixed(2)}</p>
+            <p className="text-xl font-bold text-brand-earth">{formatCurrency(subtotal)}</p>
           </div>
           
           {onCheckout ? (

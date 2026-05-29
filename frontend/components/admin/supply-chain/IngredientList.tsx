@@ -1,6 +1,7 @@
 import React from 'react';
 import { Ingredient } from "@/types/admin";
 import { Leaf } from "@phosphor-icons/react";
+import { formatThousands, formatCurrency } from "@/lib/format";
 
 interface IngredientListProps {
   ingredients: Ingredient[];
@@ -42,13 +43,13 @@ export default function IngredientList({ ingredients }: IngredientListProps) {
                       {ingredient.name}
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100 text-xs font-medium text-brand-earth/70">
-                      {Number(ingredient.stock).toFixed(2)} {ingredient.unit}
+                      {formatThousands(Number(ingredient.stock).toFixed(2))} {ingredient.unit}
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100 text-xs font-medium text-brand-earth/40">
-                      {Number(ingredient.min_stock).toFixed(2)} {ingredient.unit}
+                      {formatThousands(Number(ingredient.min_stock).toFixed(2))} {ingredient.unit}
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100 text-xs font-semibold text-brand-green">
-                      ₱ {Number(ingredient.unit_cost || 0).toFixed(2)}
+                      {formatCurrency(ingredient.unit_cost || 0)}
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100">
                       <span className={`px-2 py-0.5 rounded-lg text-[8px] font-bold uppercase tracking-wider ${

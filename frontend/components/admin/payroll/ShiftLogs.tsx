@@ -1,4 +1,5 @@
 import { Shift } from "./types";
+import { formatCurrency } from "@/lib/format";
 
 interface ShiftLogsProps {
   shifts: Shift[];
@@ -44,7 +45,7 @@ export function ShiftLogs({ shifts }: ShiftLogsProps) {
                   <td className="p-4 text-[10px] font-medium text-brand-earth/60">{s.hub.name}</td>
                   <td className="p-4 text-[10px] font-medium text-brand-earth/60">{formatDateTime(s.clock_in)}</td>
                   <td className="p-4 text-[10px] font-medium text-brand-earth/60">{formatDateTime(s.clock_out)}</td>
-                  <td className="p-4 text-[10px] font-bold text-brand-earth">₱ {parseFloat(s.hourly_rate).toFixed(2)}/hr</td>
+                  <td className="p-4 text-[10px] font-bold text-brand-earth">{formatCurrency(s.hourly_rate)}/hr</td>
                   <td className="p-4">
                     <span className={`inline-block border text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
                       s.status === 'active' ? 'bg-amber-50 text-amber-700 border-amber-100 animate-pulse' : 'bg-emerald-50 text-emerald-700 border-emerald-100'

@@ -1,4 +1,5 @@
 import React from "react";
+import { formatThousands } from "@/lib/format";
 
 interface StatsCardProps {
   label: string;
@@ -13,7 +14,7 @@ export function StatsCard({ label, value, valueColor = "text-brand-earth" }: Sta
         {label}
       </p>
       <p className={`text-[16px] md:text-xl leading-tight font-bold ${valueColor}`}>
-        {value}
+        {formatThousands(value)}
       </p>
     </div>
   );

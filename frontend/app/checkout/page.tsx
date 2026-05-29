@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import { CartItem } from "@/types";
 import { MapPin, Compass, CircleNotch } from "@phosphor-icons/react";
+import { formatCurrency } from "@/lib/format";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -230,7 +231,7 @@ export default function CheckoutPage() {
               disabled={loading || items.length === 0}
               className="w-full bg-brand-green text-white py-3 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:bg-brand-green/90 transition-colors shadow-sm disabled:opacity-30 flex items-center justify-center gap-2"
             >
-              {loading ? <CircleNotch weight="bold" className="animate-spin text-sm" /> : `Place Order (₱${total.toFixed(2)})`}
+              {loading ? <CircleNotch weight="bold" className="animate-spin text-sm" /> : `Place Order (${formatCurrency(total)})`}
             </button>
             {error && <p className="text-xs font-medium text-red-500 text-center">{error}</p>}
           </form>
@@ -247,7 +248,7 @@ export default function CheckoutPage() {
                   <span className="text-[9px] font-semibold text-brand-green bg-brand-green/10 w-5 h-5 rounded-md flex items-center justify-center">{item.quantity}x</span>
                   <span className="text-xs font-medium text-brand-earth/80">{item.name}</span>
                 </div>
-                <span className="text-xs font-semibold text-brand-earth">₱{(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
+                 <span className="text-xs font-semibold text-brand-earth">{formatCurrency(parseFloat(item.price) * item.quantity)}</span>
               </div>
             ))}
           </div>
@@ -255,15 +256,15 @@ export default function CheckoutPage() {
           <div className="pt-5 border-t border-gray-100 space-y-2.5">
              <div className="flex justify-between text-[11px] text-brand-earth/40">
                 <span>Subtotal</span>
-                <span className="font-semibold text-brand-earth/60">₱{subtotal.toFixed(2)}</span>
+                <span className="font-semibold text-brand-earth/60">{formatCurrency(subtotal)}</span>
              </div>
              <div className="flex justify-between text-[11px] text-brand-earth/40">
                 <span>Delivery Fee</span>
-                <span className="font-semibold text-brand-earth/60">₱{deliveryFee.toFixed(2)}</span>
+                <span className="font-semibold text-brand-earth/60">{formatCurrency(deliveryFee)}</span>
              </div>
              <div className="flex justify-between pt-3 border-t border-gray-50 items-center">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Total</span>
-                <span className="text-lg font-bold text-brand-earth">₱{total.toFixed(2)}</span>
+                <span className="text-lg font-bold text-brand-earth">{formatCurrency(total)}</span>
              </div>
           </div>
 
