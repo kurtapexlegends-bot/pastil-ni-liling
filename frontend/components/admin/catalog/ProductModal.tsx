@@ -3,6 +3,7 @@ import { Product } from "@/types/admin";
 import Modal from "../../ui/Modal";
 import { Image as ImageIcon, CircleNotch } from "@phosphor-icons/react";
 import { useValidation, constraints, ValidationSchema } from "../../../hooks/useValidation";
+import { useConfirm } from "../../../hooks/useConfirm";
 
 const productSchema: ValidationSchema<Product> = {
   name: [
@@ -36,6 +37,7 @@ export default function ProductModal({
 }: ProductModalProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { errors, validateField, validateAll, clearErrors } = useValidation(productSchema);
+  const { alert: confirmAlert } = useConfirm();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,10 +64,18 @@ export default function ProductModal({
       if (data.success) {
         setProductForm(prev => ({ ...prev, image_url: data.url }));
       } else {
-        alert(data.message || "Failed to upload image.");
+        confirmAlert({
+          title: "Image Upload Failed",
+          message: data.message || "Failed to upload image.",
+          isDestructive: true
+        });
       }
     } catch (err) {
-      alert("An error occurred during upload.");
+      confirmAlert({
+        title: "Network Error",
+        message: "An error occurred during upload.",
+        isDestructive: true
+      });
     } finally {
       setIsUploading(false);
     }
