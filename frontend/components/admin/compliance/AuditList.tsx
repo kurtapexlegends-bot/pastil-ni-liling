@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Audit } from './types';
+import Pagination from '@/components/ui/Pagination';
 
 interface AuditListProps {
   audits: Audit[];
@@ -28,6 +29,19 @@ const getScoreGrade = (score: number) => {
 export default function AuditList({ audits, userRole, onReview }: AuditListProps) {
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [audits]);
+
+  const totalPages = Math.ceil(audits.length / pageSize);
+  const paginatedAudits = audits.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   if (audits.length === 0) {
     return (
       <div className="h-64 bg-white border border-gray-100 rounded-2xl flex flex-col items-center justify-center p-6 text-center">
@@ -44,7 +58,7 @@ export default function AuditList({ audits, userRole, onReview }: AuditListProps
 
   return (
     <div className="grid grid-cols-1 gap-4 animate-in fade-in duration-300">
-      {audits.map((audit) => {
+      {paginatedAudits.map((audit) => {
         const hygieneGrade = getScoreGrade(audit.hygiene_score);
         const recipeGrade = getScoreGrade(audit.recipe_adherence_score);
         
@@ -162,6 +176,18 @@ export default function AuditList({ audits, userRole, onReview }: AuditListProps
           </div>
         );
       })}
+
+      {audits.length > 0 && (
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            pageSize={pageSize}
+            totalItems={audits.length}
+          />
+        </div>
+      )}
 
       {/* High-Res Fullscreen Inspection Lightbox Overlay */}
       {selectedPhoto && (

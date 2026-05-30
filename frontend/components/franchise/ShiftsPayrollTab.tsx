@@ -5,6 +5,7 @@ import { Clock, Coffee, CircleNotch, Coins, Calendar, ArrowUpRight } from "@phos
 import BranchPayrollManager from "@/components/admin/payroll/BranchPayrollManager";
 import AlertModal from "@/components/ui/AlertModal";
 import EmptyState from "@/components/ui/EmptyState";
+import Pagination from "@/components/ui/Pagination";
 import { formatCurrency, formatThousands } from "@/lib/format";
 
 interface ShiftsPayrollTabProps {
@@ -20,6 +21,19 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
   const [shiftsList, setShiftsList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [shiftsList]);
+
+  const totalPages = Math.ceil(shiftsList.length / pageSize);
+  const paginatedShifts = shiftsList.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   // Fetch all cashier shifts logs and filter active statuses
   const fetchShifts = async () => {
@@ -310,7 +324,7 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
                       </td>
                     </tr>
                   ) : (
-                    shiftsList.map((shift) => {
+                    paginatedShifts.map((shift) => {
                       const dateObj = new Date(shift.clock_in);
                       const clockInTime = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                       const clockOutTime = shift.clock_out 
@@ -355,6 +369,15 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
                 </tbody>
               </table>
             </div>
+            {shiftsList.length > 0 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                pageSize={pageSize}
+                totalItems={shiftsList.length}
+              />
+            )}
           </div>
         </div>
       )}
