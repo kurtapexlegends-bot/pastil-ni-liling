@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { useConfirm } from "@/hooks/useConfirm";
 import { Expense } from "./types";
 import { ExpenseForm } from "./ExpenseForm";
 import { ExpenseLedger } from "./ExpenseLedger";
@@ -15,9 +15,7 @@ export default function ExpenseTracker() {
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [confirmState, setConfirmState] = useState<{isOpen: boolean, title: string, message: string, action: () => void}>({
-    isOpen: false, title: "", message: "", action: () => {}
-  });
+  const { confirm } = useConfirm();
 
   const categories = [
     { value: "materials", label: "Raw Materials & Stock" },
@@ -100,34 +98,34 @@ export default function ExpenseTracker() {
     }
   };
 
-  const handleDelete = (id: number) => {
-    setConfirmState({
-      isOpen: true,
+  const handleDelete = async (id: number) => {
+    const confirmed = await confirm({
       title: "Delete Expense Record",
       message: "Are you sure you want to delete this expense record? This action cannot be undone.",
-      action: async () => {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        try {
-          const res = await fetch(`http://127.0.0.1:8000/api/expenses/${id}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await res.json();
-          if (data.success) {
-            fetchExpenses();
-          } else {
-            setError(data.message || "Failed to delete expense record.");
-          }
-        } catch (err) {
-          console.error(err);
-          setError("Failed to communicate with the server.");
-        } finally {
-          setConfirmState(prev => ({ ...prev, isOpen: false }));
-        }
-      }
+      confirmText: "Delete",
+      isDestructive: true
     });
+
+    if (!confirmed) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/expenses/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchExpenses();
+      } else {
+        setError(data.message || "Failed to delete expense record.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to communicate with the server.");
+    }
   };
 
   const totalAmount = expenses.reduce((sum, item) => sum + parseFloat(item.amount), 0);
@@ -177,17 +175,6 @@ export default function ExpenseTracker() {
           handleDelete={handleDelete}
         />
       </div>
-
-      <ConfirmationModal 
-        isOpen={confirmState.isOpen}
-        title={confirmState.title}
-        message={confirmState.message}
-        confirmText="Delete"
-        cancelText="Cancel"
-        isDestructive={true}
-        onConfirm={confirmState.action}
-        onCancel={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
-      />
     </div>
   );
 }
