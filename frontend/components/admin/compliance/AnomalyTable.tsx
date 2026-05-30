@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Anomaly } from './types';
 import EmptyState from '@/components/ui/EmptyState';
 import { ShieldCheck } from '@phosphor-icons/react';
+import Pagination from '@/components/ui/Pagination';
 
 interface AnomalyTableProps {
   anomalies: Anomaly[];
@@ -22,6 +23,19 @@ const getStatusBadge = (status: string) => {
 };
 
 export default function AnomalyTable({ anomalies, userRole, onResolveAnomaly }: AnomalyTableProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [anomalies]);
+
+  const totalPages = Math.ceil(anomalies.length / pageSize);
+  const paginatedAnomalies = anomalies.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   if (anomalies.length === 0) {
     return (
       <EmptyState
@@ -47,7 +61,7 @@ export default function AnomalyTable({ anomalies, userRole, onResolveAnomaly }: 
           </tr>
         </thead>
         <tbody>
-          {anomalies.map((anom) => (
+          {paginatedAnomalies.map((anom) => (
             <tr key={anom.id} className="border-b border-gray-50 text-xs hover:bg-gray-50/20 transition-colors">
               <td className="p-4 font-bold text-brand-earth">{anom.hub_name}</td>
               <td className="p-4 font-medium text-brand-earth/70">{anom.offline_order_id}</td>
@@ -81,6 +95,15 @@ export default function AnomalyTable({ anomalies, userRole, onResolveAnomaly }: 
           ))}
         </tbody>
       </table>
+      {anomalies.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          pageSize={pageSize}
+          totalItems={anomalies.length}
+        />
+      )}
     </div>
   );
 }
