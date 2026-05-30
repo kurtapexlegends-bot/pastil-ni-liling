@@ -94,6 +94,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Phase 4: Cashier Shift Sessions and Direct Payout Commission Ledger
     Route::post('/payroll/shifts/clock-in', [\App\Http\Controllers\Payroll\PayrollController::class, 'clockIn']);
     Route::post('/payroll/shifts/clock-out', [\App\Http\Controllers\Payroll\PayrollController::class, 'clockOut']);
+    Route::post('/payroll/shifts/break-start', [\App\Http\Controllers\Payroll\PayrollController::class, 'startBreak']);
+    Route::post('/payroll/shifts/break-end', [\App\Http\Controllers\Payroll\PayrollController::class, 'endBreak']);
     Route::get('/payroll/shifts', [\App\Http\Controllers\Payroll\PayrollController::class, 'getShifts']);
     Route::get('/payroll/payouts/calculate', [\App\Http\Controllers\Payroll\PayrollController::class, 'calculatePayout']);
     Route::post('/payroll/payouts', [\App\Http\Controllers\Payroll\PayrollController::class, 'storePayout']);

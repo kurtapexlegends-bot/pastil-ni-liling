@@ -55,6 +55,10 @@ class PayrollService
     public function calculateShiftHours(WorkShift $shift): float
     {
         if (!$shift->clock_out) return 0;
-        return $shift->clock_in->diffInHours($shift->clock_out) + ($shift->clock_in->diffInMinutes($shift->clock_out) % 60) / 60;
+        
+        $totalMinutes = $shift->clock_in->diffInMinutes($shift->clock_out);
+        $workingMinutes = max(0, $totalMinutes - intval($shift->total_break_minutes));
+        
+        return $workingMinutes / 60;
     }
 }

@@ -17,12 +17,15 @@ class WorkShift extends Model
         'clock_in',
         'clock_out',
         'hourly_rate',
+        'total_break_minutes',
+        'current_break_start',
         'status',
     ];
 
     protected $casts = [
         'clock_in' => 'datetime',
         'clock_out' => 'datetime',
+        'current_break_start' => 'datetime',
     ];
 
     public function user()
