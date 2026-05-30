@@ -15,7 +15,7 @@ import { useWholesaleCart } from "@/hooks/useWholesaleCart";
 
 // Modularized components
 import LogisticsTab from "@/components/franchise/LogisticsTab";
-import POSCashierTab from "@/components/franchise/POSCashierTab";
+import POSCashierTab from "@/components/franchise/pos/POSCashierTab";
 import ShiftsPayrollTab from "@/components/franchise/ShiftsPayrollTab";
 import Sidebar from "@/components/franchise/Sidebar";
 import AlertModal from "@/components/ui/AlertModal";
