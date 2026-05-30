@@ -65,8 +65,9 @@ class PayrollController extends Controller
     {
         $user = $request->user();
 
+        // Intercept active OR on_break shifts
         $shift = WorkShift::where('user_id', $user->id)
-            ->where('status', 'active')
+            ->whereIn('status', ['active', 'on_break'])
             ->first();
 
         // Fail-Fast: Ensure active shift exists
@@ -75,6 +76,14 @@ class PayrollController extends Controller
                 'success' => false,
                 'message' => 'No active shift session found to clock out from.'
             ], 404);
+        }
+
+        // Auto-end active breaks cleanly before checking out
+        if ($shift->status === 'on_break' && $shift->current_break_start) {
+            $breakStart = Carbon::parse($shift->current_break_start);
+            $elapsedMinutes = max(0, $breakStart->diffInMinutes(now()));
+            $shift->total_break_minutes = intval($shift->total_break_minutes) + $elapsedMinutes;
+            $shift->current_break_start = null;
         }
 
         $shift->clock_out = now();
@@ -93,6 +102,87 @@ class PayrollController extends Controller
                 'hours_worked' => round($hours, 2),
                 'earnings' => round($hours * floatval($shift->hourly_rate), 2)
             ]
+        ]);
+    }
+
+    /**
+     * Start cashier break session.
+     */
+    public function startBreak(Request $request)
+    {
+        $user = $request->user();
+
+        // Fail-Fast: Only cashiers can take breaks
+        if (!$user->hasRole('Branch Cashier')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only branch cashiers can control shift breaks.'
+            ], 403);
+        }
+
+        $shift = WorkShift::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->first();
+
+        // Fail-Fast: Ensure cashier has an active work session
+        if (!$shift) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No active work shift found to start break.'
+            ], 400);
+        }
+
+        $shift->status = 'on_break';
+        $shift->current_break_start = now();
+        $shift->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Break session started. Take a good rest!',
+            'data' => $shift
+        ]);
+    }
+
+    /**
+     * End cashier break session.
+     */
+    public function endBreak(Request $request)
+    {
+        $user = $request->user();
+
+        // Fail-Fast: Only cashiers can control breaks
+        if (!$user->hasRole('Branch Cashier')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only branch cashiers can control shift breaks.'
+            ], 403);
+        }
+
+        $shift = WorkShift::where('user_id', $user->id)
+            ->where('status', 'on_break')
+            ->first();
+
+        // Fail-Fast: Ensure shift is currently on break
+        if (!$shift || !$shift->current_break_start) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not currently on a break session.'
+            ], 400);
+        }
+
+        // Calculate break duration in minutes
+        $breakStart = Carbon::parse($shift->current_break_start);
+        $elapsedMinutes = max(0, $breakStart->diffInMinutes(now()));
+
+        $shift->total_break_minutes = intval($shift->total_break_minutes) + $elapsedMinutes;
+        $shift->current_break_start = null;
+        $shift->status = 'active';
+        $shift->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Break ended. Welcome back to active duty!',
+            'data' => $shift
         ]);
     }
 
