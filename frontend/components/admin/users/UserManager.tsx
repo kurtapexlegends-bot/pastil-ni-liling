@@ -3,7 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import Modal from "../../ui/Modal";
-import ConfirmationModal from "../../ui/ConfirmationModal";
+import { useConfirm } from "../../../hooks/useConfirm";
 import { Eye, EyeSlash, UsersThree } from "@phosphor-icons/react";
 import EmptyState from "@/components/ui/EmptyState";
 
@@ -51,9 +51,7 @@ export default function UserManager() {
   const [role, setRole] = useState("Branch Cashier");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [confirmState, setConfirmState] = useState<{isOpen: boolean, title: string, message: string, action: () => void}>({
-    isOpen: false, title: "", message: "", action: () => {}
-  });
+  const { confirm } = useConfirm();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,34 +108,34 @@ export default function UserManager() {
     setIsOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setConfirmState({
-      isOpen: true,
+  const handleDelete = async (id: number) => {
+    const confirmed = await confirm({
       title: "Terminate User Session",
       message: "Are you sure you want to terminate this user's credentials? This action cannot be undone.",
-      action: async () => {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        try {
-          const res = await fetch(`http://127.0.0.1:8000/api/admin/employees/${id}`, {
-            method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` }
-          });
-          const data = await res.json();
-          if (data.success) {
-            mutate();
-          } else {
-            setError(data.message || "Failed to terminate user credentials.");
-          }
-        } catch (err) {
-          console.error(err);
-          setError("Failed to communicate with the server.");
-        } finally {
-          setConfirmState(prev => ({ ...prev, isOpen: false }));
-        }
-      }
+      confirmText: "Terminate",
+      isDestructive: true
     });
+
+    if (!confirmed) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/admin/employees/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        mutate();
+      } else {
+        setError(data.message || "Failed to terminate user credentials.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to communicate with the server.");
+    }
   };
 
   const getRoleBadgeColor = (roleName: string) => {
@@ -329,17 +327,6 @@ export default function UserManager() {
           </div>
         </form>
       </Modal>
-
-      <ConfirmationModal 
-        isOpen={confirmState.isOpen}
-        title={confirmState.title}
-        message={confirmState.message}
-        confirmText="Terminate"
-        cancelText="Cancel"
-        isDestructive={true}
-        onConfirm={confirmState.action}
-        onCancel={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
-      />
     </div>
   );
 }
