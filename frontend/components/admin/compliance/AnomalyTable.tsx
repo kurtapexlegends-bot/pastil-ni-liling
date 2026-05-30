@@ -69,7 +69,7 @@ export default function AnomalyTable({ anomalies, userRole, onResolveAnomaly }: 
                       const desc = prompt("Enter resolution notes:", "Reconciled with restock batch.");
                       if (desc !== null) onResolveAnomaly(anom.id, desc);
                     }}
-                    className="bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[8px] px-2.5 py-1.5 rounded-md transition-all shadow-sm shadow-brand-green/5"
+                    className="bg-brand-earth hover:bg-brand-green text-white font-bold uppercase tracking-wider text-[8px] px-2.5 py-1.5 rounded-md transition-all shadow-sm active:scale-[0.98]"
                   >
                     Resolve
                   </button>

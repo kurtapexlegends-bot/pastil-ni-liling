@@ -6,6 +6,7 @@ import { formatCurrency, formatThousands } from "@/lib/format";
 import ProductModal from "./ProductModal";
 import { useConfirm } from "../../../hooks/useConfirm";
 import { toast } from "sonner";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface ProductCatalogProps {
   products: Product[];
@@ -95,44 +96,45 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <button
-          onClick={handleAddProduct}
-          className="flex items-center gap-2 bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all shadow-sm shrink-0 active:scale-[0.98]"
-        >
-          <Plus size={14} weight="bold" />
-          Add Product
-        </button>
-      </div>
+      {products.length > 0 && (
+        <div className="flex justify-end">
+          <button
+            onClick={handleAddProduct}
+            className="flex items-center gap-2 bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all shadow-sm shrink-0 active:scale-[0.98]"
+          >
+            <Plus size={14} weight="bold" />
+            Add Product
+          </button>
+        </div>
+      )}
       
-      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[800px]">
-            <thead>
-              <tr className="bg-gray-50/50">
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Product details"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Category"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Retail price"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Wholesale price"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Stock qty"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Status"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Actions"}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
-                      <Package size={48} weight="duotone" className="text-brand-earth" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
-                        No products created
-                      </p>
-                    </div>
-                  </td>
+      {products.length === 0 ? (
+        <EmptyState
+          icon={Package}
+          title="No Products Created"
+          description="Catalog items, retail/wholesale price structures, jar category tags, active statuses, and stock inventory levels will appear here."
+          action={{
+            label: "Add Product",
+            onClick: handleAddProduct
+          }}
+        />
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm animate-in fade-in duration-300">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr className="bg-gray-50/50">
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Product details"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Category"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Retail price"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Wholesale price"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Stock qty"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Status"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Actions"}</th>
                 </tr>
-              ) : (
-                products.map((product) => (
+              </thead>
+              <tbody>
+                {products.map((product) => (
                   <tr key={product.id} className="hover:bg-gray-50/30 transition-colors">
                     <td className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
                       {product.image_url ? (
@@ -194,12 +196,12 @@ export default function ProductCatalog({ products, saveProduct, deleteProduct }:
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
       
       <ProductModal
         isOpen={isModalOpen}

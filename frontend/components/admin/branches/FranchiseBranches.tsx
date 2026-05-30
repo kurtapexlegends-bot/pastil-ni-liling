@@ -4,6 +4,7 @@ import { Storefront, Plus } from "@phosphor-icons/react";
 import HubModal from "./HubModal";
 import { useConfirm } from "../../../hooks/useConfirm";
 import { toast } from "sonner";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface FranchiseBranchesProps {
   hubs: Hub[];
@@ -80,42 +81,43 @@ export default function FranchiseBranches({ hubs, franchisees, saveHub, deleteHu
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <button
-          onClick={handleAddHub}
-          className="flex items-center gap-2 bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all shadow-sm shrink-0 active:scale-[0.98]"
-        >
-          <Plus size={14} weight="bold" />
-          Create Franchise Hub
-        </button>
-      </div>
+      {hubs.length > 0 && (
+        <div className="flex justify-end">
+          <button
+            onClick={handleAddHub}
+            className="flex items-center gap-2 bg-brand-earth hover:bg-brand-green text-white px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all shadow-sm shrink-0 active:scale-[0.98]"
+          >
+            <Plus size={14} weight="bold" />
+            Create Franchise Hub
+          </button>
+        </div>
+      )}
 
-      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead>
-              <tr className="bg-gray-50/50">
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Branch Name"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Assigned Franchise Partner"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Physical Address"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Status"}</th>
-                <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Actions"}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {hubs.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-16 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
-                      <Storefront size={48} weight="duotone" className="text-brand-earth" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
-                        No branch hubs created
-                      </p>
-                    </div>
-                  </td>
+      {hubs.length === 0 ? (
+        <EmptyState
+          icon={Storefront}
+          title="No Branch Hubs Created"
+          description="Active franchise outlets, assigned franchisees, physical location data, and status indicators will appear here."
+          action={{
+            label: "Create Franchise Hub",
+            onClick: handleAddHub
+          }}
+        />
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm animate-in fade-in duration-300">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[700px]">
+              <thead>
+                <tr className="bg-gray-50/50">
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Branch Name"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Assigned Franchise Partner"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Physical Address"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Status"}</th>
+                  <th className="px-6 py-4 text-[9px] font-semibold uppercase tracking-wider text-brand-earth/40 border-b border-gray-100">{"Actions"}</th>
                 </tr>
-              ) : (
-                hubs.map((hub) => (
+              </thead>
+              <tbody>
+                {hubs.map((hub) => (
                   <tr key={hub.id} className="hover:bg-gray-50/30 transition-colors">
                     <td className="px-6 py-4 border-b border-gray-100 text-xs font-semibold text-brand-earth">
                       {hub.name}
@@ -151,12 +153,12 @@ export default function FranchiseBranches({ hubs, franchisees, saveHub, deleteHu
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
       
       <HubModal
         isOpen={isModalOpen}

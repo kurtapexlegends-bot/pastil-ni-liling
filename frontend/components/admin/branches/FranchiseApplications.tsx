@@ -1,5 +1,6 @@
 import { FranchiseApplication } from "@/types/admin";
 import { Users } from "@phosphor-icons/react";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface FranchiseApplicationsProps {
   applications: FranchiseApplication[];
@@ -7,6 +8,16 @@ interface FranchiseApplicationsProps {
 }
 
 export default function FranchiseApplications({ applications, updateAppStatus }: FranchiseApplicationsProps) {
+  if (applications.length === 0) {
+    return (
+      <EmptyState
+        icon={Users}
+        title="No Applications Logged"
+        description="Submitted franchise applications, contact information, target branch locations, investment capacities, and HQ review actions will appear here."
+      />
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
@@ -22,19 +33,7 @@ export default function FranchiseApplications({ applications, updateAppStatus }:
             </tr>
           </thead>
           <tbody>
-            {applications.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-16 text-center">
-                  <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
-                    <Users size={48} weight="duotone" className="text-brand-earth" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
-                      No applications logged
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              applications.map((app) => (
+            {applications.map((app) => (
                 <tr key={app.id} className="hover:bg-gray-50/30 transition-colors">
                   <td className="px-6 py-4 border-b border-gray-100">
                     <p className="text-xs font-semibold text-brand-earth">{app.first_name} {app.last_name}</p>
@@ -79,7 +78,7 @@ export default function FranchiseApplications({ applications, updateAppStatus }:
                   </td>
                 </tr>
               ))
-            )}
+            }
           </tbody>
         </table>
       </div>
