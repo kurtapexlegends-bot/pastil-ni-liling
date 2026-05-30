@@ -11,9 +11,10 @@ import { formatCurrency, formatThousands } from "@/lib/format";
 interface ShiftsPayrollTabProps {
   hub: any;
   isFranchisee: boolean;
+  onShiftUpdate?: () => void;
 }
 
-export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTabProps) {
+export default function ShiftsPayrollTab({ hub, isFranchisee, onShiftUpdate }: ShiftsPayrollTabProps) {
   const [alertState, setAlertState] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error'}>({isOpen: false, message: "", type: "info"});
   const customAlert = (message: string, type: 'info'|'success'|'error' = 'info') => setAlertState({isOpen: true, message, type});
 
@@ -81,6 +82,7 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
       if (data.success) {
         customAlert(data.message, "success");
         await fetchShifts();
+        onShiftUpdate?.();
       } else {
         customAlert(data.message || "Failed to clock in.", "error");
       }
@@ -108,6 +110,7 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
       if (data.success) {
         customAlert(`Clock-out recorded! Worked Hours: ${data.data.hours_worked} hrs. Earnings: ${formatCurrency(data.data.earnings)}`, "success");
         await fetchShifts();
+        onShiftUpdate?.();
       } else {
         customAlert(data.message || "Failed to clock out.", "error");
       }
@@ -135,6 +138,7 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
       if (data.success) {
         customAlert(data.message, "success");
         await fetchShifts();
+        onShiftUpdate?.();
       } else {
         customAlert(data.message || "Failed to start break.", "error");
       }
@@ -162,6 +166,7 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
       if (data.success) {
         customAlert(data.message, "success");
         await fetchShifts();
+        onShiftUpdate?.();
       } else {
         customAlert(data.message || "Failed to resume shift.", "error");
       }
@@ -208,7 +213,8 @@ export default function ShiftsPayrollTab({ hub, isFranchisee }: ShiftsPayrollTab
             </div>
             <div className="space-y-1">
               <p className="text-xs font-bold text-brand-earth uppercase tracking-wider">Not Clocked In</p>
-              <p className="text-[9px] text-brand-earth/40 leading-relaxed font-semibold">Your daily shift ledger is closed. Clock in now to activate cashier terminals and commissions.</p>
+              <p className="text-[9px] text-brand-earth/40 leading-relaxed font-semibold">Your daily shift ledger is closed. Clock in now to activate register terminals and shift operational tools.</p>
+              <p className="text-[8px] text-brand-earth/30 uppercase tracking-wide font-bold pt-1">Note: POS and Expense tracking controls are hidden until clock-in.</p>
             </div>
             <button
               onClick={handleClockIn}
