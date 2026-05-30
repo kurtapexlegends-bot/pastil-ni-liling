@@ -175,6 +175,12 @@ export default function FranchiseDashboard() {
 
 
   const handleLogout = () => {
+    const isCashierRole = user?.roles?.some((r: any) => r.name === "Branch Cashier") && !user?.roles?.some((r: any) => r.name === "Franchisee");
+    if (isCashierRole && activeShift && (activeShift.status === 'active' || activeShift.status === 'on_break')) {
+      customAlert("You have an active shift session. You must clock out from the Attendance tab before signing out.", "error");
+      return;
+    }
+
     localStorage.clear();
     deleteCookie("token");
     deleteCookie("user_role");
@@ -218,6 +224,7 @@ export default function FranchiseDashboard() {
         isFranchisee={isFranchisee}
         isCashier={isCashier}
         isClockedIn={activeShift && activeShift.status === 'active'}
+        hasActiveShift={activeShift && (activeShift.status === 'active' || activeShift.status === 'on_break')}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />

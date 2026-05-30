@@ -16,6 +16,7 @@ interface FranchiseSidebarProps {
   isFranchisee: boolean;
   isCashier: boolean;
   isClockedIn?: boolean;
+  hasActiveShift?: boolean;
   isOpen?: boolean;
   onClose?: () => void;
 }
@@ -27,6 +28,7 @@ export default function FranchiseSidebar({
   isFranchisee,
   isCashier,
   isClockedIn = false,
+  hasActiveShift = false,
   isOpen = false, 
   onClose 
 }: FranchiseSidebarProps) {
@@ -141,10 +143,14 @@ export default function FranchiseSidebar({
         {/* Logout Footer Section */}
         <button 
           onClick={handleLogout}
-          className="w-full border border-gray-100 hover:bg-red-50 hover:text-red-500 hover:border-red-100 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest text-brand-earth/40 transition-colors"
+          className={`w-full border border-gray-100 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-colors ${
+            isCashier && hasActiveShift
+              ? 'bg-amber-50/50 text-amber-700 border-amber-100/50 hover:bg-amber-100 hover:text-amber-800'
+              : 'hover:bg-red-50 hover:text-red-500 hover:border-red-100 text-brand-earth/40'
+          }`}
         >
-          <SignOut size={14} weight="duotone" />
-          Sign Out
+          <SignOut size={14} weight="duotone" className={isCashier && hasActiveShift ? 'text-amber-600' : ''} />
+          {isCashier && hasActiveShift ? 'Active Shift Locked' : 'Sign Out'}
         </button>
       </aside>
     </>
