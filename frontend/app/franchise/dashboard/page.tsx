@@ -33,6 +33,40 @@ export default function FranchiseDashboard() {
   const [alertState, setAlertState] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error'}>({isOpen: false, message: "", type: "info"});
   const customAlert = (message: string, type: 'info'|'success'|'error' = 'info') => setAlertState({isOpen: true, message, type});
 
+  const [activeShift, setActiveShift] = useState<any | null>(null);
+
+  const fetchActiveShift = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/payroll/shifts", {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/json"
+        }
+      });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        const active = data.data.find((s: any) => s.status === 'active' || s.status === 'on_break');
+        setActiveShift(active || null);
+        
+        // Dynamic Cashier Redirection check
+        const userData = localStorage.getItem("user");
+        if (userData) {
+          const parsed = JSON.parse(userData);
+          const isCashierRole = parsed.roles?.some((r: any) => r.name === "Branch Cashier") && !parsed.roles?.some((r: any) => r.name === "Franchisee");
+          if (isCashierRole && (!active || active.status !== 'active')) {
+            setActivePortalTab('payroll');
+          } else if (isCashierRole && active && active.status === 'active') {
+            setActivePortalTab('pos');
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load active shift", err);
+    }
+  };
+
   const fetcher = (url: string) => {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No token");
@@ -95,12 +129,7 @@ export default function FranchiseDashboard() {
       }
 
       setUser(parsedUser);
-      if (parsedUser.roles?.some((r: any) => r.name === "Branch Cashier")) {
-        setActivePortalTab('pos');
-      } else {
-        setActivePortalTab('logistics');
-      }
-
+      fetchActiveShift();
       setLoading(false);
     } catch (e) {
       localStorage.removeItem("token");
@@ -188,6 +217,7 @@ export default function FranchiseDashboard() {
         handleLogout={handleLogout}
         isFranchisee={isFranchisee}
         isCashier={isCashier}
+        isClockedIn={activeShift && activeShift.status === 'active'}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
@@ -254,24 +284,47 @@ export default function FranchiseDashboard() {
           )}
 
           {activePortalTab === 'pos' && (
-            <POSCashierTab
-              hubInventory={hubInventory}
-              handleAddToPOSCart={handleAddToPOSCart}
-              offlineQueue={offlineQueue}
-              isOnline={isOnline}
-              handleManualSync={handleManualSync}
-              isSyncing={isSyncing}
-              isPOSCheckingOut={isPOSCheckingOut}
-              posCart={posCart}
-              posPaymentMethod={posPaymentMethod}
-              setPosPaymentMethod={setPosPaymentMethod}
-              posChannel={posChannel}
-              setPosChannel={setPosChannel}
-              handlePOSCheckout={handlePOSCheckout}
-              updatePOSCartFlavor={updatePOSCartFlavor}
-              updatePOSCartQuantity={updatePOSCartQuantity}
-              removeFromPOSCart={removeFromPOSCart}
-            />
+            (isCashier && !isFranchisee && (!activeShift || activeShift.status !== 'active')) ? (
+              <div className="bg-white border border-gray-100 p-12 rounded-2xl text-center max-w-md mx-auto space-y-4 shadow-sm animate-in fade-in duration-300">
+                <div className="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 mx-auto">
+                  <Warning size={24} weight="fill" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Clock-In Shift Session Required</h3>
+                  <p className="text-[9px] text-brand-earth/40 leading-relaxed font-semibold uppercase tracking-wider">
+                    {activeShift?.status === 'on_break'
+                      ? "Your shift session is currently muted on break. You must resume your shift in the Attendance Tab before operating the terminal."
+                      : "You are not clocked in. You must log your shift daily check-in from the Attendance Tab before accessing register terminals."
+                    }
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActivePortalTab('payroll')}
+                  className="bg-brand-earth hover:bg-brand-green text-white font-bold uppercase tracking-widest text-[9px] px-6 py-3 rounded-full transition-all active:scale-[0.98] w-full"
+                >
+                  Go to Attendance Console
+                </button>
+              </div>
+            ) : (
+              <POSCashierTab
+                hubInventory={hubInventory}
+                handleAddToPOSCart={handleAddToPOSCart}
+                offlineQueue={offlineQueue}
+                isOnline={isOnline}
+                handleManualSync={handleManualSync}
+                isSyncing={isSyncing}
+                isPOSCheckingOut={isPOSCheckingOut}
+                posCart={posCart}
+                posPaymentMethod={posPaymentMethod}
+                setPosPaymentMethod={setPosPaymentMethod}
+                posChannel={posChannel}
+                setPosChannel={setPosChannel}
+                handlePOSCheckout={handlePOSCheckout}
+                updatePOSCartFlavor={updatePOSCartFlavor}
+                updatePOSCartQuantity={updatePOSCartQuantity}
+                removeFromPOSCart={removeFromPOSCart}
+              />
+            )
           )}
 
           {activePortalTab === 'compliance' && isFranchisee && (
@@ -282,6 +335,7 @@ export default function FranchiseDashboard() {
             <ShiftsPayrollTab
               hub={hub}
               isFranchisee={isFranchisee}
+              onShiftUpdate={fetchActiveShift}
             />
           )}
 

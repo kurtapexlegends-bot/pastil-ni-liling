@@ -15,6 +15,7 @@ interface FranchiseSidebarProps {
   handleLogout: () => void;
   isFranchisee: boolean;
   isCashier: boolean;
+  isClockedIn?: boolean;
   isOpen?: boolean;
   onClose?: () => void;
 }
@@ -25,6 +26,7 @@ export default function FranchiseSidebar({
   handleLogout, 
   isFranchisee,
   isCashier,
+  isClockedIn = false,
   isOpen = false, 
   onClose 
 }: FranchiseSidebarProps) {
@@ -34,7 +36,7 @@ export default function FranchiseSidebar({
     {
       title: 'Operations',
       items: [
-        { id: 'pos', label: 'POS Cashier', icon: DeviceTablet, show: true },
+        { id: 'pos', label: 'POS Cashier', icon: DeviceTablet, show: !isCashier || isClockedIn },
         { id: 'logistics', label: 'Logistics', icon: Truck, show: isFranchisee },
       ]
     },
@@ -43,7 +45,7 @@ export default function FranchiseSidebar({
       items: [
         { id: 'compliance', label: 'QC Compliance', icon: ShieldCheck, show: isFranchisee },
         { id: 'payroll', label: 'Shifts & Payroll', icon: Coins, show: true },
-        { id: 'expenses', label: 'Expenses', icon: Receipt, show: true },
+        { id: 'expenses', label: 'Expenses', icon: Receipt, show: !isCashier || isClockedIn },
       ]
     }
   ] as const;
