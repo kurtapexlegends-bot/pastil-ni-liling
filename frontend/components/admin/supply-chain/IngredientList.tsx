@@ -2,12 +2,23 @@ import React from 'react';
 import { Ingredient } from "@/types/admin";
 import { Leaf } from "@phosphor-icons/react";
 import { formatThousands, formatCurrency } from "@/lib/format";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface IngredientListProps {
   ingredients: Ingredient[];
 }
 
 export default function IngredientList({ ingredients }: IngredientListProps) {
+  if (ingredients.length === 0) {
+    return (
+      <EmptyState
+        icon={Leaf}
+        title="No Ingredients Recorded"
+        description="Raw ingredients, stock measurements, commissary unit costs, and depletion limits will appear here."
+      />
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm animate-in fade-in duration-300">
       <div className="overflow-x-auto">
@@ -23,21 +34,9 @@ export default function IngredientList({ ingredients }: IngredientListProps) {
             </tr>
           </thead>
           <tbody>
-            {ingredients.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-16 text-center">
-                  <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
-                    <Leaf size={48} weight="duotone" className="text-brand-earth" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
-                      No ingredients recorded
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              ingredients.map((ingredient) => {
-                const isLowStock = Number(ingredient.stock) <= Number(ingredient.min_stock);
-                return (
+            {ingredients.map((ingredient) => {
+              const isLowStock = Number(ingredient.stock) <= Number(ingredient.min_stock);
+              return (
                   <tr key={ingredient.id} className="hover:bg-gray-50/30 transition-colors">
                     <td className="px-6 py-4 border-b border-gray-100 text-xs font-semibold text-brand-earth">
                       {ingredient.name}
@@ -64,7 +63,7 @@ export default function IngredientList({ ingredients }: IngredientListProps) {
                   </tr>
                 );
               })
-            )}
+            }
           </tbody>
         </table>
       </div>

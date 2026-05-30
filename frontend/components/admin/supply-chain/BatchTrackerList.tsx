@@ -1,12 +1,23 @@
 import React from 'react';
 import { InventoryBatch } from "@/types/admin";
 import { Flask } from "@phosphor-icons/react";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface BatchTrackerListProps {
   batches: InventoryBatch[];
 }
 
 export default function BatchTrackerList({ batches }: BatchTrackerListProps) {
+  if (batches.length === 0) {
+    return (
+      <EmptyState
+        icon={Flask}
+        title="No Batches Tracked"
+        description="Active product batches, manufacturing and expiration dates, shelf life statuses, and dynamic near-expiry markdowns will appear here."
+      />
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm animate-in fade-in duration-300">
       <div className="overflow-x-auto">
@@ -22,19 +33,7 @@ export default function BatchTrackerList({ batches }: BatchTrackerListProps) {
             </tr>
           </thead>
           <tbody>
-            {batches.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-16 text-center">
-                  <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
-                    <Flask size={48} weight="duotone" className="text-brand-earth" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
-                      No batches tracked
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              batches.map((batch) => {
+            {batches.map((batch) => {
                 const expiryDateObj = new Date(batch.expiry_date);
                 const daysRemaining = Math.ceil((expiryDateObj.getTime() - Date.now()) / (1000 * 3600 * 24));
                 const isNearExpiry = daysRemaining <= 3 && daysRemaining >= 0;
@@ -74,7 +73,7 @@ export default function BatchTrackerList({ batches }: BatchTrackerListProps) {
                   </tr>
                 );
               })
-            )}
+            }
           </tbody>
         </table>
       </div>
