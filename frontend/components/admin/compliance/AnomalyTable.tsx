@@ -3,6 +3,7 @@ import { Anomaly } from './types';
 import EmptyState from '@/components/ui/EmptyState';
 import { ShieldCheck } from '@phosphor-icons/react';
 import Pagination from '@/components/ui/Pagination';
+import Modal from '@/components/ui/Modal';
 
 interface AnomalyTableProps {
   anomalies: Anomaly[];
@@ -25,6 +26,12 @@ const getStatusBadge = (status: string) => {
 export default function AnomalyTable({ anomalies, userRole, onResolveAnomaly }: AnomalyTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
+
+  const [resolveState, setResolveState] = useState<{ isOpen: boolean; anomalyId: number | null; notes: string }>({
+    isOpen: false,
+    anomalyId: null,
+    notes: "Reconciled with restock batch."
+  });
 
   useEffect(() => {
     setCurrentPage(1);
@@ -80,8 +87,11 @@ export default function AnomalyTable({ anomalies, userRole, onResolveAnomaly }: 
                 {anom.status === 'pending' && (userRole === 'Admin' || userRole === 'HQ operations') ? (
                   <button
                     onClick={() => {
-                      const desc = prompt("Enter resolution notes:", "Reconciled with restock batch.");
-                      if (desc !== null) onResolveAnomaly(anom.id, desc);
+                      setResolveState({
+                        isOpen: true,
+                        anomalyId: anom.id,
+                        notes: "Reconciled with restock batch."
+                      });
                     }}
                     className="bg-brand-earth hover:bg-brand-green text-white font-bold uppercase tracking-wider text-[8px] px-2.5 py-1.5 rounded-md transition-all shadow-sm active:scale-[0.98]"
                   >
@@ -104,6 +114,44 @@ export default function AnomalyTable({ anomalies, userRole, onResolveAnomaly }: 
           totalItems={anomalies.length}
         />
       )}
+
+      {/* Resolution Input Modal */}
+      <Modal
+        isOpen={resolveState.isOpen}
+        onClose={() => setResolveState({ isOpen: false, anomalyId: null, notes: "" })}
+        title="Resolve Compliance Anomaly"
+      >
+        <div className="space-y-4">
+          <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest font-black">
+            Input resolution details to log audit completion:
+          </p>
+          <textarea
+            value={resolveState.notes}
+            onChange={(e) => setResolveState(prev => ({ ...prev, notes: e.target.value }))}
+            className="w-full min-h-[100px] border border-gray-200 rounded-xl p-3 text-xs text-brand-earth bg-gray-50/30 focus:outline-none focus:border-brand-green transition-all font-medium"
+            placeholder="e.g. Reconciled with restock batch."
+          />
+          <div className="flex gap-2 justify-end pt-2">
+            <button
+              onClick={() => setResolveState({ isOpen: false, anomalyId: null, notes: "" })}
+              className="border border-gray-200 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-widest text-[8px] px-4 py-2.5 rounded-xl transition-all active:scale-[0.98]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                if (resolveState.anomalyId !== null) {
+                  await onResolveAnomaly(resolveState.anomalyId, resolveState.notes);
+                }
+                setResolveState({ isOpen: false, anomalyId: null, notes: "" });
+              }}
+              className="bg-brand-earth hover:bg-brand-green text-white font-bold uppercase tracking-widest text-[8px] px-4 py-2.5 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+            >
+              Confirm Resolution
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Audit } from './types';
 import Pagination from '@/components/ui/Pagination';
+import EmptyState from '@/components/ui/EmptyState';
+import { ShieldCheck } from '@phosphor-icons/react';
 
 interface AuditListProps {
   audits: Audit[];
@@ -44,15 +46,11 @@ export default function AuditList({ audits, userRole, onReview }: AuditListProps
 
   if (audits.length === 0) {
     return (
-      <div className="h-64 bg-white border border-gray-100 rounded-2xl flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-10 h-10 rounded-full bg-brand-earth/5 flex items-center justify-center text-brand-earth/30 mb-3">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-          </svg>
-        </div>
-        <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest font-black">No QC Compliance Logs Found</p>
-        <p className="text-[8px] text-brand-earth/30 uppercase tracking-widest font-bold mt-1 max-w-[200px]">Branch audits will appear here once submitted by authorized officers.</p>
-      </div>
+      <EmptyState
+        icon={ShieldCheck}
+        title="No QC Compliance Logs Found"
+        description="Branch audits will appear here once submitted by authorized officers."
+      />
     );
   }
 

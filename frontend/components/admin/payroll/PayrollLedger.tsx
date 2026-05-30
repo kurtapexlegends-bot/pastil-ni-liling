@@ -1,5 +1,5 @@
 import { PayoutLedger } from "./types";
-import { Printer, Receipt } from "@phosphor-icons/react";
+import { Printer, Receipt, ArrowUpRight } from "@phosphor-icons/react";
 import EmptyState from "@/components/ui/EmptyState";
 
 interface PayrollLedgerProps {
@@ -8,11 +8,46 @@ interface PayrollLedgerProps {
 }
 
 export function PayrollLedger({ payouts, setPrintData }: PayrollLedgerProps) {
+  const handleExportCSV = () => {
+    const headers = ["Employee", "Branch Location", "Statement Period", "Base Hourly Pay", "Commission Pay", "Settled Amount"];
+    const rows = payouts.map(p => {
+      const name = `"${p.user.name}"`;
+      const hubName = `"${p.hub.name}"`;
+      const period = `"${p.start_date} to ${p.end_date}"`;
+      const basePay = p.base_pay;
+      const commissionPay = p.commission_pay;
+      const totalPay = p.total_pay;
+      return [name, hubName, period, basePay, commissionPay, totalPay];
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Payout_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-4">
-      <div>
-        <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Payout Ledger</h2>
-        <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Permanent records of completed staff payouts, base pay, and commissions.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Payout Ledger</h2>
+          <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Permanent records of completed staff payouts, base pay, and commissions.</p>
+        </div>
+        {payouts.length > 0 && (
+          <button
+            onClick={handleExportCSV}
+            className="border border-gray-200 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-widest text-[8px] px-4 py-2 rounded-full transition-all active:scale-[0.98] flex items-center gap-1.5 shadow-sm"
+          >
+            <ArrowUpRight size={12} weight="bold" />
+            Export CSV
+          </button>
+        )}
       </div>
 
       {payouts.length === 0 ? (

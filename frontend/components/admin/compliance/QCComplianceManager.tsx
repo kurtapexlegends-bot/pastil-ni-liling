@@ -7,6 +7,7 @@ import AuditList from "./AuditList";
 import AnomalyTable from "./AnomalyTable";
 import NewAuditModal from "./NewAuditModal";
 import SegmentedControl from "@/components/ui/SegmentedControl";
+import { ArrowUpRight } from "@phosphor-icons/react";
 
 const fetcher = async (url: string) => {
   const token = localStorage.getItem("token");
@@ -138,6 +139,54 @@ export default function QCComplianceManager() {
     mutateAudits();
   };
 
+  const handleExportAuditsCSV = () => {
+    const headers = ["Stall Branch", "Hygiene Rating", "Recipe Adherence", "Auditor", "Date", "Status", "Notes"];
+    const rows = audits.map((audit: any) => [
+      `"${audit.hub.name}"`,
+      audit.hygiene_score,
+      audit.recipe_adherence_score,
+      `"${audit.auditor.name}"`,
+      `"${audit.audit_date}"`,
+      `"${audit.status}"`,
+      `"${audit.notes || ''}"`
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map((e: any) => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Hygiene_QC_Audits_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportAnomaliesCSV = () => {
+    const headers = ["Stall Branch", "Offline ID", "Product", "Requested Qty", "Available Qty", "Status", "Notes"];
+    const rows = anomalies.map((anom: any) => [
+      `"${anom.hub_name}"`,
+      `"${anom.offline_order_id}"`,
+      `"${anom.product_name}"`,
+      anom.requested_quantity,
+      anom.available_quantity,
+      `"${anom.status}"`,
+      `"${anom.notes || ''}"`
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map((e: any) => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Sync_Reconciliation_Anomalies_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-6">
       {/* Sleek, Premium Mode Toggle Bar */}
@@ -150,14 +199,37 @@ export default function QCComplianceManager() {
             { id: "anomalies", label: `POS Sync Reconciliation (${anomalies.length})` }
           ]}
         />
-        {activeSubTab === 'audits' && (
-          <button
-            onClick={() => setIsOpen(true)}
-            className="bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-xl shadow-sm transition-all cursor-pointer shrink-0 active:scale-[0.98]"
-          >
-            New Compliance Log
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {activeSubTab === 'audits' ? (
+            <>
+              {audits.length > 0 && (
+                <button
+                  onClick={handleExportAuditsCSV}
+                  className="border border-gray-200 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-widest text-[8px] px-4 py-2.5 rounded-xl transition-all active:scale-[0.98] flex items-center gap-1.5 shadow-sm shrink-0 cursor-pointer"
+                >
+                  <ArrowUpRight size={12} weight="bold" />
+                  Export CSV
+                </button>
+              )}
+              <button
+                onClick={() => setIsOpen(true)}
+                className="bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] px-4 py-2.5 rounded-xl shadow-sm transition-all cursor-pointer shrink-0 active:scale-[0.98]"
+              >
+                New Compliance Log
+              </button>
+            </>
+          ) : (
+            anomalies.length > 0 && (
+              <button
+                onClick={handleExportAnomaliesCSV}
+                className="border border-gray-200 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-widest text-[8px] px-4 py-2.5 rounded-xl transition-all active:scale-[0.98] flex items-center gap-1.5 shadow-sm shrink-0 cursor-pointer"
+              >
+                <ArrowUpRight size={12} weight="bold" />
+                Export CSV
+              </button>
+            )
+          )}
+        </div>
       </div>
 
       {loading ? (

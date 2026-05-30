@@ -2,7 +2,8 @@
 
 import { Product } from "@/types";
 import ProductCard from "@/components/consumer/ProductCard";
-import { Truck, Package, Leaf } from "@phosphor-icons/react";
+import EmptyState from "@/components/ui/EmptyState";
+import { Truck, Package, Leaf, ArrowUpRight } from "@phosphor-icons/react";
 import { formatCurrency } from "@/lib/format";
 
 interface LogisticsTabProps {
@@ -24,24 +25,103 @@ export default function LogisticsTab({
   hubInventory,
   orders,
 }: LogisticsTabProps) {
+  const handleExportB2COrdersCSV = () => {
+    const headers = ["Order ID", "Customer Name", "Contact Number", "Address", "Items Ordered", "Total Amount", "Status"];
+    const rows = customerOrders.map(order => {
+      const itemsStr = order.items?.map((item: any) => `${item.quantity}x ${item.product?.name}`).join(" | ");
+      return [
+        order.id,
+        `"${order.user?.name || 'Guest Customer'}"`,
+        `"${order.contact_number || ''}"`,
+        `"${order.shipping_address || ''}"`,
+        `"${itemsStr}"`,
+        order.total_amount,
+        `"${order.status}"`
+      ];
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `B2C_Orders_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportInventoryCSV = () => {
+    const headers = ["Product Name", "Stock Quantity", "Hub Location", "Status"];
+    const rows = hubInventory.map(item => {
+      const name = `"${item.product?.name}"`;
+      const qty = item.stock_quantity;
+      const hubName = `"${hub?.name || ''}"`;
+      const status = qty < 20 ? "Low Stock" : "In Stock";
+      return [name, qty, hubName, status];
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Branch_Inventory_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportCommissaryOrdersCSV = () => {
+    const headers = ["Order ID", "Total Amount", "Status"];
+    const rows = orders.map(order => [
+      order.id,
+      order.total_amount,
+      `"${order.status}"`
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Commissary_Shipments_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-12">
       {/* Live Retail Orders Section */}
       <section className="space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Live Routed B2C Orders</h2>
-          <span className="bg-brand-green/10 text-brand-green text-[9px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
-            {customerOrders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length} Active
-          </span>
+          <div className="flex items-center gap-3">
+            <h2 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Live Routed B2C Orders</h2>
+            <span className="bg-brand-green/10 text-brand-green text-[9px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
+              {customerOrders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length} Active
+            </span>
+          </div>
+          {customerOrders.length > 0 && (
+            <button
+              onClick={handleExportB2COrdersCSV}
+              className="border border-gray-200 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-widest text-[8px] px-4 py-2 rounded-full transition-all active:scale-[0.98] flex items-center gap-1.5 shadow-sm"
+            >
+              <ArrowUpRight size={12} weight="bold" />
+              Export CSV
+            </button>
+          )}
         </div>
 
         {customerOrders.length === 0 ? (
-          <div className="py-12 flex flex-col items-center justify-center space-y-3 opacity-40 bg-white rounded-xl border border-gray-100/80">
-            <Package size={48} weight="duotone" className="text-brand-earth" />
-            <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
-              No active orders
-            </p>
-          </div>
+          <EmptyState
+            icon={Package}
+            title="No Active B2C Orders"
+            description="Live customer retail orders routed from register checkout channels will appear here."
+          />
         ) : (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
             {customerOrders.map((order, index) => (
@@ -145,16 +225,26 @@ export default function LogisticsTab({
                   <p className="text-xs font-bold text-brand-earth tracking-tight">{hub?.name || 'Loading Branch...'}</p>
                   <p className="text-[9px] text-brand-earth/40 uppercase tracking-widest font-semibold mt-0.5">{hub?.address || 'Locating...'}</p>
                 </div>
-                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <div className="flex items-center gap-2">
+                  {hubInventory.length > 0 && (
+                    <button
+                      onClick={handleExportInventoryCSV}
+                      className="border border-gray-200 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-widest text-[7px] px-2.5 py-1.5 rounded-full transition-all active:scale-[0.98] flex items-center gap-1 cursor-pointer"
+                    >
+                      <ArrowUpRight size={10} weight="bold" />
+                      Export
+                    </button>
+                  )}
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shrink-0"></span>
+                </div>
               </div>
               <div className="space-y-4">
                 {hubInventory.length === 0 ? (
-                  <div className="py-12 flex flex-col items-center justify-center space-y-3 opacity-40">
-                    <Leaf size={48} weight="duotone" className="text-brand-earth" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
-                      No retail stock yet
-                    </p>
-                  </div>
+                  <EmptyState
+                    icon={Leaf}
+                    title="Retail Stock Is Empty"
+                    description="This spoke outlet has not initialized any retail product inventories."
+                  />
                 ) : (
                   hubInventory.map((item: any) => {
                     const isLowStock = item.stock_quantity < 20;
@@ -198,15 +288,25 @@ export default function LogisticsTab({
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Recent Commissary Shipments</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-xs font-bold text-brand-earth uppercase tracking-wider">Recent Commissary Shipments</h2>
+              {orders.length > 0 && (
+                <button
+                  onClick={handleExportCommissaryOrdersCSV}
+                  className="border border-gray-200 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-widest text-[7px] px-2.5 py-1.5 rounded-full transition-all active:scale-[0.98] flex items-center gap-1 cursor-pointer"
+                >
+                  <ArrowUpRight size={10} weight="bold" />
+                  Export
+                </button>
+              )}
+            </div>
             <div className="space-y-3">
               {orders.length === 0 ? (
-                <div className="py-8 flex flex-col items-center justify-center space-y-3 opacity-40">
-                  <Truck size={48} weight="duotone" className="text-brand-earth" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
-                    No recent orders
-                  </p>
-                </div>
+                <EmptyState
+                  icon={Truck}
+                  title="No Commissary Orders"
+                  description="Wholesale supply restocks and active delivery records will display here."
+                />
               ) : (
                 orders.slice(0, 5).map((order, index) => (
                   <div 
