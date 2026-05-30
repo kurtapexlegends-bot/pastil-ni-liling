@@ -1,7 +1,7 @@
 import { Shift } from "./types";
 import { formatCurrency } from "@/lib/format";
 import EmptyState from "@/components/ui/EmptyState";
-import { Calendar } from "@phosphor-icons/react";
+import { Calendar, ArrowUpRight } from "@phosphor-icons/react";
 
 interface ShiftLogsProps {
   shifts: Shift[];
@@ -18,11 +18,46 @@ export function ShiftLogs({ shifts }: ShiftLogsProps) {
     });
   };
 
+  const handleExportCSV = () => {
+    const headers = ["Employee", "Branch Location", "Clock-In", "Clock-Out", "Hourly Rate", "Status"];
+    const rows = shifts.map(s => {
+      const name = `"${s.user.name}"`;
+      const hubName = `"${s.hub.name}"`;
+      const clockIn = s.clock_in ? new Date(s.clock_in).toLocaleString() : '';
+      const clockOut = s.clock_out ? new Date(s.clock_out).toLocaleString() : 'Ongoing';
+      const rate = s.hourly_rate;
+      const status = s.status;
+      return [name, hubName, `"${clockIn}"`, `"${clockOut}"`, rate, status];
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Work_Shift_Registry_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm space-y-4">
-      <div>
-        <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Work Shift Registry</h2>
-        <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Track branch cashier attendance logs, shift hours, and clock-out status.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-sm font-bold text-brand-earth uppercase tracking-wider">Work Shift Registry</h2>
+          <p className="text-[10px] text-brand-earth/40 uppercase tracking-widest mt-0.5">Track branch cashier attendance logs, shift hours, and clock-out status.</p>
+        </div>
+        {shifts.length > 0 && (
+          <button
+            onClick={handleExportCSV}
+            className="border border-gray-200 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-widest text-[8px] px-4 py-2 rounded-full transition-all active:scale-[0.98] flex items-center gap-1.5 shadow-sm"
+          >
+            <ArrowUpRight size={12} weight="bold" />
+            Export CSV
+          </button>
+        )}
       </div>
 
       {shifts.length === 0 ? (
