@@ -1,12 +1,23 @@
 import React from 'react';
 import { ProductIngredient } from "@/types/admin";
 import { BookOpen } from "@phosphor-icons/react";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface RecipeFormulationListProps {
   recipes: ProductIngredient[];
 }
 
 export default function RecipeFormulationList({ recipes }: RecipeFormulationListProps) {
+  if (recipes.length === 0) {
+    return (
+      <EmptyState 
+        icon={BookOpen} 
+        title="No Recipes Mapped" 
+        description="Commissary ingredients mapping, multipliers, and retail jar specifications will appear here." 
+      />
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm animate-in fade-in duration-300">
       <div className="overflow-x-auto">
@@ -20,19 +31,7 @@ export default function RecipeFormulationList({ recipes }: RecipeFormulationList
             </tr>
           </thead>
           <tbody>
-            {recipes.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-16 text-center">
-                  <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
-                    <BookOpen size={48} weight="duotone" className="text-brand-earth" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth">
-                      No recipes mapped
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              recipes.map((recipe) => (
+            {recipes.map((recipe) => (
                 <tr key={recipe.id} className="hover:bg-gray-50/30 transition-colors">
                   <td className="px-6 py-4 border-b border-gray-100 text-xs font-semibold text-brand-earth">
                     {recipe.product?.name || `Product ID: ${recipe.product_id}`}
@@ -48,7 +47,7 @@ export default function RecipeFormulationList({ recipes }: RecipeFormulationList
                   </td>
                 </tr>
               ))
-            )}
+            }
           </tbody>
         </table>
       </div>
