@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesAnalyticsCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\InvalidatesAnalyticsCache;
 
 class ComplianceAudit extends Model
 {

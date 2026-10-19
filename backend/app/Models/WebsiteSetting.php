@@ -8,7 +8,7 @@ class WebsiteSetting extends Model
 {
     protected $fillable = [
         'key',
-        'value'
+        'value',
     ];
 
     /**
@@ -18,7 +18,7 @@ class WebsiteSetting extends Model
     public static function getByKey(string $key, $default = null)
     {
         $setting = self::where('key', $key)->first();
-        if (!$setting) {
+        if (! $setting) {
             return $default;
         }
 
@@ -44,8 +44,8 @@ class WebsiteSetting extends Model
      */
     public static function setByKey(string $key, mixed $value): self
     {
-        $valueToStore = (is_array($value) || is_object($value)) 
-            ? json_encode($value, JSON_UNESCAPED_UNICODE) 
+        $valueToStore = (is_array($value) || is_object($value))
+            ? json_encode($value, JSON_UNESCAPED_UNICODE)
             : $value;
 
         return self::updateOrCreate(

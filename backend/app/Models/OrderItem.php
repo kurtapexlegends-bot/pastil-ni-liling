@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesAnalyticsCache;
+use Database\Factories\OrderItemFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\InvalidatesAnalyticsCache;
 
 class OrderItem extends Model
 {
-    /** @use HasFactory<\Database\Factories\OrderItemFactory> */
+    /** @use HasFactory<OrderItemFactory> */
     use HasFactory;
+
     use InvalidatesAnalyticsCache;
 
     protected $fillable = [

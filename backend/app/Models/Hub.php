@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesAnalyticsCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\InvalidatesAnalyticsCache;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Hub extends Model
 {
-    use HasFactory;
-    use InvalidatesAnalyticsCache;
+    use HasFactory, InvalidatesAnalyticsCache, SoftDeletes;
 
     protected $fillable = [
         'franchisee_id',
@@ -20,9 +22,14 @@ class Hub extends Model
         'status',
     ];
 
-    public function franchisee()
+    public function franchisee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'franchisee_id');
+    }
+
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
     }
 
     public function inventory()

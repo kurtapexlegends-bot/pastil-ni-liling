@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesAnalyticsCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payout extends Model
 {
-    use HasFactory;
+    use HasFactory, InvalidatesAnalyticsCache;
 
     protected $fillable = [
         'user_id',
@@ -20,12 +22,12 @@ class Payout extends Model
         'status',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function hub()
+    public function hub(): BelongsTo
     {
         return $this->belongsTo(Hub::class);
     }

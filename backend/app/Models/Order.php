@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesAnalyticsCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\InvalidatesAnalyticsCache;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    use HasFactory;
-    use InvalidatesAnalyticsCache;
+    use HasFactory, InvalidatesAnalyticsCache, SoftDeletes;
 
     protected $fillable = [
+        'idempotency_key',
         'user_id',
         'hub_id',
         'type',
@@ -40,5 +41,10 @@ class Order extends Model
     public function hub()
     {
         return $this->belongsTo(Hub::class);
+    }
+
+    public function cashier()
+    {
+        return $this->belongsTo(User::class, 'cashier_id');
     }
 }

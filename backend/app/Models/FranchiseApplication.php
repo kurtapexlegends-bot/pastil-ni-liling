@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\FranchiseApplicationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FranchiseApplication extends Model
 {
-    /** @use HasFactory<\Database\Factories\FranchiseApplicationFactory> */
+    /** @use HasFactory<FranchiseApplicationFactory> */
     use HasFactory;
 
     protected $fillable = [

@@ -2,22 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\CommissaryOrder;
+use App\Models\CommissaryOrderItem;
+use App\Models\ComplianceAudit;
+use App\Models\Expense;
 use App\Models\Hub;
-use App\Models\Product;
 use App\Models\Ingredient;
-use App\Models\ProductIngredient;
 use App\Models\InventoryBatch;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Expense;
+use App\Models\Product;
+use App\Models\ProductIngredient;
+use App\Models\User;
 use App\Models\WorkShift;
-use App\Models\ComplianceAudit;
-use App\Models\CommissaryOrder;
-use App\Models\CommissaryOrderItem;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class AnalyticsDataSeeder extends Seeder
 {
@@ -28,14 +27,14 @@ class AnalyticsDataSeeder extends Seeder
         $franchisee = User::where('email', 'franchise@pnl.com')->first();
         $cashier = User::where('email', 'cashier@pnl.com')->first();
         $customer = User::where('email', 'customer@pnl.com')->first();
-        
+
         $hub = Hub::where('franchisee_id', $franchisee->id)->first();
-        if (!$hub) {
+        if (! $hub) {
             $hub = Hub::create([
                 'name' => 'Manila Spoke Hub',
                 'franchisee_id' => $franchisee->id,
                 'address' => '123 Taft Ave, Manila',
-                'status' => 'active'
+                'status' => 'active',
             ]);
         }
 
@@ -46,7 +45,7 @@ class AnalyticsDataSeeder extends Seeder
         $pBagoongRegular = Product::where('slug', 'premium-shrimp-bagoong-regular')->first();
         $pBagoongSpicy = Product::where('slug', 'premium-shrimp-bagoong-spicy')->first();
         $pChiliOil = Product::where('slug', 'lilings-signature-chili-garlic-oil')->first();
-        
+
         $pWholesalePastil = Product::where('slug', 'wholesale-pastil-jar-bulk')->first();
         $pWholesaleChili = Product::where('slug', 'wholesale-chili-oil-bulk')->first();
 
@@ -148,9 +147,9 @@ class AnalyticsDataSeeder extends Seeder
             'initial_quantity' => 100,
             'manufacture_date' => Carbon::now()->subDays(10),
             'expiry_date' => Carbon::now()->addDays(4),
-            'discount_triggered' => false
+            'discount_triggered' => false,
         ]);
-        
+
         InventoryBatch::create([
             'batch_number' => 'BATCH-BP-01',
             'product_id' => $pBeef->id,
@@ -159,7 +158,7 @@ class AnalyticsDataSeeder extends Seeder
             'initial_quantity' => 50,
             'manufacture_date' => Carbon::now()->subDays(5),
             'expiry_date' => Carbon::now()->addDays(9),
-            'discount_triggered' => false
+            'discount_triggered' => false,
         ]);
 
         // Expired batch (wasted jars)
@@ -172,7 +171,7 @@ class AnalyticsDataSeeder extends Seeder
             'manufacture_date' => Carbon::now()->subDays(25),
             'expiry_date' => Carbon::now()->subDays(5),
             'discount_triggered' => false,
-            'deleted_at' => Carbon::now()->subDays(5) // soft deleted as expired waste
+            'deleted_at' => Carbon::now()->subDays(5), // soft deleted as expired waste
         ]);
 
         // 5. Seed Historical Completed Shifts (Labor cost metrics)
@@ -184,7 +183,7 @@ class AnalyticsDataSeeder extends Seeder
                 'clock_in' => $shiftDate->copy()->hour(9)->minute(0),
                 'clock_out' => $shiftDate->copy()->hour(17)->minute(0),
                 'hourly_rate' => 65.00, // 65 PHP/hr
-                'status' => 'completed'
+                'status' => 'completed',
             ]);
         }
 
@@ -194,21 +193,21 @@ class AnalyticsDataSeeder extends Seeder
             'category' => 'rent',
             'amount' => 12000.00,
             'date' => Carbon::now()->subDays(15),
-            'description' => 'Monthly branch lease payment.'
+            'description' => 'Monthly branch lease payment.',
         ]);
         Expense::create([
             'hub_id' => $hub->id,
             'category' => 'utilities',
             'amount' => 2350.00,
             'date' => Carbon::now()->subDays(3),
-            'description' => 'Electric and water bills.'
+            'description' => 'Electric and water bills.',
         ]);
         Expense::create([
             'hub_id' => $hub->id,
             'category' => 'marketing',
             'amount' => 1500.00,
             'date' => Carbon::now()->subDays(5),
-            'description' => 'Local Facebook promo boost.'
+            'description' => 'Local Facebook promo boost.',
         ]);
 
         // 7. Seed Quality Compliance Audits (Metrics for scatter plots)
@@ -220,7 +219,7 @@ class AnalyticsDataSeeder extends Seeder
             'recipe_adherence_score' => 98,
             'kitchen_photo_path' => '/photos/kitchen_taft.jpg',
             'notes' => 'Pristine kitchen. Handwashing guidelines strictly adhered to.',
-            'status' => 'approved'
+            'status' => 'approved',
         ]);
 
         ComplianceAudit::create([
@@ -231,7 +230,7 @@ class AnalyticsDataSeeder extends Seeder
             'recipe_adherence_score' => 94,
             'kitchen_photo_path' => '/photos/kitchen_taft_2.jpg',
             'notes' => 'Minor ingredient storage clutter, resolved on site.',
-            'status' => 'approved'
+            'status' => 'approved',
         ]);
 
         // 8. Seed Mathematically Consistent Orders for Sales Timeline
@@ -253,7 +252,7 @@ class AnalyticsDataSeeder extends Seeder
                 $qtyOriginal = floor($revenues['retail'] * 0.4 / $pOriginal->price);
                 $qtySpicy = floor($revenues['retail'] * 0.3 / $pSpicy->price);
                 $qtyChili = floor($revenues['retail'] * 0.3 / $pChiliOil->price);
-                
+
                 $totalAmt = ($qtyOriginal * $pOriginal->price) + ($qtySpicy * $pSpicy->price) + ($qtyChili * $pChiliOil->price);
 
                 $order = Order::create([
@@ -267,22 +266,22 @@ class AnalyticsDataSeeder extends Seeder
                     'contact_number' => '09172345678',
                     'payment_method' => 'online_card',
                     'created_at' => $orderDate,
-                    'updated_at' => $orderDate
+                    'updated_at' => $orderDate,
                 ]);
 
                 if ($qtyOriginal > 0) {
                     OrderItem::create([
-                        'order_id' => $order->id, 'product_id' => $pOriginal->id, 'quantity' => $qtyOriginal, 'price' => $pOriginal->price
+                        'order_id' => $order->id, 'product_id' => $pOriginal->id, 'quantity' => $qtyOriginal, 'price' => $pOriginal->price,
                     ]);
                 }
                 if ($qtySpicy > 0) {
                     OrderItem::create([
-                        'order_id' => $order->id, 'product_id' => $pSpicy->id, 'quantity' => $qtySpicy, 'price' => $pSpicy->price
+                        'order_id' => $order->id, 'product_id' => $pSpicy->id, 'quantity' => $qtySpicy, 'price' => $pSpicy->price,
                     ]);
                 }
                 if ($qtyChili > 0) {
                     OrderItem::create([
-                        'order_id' => $order->id, 'product_id' => $pChiliOil->id, 'quantity' => $qtyChili, 'price' => $pChiliOil->price
+                        'order_id' => $order->id, 'product_id' => $pChiliOil->id, 'quantity' => $qtyChili, 'price' => $pChiliOil->price,
                     ]);
                 }
             }
@@ -303,11 +302,11 @@ class AnalyticsDataSeeder extends Seeder
                     'contact_number' => '09156789123',
                     'payment_method' => 'cod',
                     'created_at' => $orderDate,
-                    'updated_at' => $orderDate
+                    'updated_at' => $orderDate,
                 ]);
 
                 OrderItem::create([
-                    'order_id' => $order->id, 'product_id' => $pWholesalePastil->id, 'quantity' => $qtyPBulk, 'price' => $pWholesalePastil->wholesale_price
+                    'order_id' => $order->id, 'product_id' => $pWholesalePastil->id, 'quantity' => $qtyPBulk, 'price' => $pWholesalePastil->wholesale_price,
                 ]);
             }
 
@@ -329,17 +328,17 @@ class AnalyticsDataSeeder extends Seeder
                     'contact_number' => 'N/A',
                     'payment_method' => 'cash',
                     'created_at' => $orderDate,
-                    'updated_at' => $orderDate
+                    'updated_at' => $orderDate,
                 ]);
 
                 if ($qtyOriginal > 0) {
                     OrderItem::create([
-                        'order_id' => $order->id, 'product_id' => $pOriginal->id, 'quantity' => $qtyOriginal, 'price' => $pOriginal->price
+                        'order_id' => $order->id, 'product_id' => $pOriginal->id, 'quantity' => $qtyOriginal, 'price' => $pOriginal->price,
                     ]);
                 }
                 if ($qtyBeef > 0) {
                     OrderItem::create([
-                        'order_id' => $order->id, 'product_id' => $pBeef->id, 'quantity' => $qtyBeef, 'price' => $pBeef->price
+                        'order_id' => $order->id, 'product_id' => $pBeef->id, 'quantity' => $qtyBeef, 'price' => $pBeef->price,
                     ]);
                 }
             }

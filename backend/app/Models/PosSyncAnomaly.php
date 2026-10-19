@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PosSyncAnomaly extends Model
 {
@@ -13,20 +14,25 @@ class PosSyncAnomaly extends Model
 
     protected $fillable = [
         'hub_id',
+        'offline_order_id',
         'product_id',
-        'expected_stock',
-        'actual_stock',
-        'discrepancy_amount',
+        'requested_quantity',
+        'available_quantity',
         'status',
         'notes',
     ];
 
-    public function hub()
+    protected $casts = [
+        'requested_quantity' => 'integer',
+        'available_quantity' => 'integer',
+    ];
+
+    public function hub(): BelongsTo
     {
         return $this->belongsTo(Hub::class);
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
@@ -39,7 +45,12 @@ class PosSyncAnomaly extends Model
 
         if ($user->hasRole('Franchisee')) {
             $hubs = Hub::where('franchisee_id', $user->id)->pluck('id');
+
             return $query->whereIn('hub_id', $hubs);
+        }
+
+        if ($user->hasRole('Branch Cashier') && $user->hub_id) {
+            return $query->where('hub_id', $user->hub_id);
         }
 
         return $query->where('id', -1); // Deny access

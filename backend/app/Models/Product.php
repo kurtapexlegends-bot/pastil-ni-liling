@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesAnalyticsCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\InvalidatesAnalyticsCache;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
-    use InvalidatesAnalyticsCache;
+    use HasFactory, InvalidatesAnalyticsCache, SoftDeletes;
 
     protected $fillable = [
         'name',

@@ -2,10 +2,14 @@
 
 namespace App\Traits;
 
+use App\Models\Hub;
+use App\Models\Product;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin Model
+ *
  * @method static void saved(\Closure|string $callback)
  * @method static void deleted(\Closure|string $callback)
  */
@@ -18,14 +22,22 @@ trait InvalidatesAnalyticsCache
     {
         static::saved(function ($model) {
             Cache::forget('analytics_summary');
-            if ($model instanceof \App\Models\Product) Cache::forget('active_catalog');
-            if ($model instanceof \App\Models\Hub) Cache::forget('active_hubs');
+            if ($model instanceof Product) {
+                Cache::forget('active_catalog');
+            }
+            if ($model instanceof Hub) {
+                Cache::forget('active_hubs');
+            }
         });
 
         static::deleted(function ($model) {
             Cache::forget('analytics_summary');
-            if ($model instanceof \App\Models\Product) Cache::forget('active_catalog');
-            if ($model instanceof \App\Models\Hub) Cache::forget('active_hubs');
+            if ($model instanceof Product) {
+                Cache::forget('active_catalog');
+            }
+            if ($model instanceof Hub) {
+                Cache::forget('active_hubs');
+            }
         });
     }
 }

@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesAnalyticsCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\InvalidatesAnalyticsCache;
 
 class CommissaryOrder extends Model
 {
-    use HasFactory, SoftDeletes, InvalidatesAnalyticsCache;
+    use HasFactory, InvalidatesAnalyticsCache, SoftDeletes;
 
     protected $fillable = [
         'idempotency_key',
