@@ -25,7 +25,7 @@ import AnnouncementForm from './forms/AnnouncementForm';
 import LayoutBrandingForm from './forms/LayoutBrandingForm';
 import FranchiseFormFields from './forms/FranchiseFormFields';
 import LivePreviewPanel from './mockups/LivePreviewPanel';
-import MobileMockup from './mockups/MobileMockup';
+import ContentMobilePreviewDrawer from './ContentMobilePreviewDrawer';
 
 interface SiteSettings {
   hero_badge: string;
@@ -458,40 +458,13 @@ export default function WebsiteContentManager() {
       </button>
 
       {/* Mobile Preview Slide-Over Drawer */}
-      {showMobilePreviewDrawer && (
-        <div className="fixed inset-0 z-50 md:hidden flex justify-end animate-in fade-in duration-300 select-none">
-          {/* Backdrop */}
-          <div 
-            onClick={() => setShowMobilePreviewDrawer(false)}
-            className="absolute inset-0 bg-brand-earth/30 backdrop-blur-[2px] animate-fade-in"
-          />
-          {/* Slide Pane */}
-          <div className="relative w-full max-w-[320px] h-full bg-[#fafafa] shadow-2xl flex flex-col justify-start items-center p-6 overflow-y-auto scrollbar-hide border-l border-gray-100 animate-in slide-in-from-right duration-300">
-            <header className="w-full flex items-center justify-between mb-6 shrink-0">
-              <p className="text-[10px] font-black uppercase tracking-widest text-brand-earth/60 flex items-center gap-1.5">
-                <Eye size={12} weight="fill" className="text-brand-green" />
-                Live Mobile Mockup
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowMobilePreviewDrawer(false)}
-                className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-black hover:bg-gray-200 transition-colors"
-              >
-                ✕
-              </button>
-            </header>
-
-            {/* Mobile Device Mockup Emulation */}
-            <div className="scale-[0.9] origin-top my-auto">
-              <MobileMockup 
-                formData={formData} 
-                products={products} 
-                activeSubTab={activeSubTab} 
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <ContentMobilePreviewDrawer
+        isOpen={showMobilePreviewDrawer}
+        onClose={() => setShowMobilePreviewDrawer(false)}
+        formData={formData}
+        products={products}
+        activeSubTab={activeSubTab}
+      />
     </div>
   );
 }

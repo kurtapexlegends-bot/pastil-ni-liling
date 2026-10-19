@@ -29,6 +29,10 @@ interface POSCashierTabProps {
   removeFromPOSCart: (id: number) => void;
 }
 
+function generateTransactionId(): string {
+  return "TXN-" + Math.floor(100000 + Math.random() * 900000);
+}
+
 export default function POSCashierTab({
   hubInventory,
   handleAddToPOSCart,
@@ -66,7 +70,7 @@ export default function POSCashierTab({
       paymentMethod: posPaymentMethod,
       channel: posChannel,
       timestamp: new Date().toLocaleString(),
-      transactionId: "TXN-" + Math.floor(100000 + Math.random() * 900000),
+      transactionId: generateTransactionId(),
     });
     
     setShowReceiptModal(true);
@@ -110,7 +114,7 @@ export default function POSCashierTab({
             <button 
               onClick={handleManualSync}
               disabled={isSyncing}
-              className="bg-brand-earth text-white px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-brand-green transition-all shadow-sm shrink-0 flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait"
+              className="bg-brand-earth text-white px-5 py-3 min-h-[44px] rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-green transition-all shadow-sm shrink-0 flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait cursor-pointer"
             >
               {isSyncing ? (
                 <>
@@ -178,7 +182,7 @@ export default function POSCashierTab({
                   type="button"
                   onClick={handleCheckoutSubmit}
                   disabled={isPOSCheckingOut}
-                  className="w-full bg-brand-green text-white py-3.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-green/90 transition-all shadow-md shadow-brand-green/10 flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait"
+                  className="w-full bg-brand-green text-white py-3.5 min-h-[44px] rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-green/90 transition-all shadow-md shadow-brand-green/10 flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait cursor-pointer"
                 >
                   {isPOSCheckingOut ? (
                     <>

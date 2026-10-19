@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { ShoppingCart } from '@phosphor-icons/react';
+import { ShoppingCart, X, List, ArrowLeft } from '@phosphor-icons/react';
 
 interface NavbarProps {
   variant?: 'landing' | 'menu' | 'checkout' | 'franchise' | 'dashboard';
@@ -107,10 +107,10 @@ export default function Navbar({
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden text-brand-earth p-1 focus:outline-none"
+              className="md:hidden text-brand-earth w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none cursor-pointer"
               aria-label="Toggle Menu"
             >
-              <span className="text-xl">{mobileMenuOpen ? '✕' : '☰'}</span>
+              {mobileMenuOpen ? <X size={24} weight="bold" /> : <List size={24} weight="bold" />}
             </button>
           </div>
         )}
@@ -135,20 +135,18 @@ export default function Navbar({
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden text-brand-earth p-1 focus:outline-none"
+              className="md:hidden text-brand-earth w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none cursor-pointer"
               aria-label="Toggle Menu"
             >
-              <span className="text-xl">{mobileMenuOpen ? '✕' : '☰'}</span>
+              {mobileMenuOpen ? <X size={24} weight="bold" /> : <List size={24} weight="bold" />}
             </button>
           </div>
         )}
 
         {/* 3. Checkout Page Navigation */}
         {variant === 'checkout' && (
-          <Link href="/menu" className="flex items-center gap-2 group">
-            <span className="text-sm text-brand-earth/60 group-hover:text-brand-earth transition-colors">
-              ←
-            </span>
+          <Link href="/menu" className="flex items-center gap-2 group min-h-[44px] py-2">
+            <ArrowLeft size={16} className="text-brand-earth/60 group-hover:text-brand-earth transition-colors" />
             <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/60 group-hover:text-brand-earth transition-colors">
               Back to Menu
             </span>

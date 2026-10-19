@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Order } from "@/types/admin";
-import { Receipt, Truck, ShoppingCart } from "@phosphor-icons/react";
+import { Receipt, Truck, ShoppingCart, ArrowRight } from "@phosphor-icons/react";
 import { formatCurrency } from "@/lib/format";
 import SegmentedControl from "@/components/ui/SegmentedControl";
 
@@ -90,11 +90,15 @@ export default function OrderManagement({ orders, b2bOrders, updateOrderStatus, 
                     </td>
                     <td className="px-6 py-4 border-b border-gray-100">
                       <p className="text-[11px] text-brand-earth/60 font-medium leading-relaxed">
-                        {viewMode === 'b2b' 
-                          ? `HQ ➔ ${order.hub?.name || 'Hub'}` 
-                          : order.type === 'wholesale' 
-                            ? 'HQ Restock' 
-                            : (order.hub?.name || 'HQ Managed')}
+                        {viewMode === 'b2b' ? (
+                          <span className="inline-flex items-center gap-1.5">
+                            HQ <ArrowRight size={12} className="inline text-brand-earth/40" /> {order.hub?.name || 'Hub'}
+                          </span>
+                        ) : order.type === 'wholesale' ? (
+                          'HQ Restock'
+                        ) : (
+                          order.hub?.name || 'HQ Managed'
+                        )}
                       </p>
                       {order.shipping_address && (
                         <p className="text-[9px] text-brand-earth/30 leading-relaxed max-w-[120px] truncate" title={order.shipping_address}>

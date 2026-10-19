@@ -4,6 +4,10 @@ interface PrintablePayslipProps {
   printData: PayoutLedger | null;
 }
 
+function generateReceiptRef(id: number | string): string {
+  return `${id}-${Date.now()}`;
+}
+
 export function PrintablePayslip({ printData }: PrintablePayslipProps) {
   if (!printData) return null;
 
@@ -41,7 +45,7 @@ export function PrintablePayslip({ printData }: PrintablePayslipProps) {
         </div>
         <div className="text-center pt-8">
           <p className="text-[9px] font-bold text-brand-earth/40 uppercase tracking-widest">Thank you for your hard work!</p>
-          <p className="text-[8px] text-brand-earth/30 uppercase tracking-widest mt-1">Ref: {printData.id}-{Date.now()}</p>
+          <p className="text-[8px] text-brand-earth/30 uppercase tracking-widest mt-1">Ref: {generateReceiptRef(printData.id)}</p>
         </div>
       </div>
     </div>

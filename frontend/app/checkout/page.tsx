@@ -113,7 +113,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
+    <div className="min-h-screen bg-background font-sans text-brand-earth flex flex-col">
       <Navbar variant="checkout" />
 
       <main className="max-w-6xl mx-auto px-4 md:px-6 pt-24 pb-10 flex flex-col-reverse lg:grid lg:grid-cols-2 gap-8 lg:gap-12 w-full flex-1">
@@ -146,7 +146,7 @@ export default function CheckoutPage() {
                    required
                    value={selectedHubId}
                    onChange={(e) => setSelectedHubId(e.target.value)}
-                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 min-h-[44px] font-medium focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
                  >
                    {!Array.isArray(hubs) || hubs.length === 0 ? (
                      <option value="">No active hubs available</option>
@@ -163,7 +163,7 @@ export default function CheckoutPage() {
                  <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Delivery Address</label>
                  <textarea 
                    required
-                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all h-20 resize-none shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 font-medium focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all h-24 resize-none shadow-sm"
                    placeholder="Street, Barangay, City, Landmark"
                    value={formData.shipping_address}
                    onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
@@ -173,7 +173,7 @@ export default function CheckoutPage() {
                  <label className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Contact Number</label>
                  <input 
                    required
-                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
+                   className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 min-h-[44px] font-medium focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green/50 outline-none transition-all shadow-sm"
                    placeholder="0917 XXX XXXX"
                    value={formData.contact_number}
                    onChange={(e) => setFormData({...formData, contact_number: e.target.value})}
@@ -187,7 +187,7 @@ export default function CheckoutPage() {
                         key={method}
                         type="button"
                         onClick={() => setFormData({...formData, payment_method: method})}
-                        className={`py-3 rounded-lg border text-[9px] font-semibold uppercase tracking-wider transition-colors cursor-pointer ${
+                        className={`min-h-[44px] py-3 rounded-lg border text-[10px] font-semibold uppercase tracking-wider transition-colors cursor-pointer flex items-center justify-center ${
                           formData.payment_method === method 
                             ? 'bg-brand-earth text-white border-brand-earth shadow-sm' 
                             : 'bg-white border-gray-100 text-brand-earth/40 hover:border-brand-green'
@@ -207,7 +207,7 @@ export default function CheckoutPage() {
                      href="https://www.foodpanda.ph/?query=pastil+ni+liling"
                      target="_blank"
                      rel="noopener noreferrer"
-                     className="bg-[#D70F64] hover:bg-[#D70F64]/95 text-white py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#D70F64]/10 text-center"
+                     className="bg-[#D70F64] hover:bg-[#D70F64]/95 text-white py-3 min-h-[44px] rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#D70F64]/10 text-center cursor-pointer"
                    >
                      Foodpanda
                    </a>
@@ -215,7 +215,7 @@ export default function CheckoutPage() {
                      href="https://food.grab.com/ph/en/restaurants?search=Pastil+ni+Liling"
                      target="_blank"
                      rel="noopener noreferrer"
-                     className="bg-[#00B14F] hover:bg-[#00B14F]/95 text-white py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#00B14F]/10 text-center"
+                     className="bg-[#00B14F] hover:bg-[#00B14F]/95 text-white py-3 min-h-[44px] rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#00B14F]/10 text-center cursor-pointer"
                    >
                      GrabFood
                    </a>

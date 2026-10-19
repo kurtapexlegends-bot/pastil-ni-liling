@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { MegaphoneSimple, Sparkle, Gift, Flame } from '@phosphor-icons/react';
 
 interface SiteSettings {
   announcement_enabled: boolean;
@@ -172,24 +173,25 @@ export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFor
               </label>
               <div className="grid grid-cols-4 gap-2.5">
                 {[
-                  { id: 'megaphone', label: 'Megaphone', icon: '📢' },
-                  { id: 'sparkle', label: 'Sparkle', icon: '✨' },
-                  { id: 'gift', label: 'Gift Present', icon: '🎁' },
-                  { id: 'warning', label: 'Spicy Warning', icon: '🔥' }
+                  { id: 'megaphone', label: 'Megaphone', icon: MegaphoneSimple },
+                  { id: 'sparkle', label: 'Sparkle', icon: Sparkle },
+                  { id: 'gift', label: 'Gift Present', icon: Gift },
+                  { id: 'warning', label: 'Spicy Warning', icon: Flame }
                 ].map((item) => {
+                  const IconComponent = item.icon;
                   const isSelected = config.icon === item.id;
                   return (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => handleFieldChange('icon', item.id)}
-                      className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
+                      className={`flex flex-col items-center justify-center p-3 min-h-[44px] rounded-xl border transition-all cursor-pointer ${
                         isSelected
                           ? 'border-brand-green bg-brand-green/5 text-brand-green ring-2 ring-brand-green/10'
                           : 'border-gray-100 bg-gray-50/50 hover:bg-gray-50 text-brand-earth/60'
                       }`}
                     >
-                      <span className="text-base mb-1">{item.icon}</span>
+                      <IconComponent size={20} weight="fill" className="mb-1" />
                       <span className="text-[7.5px] font-black uppercase tracking-wider">{item.label}</span>
                     </button>
                   );
@@ -212,7 +214,7 @@ export default function AnnouncementForm({ formData, onUpdate }: AnnouncementFor
                   </span>
                 </label>
                 <p className="text-[9px] text-brand-earth/50 leading-relaxed font-medium">
-                  Show a ticking urgency countdown timer inside the alert capsule (e.g. "Ends in: 02h 45m 10s") to drive promo engagement.
+                  Show a ticking urgency countdown timer inside the alert capsule (e.g. &quot;Ends in: 02h 45m 10s&quot;) to drive promo engagement.
                 </p>
               </div>
 

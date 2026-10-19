@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Product } from "@/types/admin";
-import Modal from "../../ui/Modal";
+import Modal from "@/components/ui/Modal";
 import { Image as ImageIcon, CircleNotch } from "@phosphor-icons/react";
-import { useValidation, constraints, ValidationSchema } from "../../../hooks/useValidation";
-import { useConfirm } from "../../../hooks/useConfirm";
+import { useValidation, constraints, ValidationSchema } from "@/hooks/useValidation";
+import { useConfirm } from "@/hooks/useConfirm";
 
 const productSchema: ValidationSchema<Product> = {
   name: [
@@ -106,7 +106,7 @@ export default function ProductModal({
                   validateField("name", val, { ...productForm, name: val });
                 }}
                 placeholder="e.g., Liling's Classic Garlic Chili Oil"
-                className={`w-full border rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:outline-none transition-all shadow-sm ${errors.name ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200/50' : 'border-gray-100 focus:border-brand-earth/30'}`}
+                className={`w-full border rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:outline-none transition-all shadow-sm ${errors.name ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200/50' : 'border-gray-100 focus:border-brand-earth/30'}`}
               />
               {errors.name && <p className="text-[9px] font-bold text-red-500 mt-1 ml-1">{errors.name}</p>}
             </div>
@@ -117,7 +117,7 @@ export default function ProductModal({
                 <select 
                   value={productForm.category}
                   onChange={(e) => setProductForm(prev => ({ ...prev, category: e.target.value }))}
-                  className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm cursor-pointer"
+                  className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm cursor-pointer"
                 >
                   <option value="pastil">{"Pastil"}</option>
                   <option value="bagoong">{"Bagoong"}</option>
@@ -157,7 +157,7 @@ export default function ProductModal({
                      }
                   }}
                   min="0"
-                  className={`w-full border rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:outline-none transition-all shadow-sm ${errors.stock ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200/50' : 'border-gray-100 focus:border-brand-earth/30'}`}
+                  className={`w-full border rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:outline-none transition-all shadow-sm ${errors.stock ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200/50' : 'border-gray-100 focus:border-brand-earth/30'}`}
                 />
                 {errors.stock && <p className="text-[9px] font-bold text-red-500 mt-1 ml-1">{errors.stock}</p>}
               </div>
@@ -170,7 +170,7 @@ export default function ProductModal({
                 onChange={(e) => setProductForm(prev => ({ ...prev, description: e.target.value }))}
                 rows={4.5}
                 placeholder="e.g., Preservative-free chicken flakes stored in premium coconut oil."
-                className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm resize-none"
+                className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm resize-none"
               />
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function ProductModal({
           {/* Right Column: Pricing, Status & Image Uploads */}
           <div className="space-y-4">
             {/* Pricing Ledger Panel */}
-            <div className="bg-[#fafafa] border border-gray-100 rounded-2xl p-4 space-y-4">
+            <div className="bg-brand-gray/30 border border-gray-100 rounded-2xl p-4 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[8px] font-black uppercase tracking-widest text-brand-earth/40">{"Retail Price (₱)"}</label>
@@ -212,7 +212,7 @@ export default function ProductModal({
                        }
                     }}
                     min="0"
-                    className={`w-full border rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:outline-none transition-all shadow-sm ${errors.price ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200/50' : 'border-gray-100 focus:border-brand-earth/30'}`}
+                    className={`w-full border rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:outline-none transition-all shadow-sm ${errors.price ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200/50' : 'border-gray-100 focus:border-brand-earth/30'}`}
                   />
                   {errors.price && <p className="text-[9px] font-bold text-red-500 mt-1 ml-1">{errors.price}</p>}
                 </div>
@@ -248,7 +248,7 @@ export default function ProductModal({
                     }}
                     disabled={!productForm.is_wholesale}
                     min="0"
-                    className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm disabled:bg-gray-50/50 disabled:text-gray-300"
+                    className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm disabled:bg-gray-50/50 disabled:text-gray-300"
                   />
                 </div>
               </div>
@@ -344,14 +344,14 @@ export default function ProductModal({
           <button 
             type="button" 
             onClick={onClose}
-            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-3 rounded-xl transition-all"
+            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all cursor-pointer"
           >
             {"Cancel"}
           </button>
           <button 
             type="submit" 
             disabled={!productForm.name.trim() || !productForm.price || !productForm.description?.trim() || !productForm.image_url || (productForm.is_wholesale && !productForm.wholesale_price)}
-            className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-3 rounded-xl transition-all shadow-xl shadow-brand-earth/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand-earth"
+            className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all shadow-xl shadow-brand-earth/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand-earth cursor-pointer"
           >
             {"Save Product"}
           </button>

@@ -82,7 +82,7 @@ export default function ProductionIntakeModal({
             required
             value={form.batch_number}
             onChange={(e) => setForm({ ...form, batch_number: e.target.value })}
-            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm font-mono"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm font-mono"
           />
         </div>
 
@@ -92,7 +92,7 @@ export default function ProductionIntakeModal({
             required
             value={form.product_id}
             onChange={(e) => setForm({ ...form, product_id: e.target.value })}
-            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
           >
             <option value="" disabled>-- Choose Product --</option>
             {products.map((p) => (
@@ -107,7 +107,7 @@ export default function ProductionIntakeModal({
             <select
               value={form.hub_id}
               onChange={(e) => setForm({ ...form, hub_id: e.target.value })}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
             >
               <option value="">HQ Commissary (Central)</option>
               {hubs.map((h) => (
@@ -122,7 +122,7 @@ export default function ProductionIntakeModal({
               required
               value={form.initial_quantity}
               onChange={(e) => setForm({ ...form, initial_quantity: parseInt(e.target.value) || 0 })}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
             />
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function ProductionIntakeModal({
               required
               value={form.manufacture_date}
               onChange={(e) => setForm({ ...form, manufacture_date: e.target.value })}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm text-center"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm text-center"
             />
           </div>
           <div className="space-y-1.5">
@@ -145,7 +145,7 @@ export default function ProductionIntakeModal({
               required
               value={form.expiry_date}
               onChange={(e) => setForm({ ...form, expiry_date: e.target.value })}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm text-center"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm text-center"
             />
           </div>
         </div>
@@ -154,14 +154,14 @@ export default function ProductionIntakeModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
+            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-green/10 disabled:opacity-50"
+            className="flex-1 bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all shadow-xl shadow-brand-green/10 disabled:opacity-50 cursor-pointer"
           >
             Log Batch
           </button>

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import Modal from "../../ui/Modal";
-import { useConfirm } from "../../../hooks/useConfirm";
+import Modal from "@/components/ui/Modal";
+import { useConfirm } from "@/hooks/useConfirm";
 import { Eye, EyeSlash, UsersThree } from "@phosphor-icons/react";
 import EmptyState from "@/components/ui/EmptyState";
 
@@ -256,7 +256,7 @@ export default function UserManager() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
               placeholder="e.g. John Smith"
             />
           </div>
@@ -268,7 +268,7 @@ export default function UserManager() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
               placeholder="e.g. example@pnl.com"
             />
           </div>
@@ -283,7 +283,7 @@ export default function UserManager() {
                 required={!editingId}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-100 rounded-2xl pl-4 pr-10 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+                className="w-full border border-gray-100 rounded-2xl pl-4 pr-10 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
                 placeholder="Minimum 8 characters"
               />
               <button
@@ -301,7 +301,7 @@ export default function UserManager() {
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
             >
               <option value="Admin">Super Admin</option>
               <option value="HQ operations">HQ Operations Director</option>
@@ -314,13 +314,13 @@ export default function UserManager() {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
+              className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-earth/10"
+              className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all shadow-xl shadow-brand-earth/10 cursor-pointer"
             >
               Save User
             </button>

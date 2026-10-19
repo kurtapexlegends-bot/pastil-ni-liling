@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X } from "@phosphor-icons/react";
 import { Ingredient, InventoryBatch, ProductIngredient, Product, Hub } from "@/types/admin";
 import SegmentedControl from "@/components/ui/SegmentedControl";
 import AddIngredientModal from "./modals/AddIngredientModal";
@@ -196,13 +197,17 @@ export default function SupplyChainManager({
       {successMsg && (
         <div className="bg-emerald-50 border border-emerald-100 text-emerald-800 p-4 rounded-xl text-xs flex justify-between items-center shadow-sm">
           <span>{successMsg}</span>
-          <button onClick={() => setSuccessMsg(null)} className="font-bold hover:text-emerald-950">×</button>
+          <button onClick={() => setSuccessMsg(null)} aria-label="Dismiss message" className="p-1 hover:text-emerald-950 cursor-pointer">
+            <X size={16} weight="bold" />
+          </button>
         </div>
       )}
       {errorMsg && (
         <div className="bg-rose-50 border border-rose-100 text-rose-800 p-4 rounded-xl text-xs flex justify-between items-center shadow-sm">
           <span>{errorMsg}</span>
-          <button onClick={() => setErrorMsg(null)} className="font-bold hover:text-rose-950">×</button>
+          <button onClick={() => setErrorMsg(null)} aria-label="Dismiss message" className="p-1 hover:text-rose-950 cursor-pointer">
+            <X size={16} weight="bold" />
+          </button>
         </div>
       )}
 

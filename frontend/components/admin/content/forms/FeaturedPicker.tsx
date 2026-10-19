@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Product } from '@/types/admin';
+import { Check } from '@phosphor-icons/react';
 
 interface SiteSettings {
   featured_products: number[];
@@ -55,7 +56,7 @@ export default function FeaturedPicker({ formData, products, onToggleFeaturedPro
                     ? 'bg-brand-green border-brand-green text-white' 
                     : 'border-gray-300 bg-white'
                 }`}>
-                  {isSelected && <span className="text-[8px] font-bold">✓</span>}
+                  {isSelected && <Check size={10} weight="bold" />}
                 </div>
               </div>
             );

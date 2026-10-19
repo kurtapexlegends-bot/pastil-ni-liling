@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import AlertModal from "../../ui/AlertModal";
-import { usePayroll } from "./usePayroll";
+import AlertModal from "@/components/ui/AlertModal";
+import { usePayroll } from "@/hooks/admin/usePayroll";
 import { PayrollCalculator } from "./PayrollCalculator";
 import { ShiftLogs } from "./ShiftLogs";
 import { PayrollLedger } from "./PayrollLedger";

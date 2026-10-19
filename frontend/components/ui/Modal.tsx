@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { X } from '@phosphor-icons/react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -51,7 +52,7 @@ export default function Modal({
         <div className="w-12 h-1 bg-gray-200/80 rounded-full mx-auto my-3 sm:hidden shrink-0" />
 
         {/* Modal Header */}
-        <div className="flex justify-between items-center px-6 pt-2 pb-4 border-b border-gray-100 bg-[#fafafa]/50 sm:pt-5">
+        <div className="flex justify-between items-center px-6 pt-2 pb-4 border-b border-gray-100 bg-background/50 sm:pt-5">
           <div>
             <h3 className="text-xs font-black text-brand-earth uppercase tracking-widest font-display">
               {title}
@@ -60,9 +61,9 @@ export default function Modal({
           <button 
             onClick={onClose}
             aria-label="Close dialog"
-            className="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-brand-earth/40 hover:text-brand-earth hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all text-xs font-bold cursor-pointer"
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-brand-earth/40 hover:text-brand-earth hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
-            ✕
+            <X size={18} weight="bold" />
           </button>
         </div>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import CountdownTimer from '../../../ui/CountdownTimer';
+import { MegaphoneSimple, Sparkle, Gift, Flame } from '@phosphor-icons/react';
+import CountdownTimer from '@/components/ui/CountdownTimer';
 import { getBgStyle, getTextStyle } from './mockupHelpers';
 import { SiteSettings, Product } from './types';
 import DesktopLandingPreview from './views/DesktopLandingPreview';
@@ -60,11 +61,19 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
     setIsTimerExpired(false);
   }, [announcement.timer_target, announcement.timer_enabled]);
 
-  const iconEmoji = announcement.icon === 'megaphone' ? '📢' 
-    : announcement.icon === 'sparkle' ? '✨'
-    : announcement.icon === 'gift' ? '🎁'
-    : announcement.icon === 'warning' ? '🔥'
-    : '📢';
+  const renderAnnouncementIcon = (iconName?: string) => {
+    switch (iconName) {
+      case 'sparkle':
+        return <Sparkle size={10} weight="fill" className="shrink-0" />;
+      case 'gift':
+        return <Gift size={10} weight="fill" className="shrink-0" />;
+      case 'warning':
+        return <Flame size={10} weight="fill" className="shrink-0" />;
+      case 'megaphone':
+      default:
+        return <MegaphoneSimple size={10} weight="fill" className="shrink-0" />;
+    }
+  };
 
   return (
     <div className="relative w-full max-w-[460px] h-[560px] bg-white rounded-3xl border border-gray-200/80 shadow-2xl overflow-hidden flex flex-col ring-4 ring-white/30 transition-all duration-300 animate-in zoom-in-95 duration-200">
@@ -77,7 +86,7 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
           }}
           className="absolute top-20 left-1/2 -translate-x-1/2 z-40 px-3 py-1 rounded-full shadow-lg border border-black/5 flex items-center justify-between gap-1.5 max-w-[85%] select-none scale-90 origin-top shrink-0"
         >
-          <span className="text-[8px] shrink-0">{iconEmoji}</span>
+          <span className="shrink-0 flex items-center">{renderAnnouncementIcon(announcement.icon)}</span>
           <span className={`text-[6.5px] font-black tracking-wide leading-none truncate max-w-[130px] ${
             announcement.animate === 'bounce' ? 'animate-bounce inline-block' : 
             announcement.animate === 'pulse' ? 'animate-pulse' : ''
@@ -117,7 +126,7 @@ export default function DesktopMockup({ formData, products, activeSubTab }: Desk
       </div>
 
       {/* Device Mockup Scrollable Web Page View */}
-      <div className="flex-1 bg-[#fafafa] overflow-y-auto scrollbar-hide text-brand-earth text-left select-none relative animate-in fade-in duration-500">
+      <div className="flex-1 bg-background overflow-y-auto scrollbar-hide text-brand-earth text-left select-none relative animate-in fade-in duration-500">
         {activeSubTab === 'franchise' ? (
           <DesktopFranchisePreview 
             formData={formData} 

@@ -7,6 +7,10 @@ interface BatchTrackerListProps {
   batches: InventoryBatch[];
 }
 
+function calculateDaysRemaining(expiryDate: string): number {
+  return Math.ceil((new Date(expiryDate).getTime() - Date.now()) / (1000 * 3600 * 24));
+}
+
 export default function BatchTrackerList({ batches }: BatchTrackerListProps) {
   if (batches.length === 0) {
     return (
@@ -34,8 +38,7 @@ export default function BatchTrackerList({ batches }: BatchTrackerListProps) {
           </thead>
           <tbody>
             {batches.map((batch) => {
-                const expiryDateObj = new Date(batch.expiry_date);
-                const daysRemaining = Math.ceil((expiryDateObj.getTime() - Date.now()) / (1000 * 3600 * 24));
+                const daysRemaining = calculateDaysRemaining(batch.expiry_date);
                 const isNearExpiry = daysRemaining <= 3 && daysRemaining >= 0;
                 return (
                   <tr key={batch.id} className="hover:bg-gray-50/30 transition-colors">

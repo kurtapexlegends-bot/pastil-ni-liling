@@ -6,7 +6,8 @@ import {
   ShieldCheck, 
   Coins, 
   Receipt, 
-  SignOut 
+  SignOut,
+  X
 } from '@phosphor-icons/react';
 
 interface FranchiseSidebarProps {
@@ -75,7 +76,7 @@ export default function FranchiseSidebar({
                 </span>
               </div>
               <div>
-                <h1 className="text-xs font-bold text-brand-earth uppercase tracking-wider leading-none">Liling's Franchise</h1>
+                <h1 className="text-xs font-bold text-brand-earth uppercase tracking-wider leading-none">Liling&apos;s Franchise</h1>
                 <p className="text-[9px] font-semibold text-brand-earth/40 uppercase tracking-widest mt-1">
                   {isCashier ? 'Cashier Station' : 'Partner Portal'}
                 </p>
@@ -84,9 +85,10 @@ export default function FranchiseSidebar({
             {onClose && (
               <button 
                 onClick={onClose}
-                className="lg:hidden w-11 h-11 rounded-full bg-gray-50 flex items-center justify-center text-xs text-brand-earth/70 hover:bg-gray-100 transition-colors"
+                aria-label="Close sidebar"
+                className="lg:hidden w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-gray-50 flex items-center justify-center text-brand-earth/70 hover:bg-gray-100 transition-colors cursor-pointer"
               >
-                ✕
+                <X size={18} weight="bold" />
               </button>
             )}
           </div>

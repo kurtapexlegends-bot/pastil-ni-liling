@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { SiteSettings, Product } from '../types';
+import { SiteSettings, Product } from '@/components/admin/content/mockups/types';
 
 interface MobileLandingPreviewProps {
   formData: SiteSettings;
@@ -21,7 +21,7 @@ export default function MobileLandingPreview({ formData, products }: MobileLandi
           {formData.hero_title_white ? (
             formData.hero_title_white.split('\n').map((line: string, i: number) => <span key={i}>{line}<br/></span>)
           ) : (
-            <span>Mindanao's finest<br/>delivered to your<br/></span>
+            <span>Mindanao&apos;s finest<br/>delivered to your<br/></span>
           )}
           <span className="text-brand-green">{formData.hero_title_green || 'doorstep.'}</span>
         </h1>
@@ -118,7 +118,7 @@ export default function MobileLandingPreview({ formData, products }: MobileLandi
       </div>
 
       {/* TRUST SECTION */}
-      <div className="py-8 px-4 text-center bg-[#fafafa] space-y-5 border-b border-gray-100 animate-in fade-in duration-500">
+      <div className="py-8 px-4 text-center bg-brand-gray/30 space-y-5 border-b border-gray-100 animate-in fade-in duration-500">
         <div className="space-y-1.5">
           <h2 className="text-[9px] font-extrabold tracking-tight text-brand-earth">
             {formData.trust_title || 'The Fastest Growing Pastil Brand.'}

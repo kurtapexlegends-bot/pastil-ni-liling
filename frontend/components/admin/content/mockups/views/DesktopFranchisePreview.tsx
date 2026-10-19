@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
-import { SiteSettings } from '../types';
+import { CaretDown } from '@phosphor-icons/react';
+import { SiteSettings } from '@/components/admin/content/mockups/types';
 
 interface DesktopFranchisePreviewProps {
   formData: SiteSettings;
@@ -187,7 +188,7 @@ export default function DesktopFranchisePreview({ formData, mockStep, setMockSte
                   <label className="text-[4px] font-bold uppercase tracking-wider text-brand-earth/50">Investment Capacity</label>
                   <div className="h-4.5 bg-gray-50/50 border border-gray-100 rounded px-1.5 flex items-center justify-between">
                     <span className="text-[4.5px] font-bold text-brand-earth/30">Select Capacity Range</span>
-                    <span className="text-[4px] text-brand-earth/40">▼</span>
+                    <CaretDown size={6} weight="bold" className="text-brand-earth/40" />
                   </div>
                 </div>
               </div>
@@ -274,7 +275,7 @@ export default function DesktopFranchisePreview({ formData, mockStep, setMockSte
         </div>
       </div>
 
-      <div className="py-6 border-t border-gray-100 text-center bg-[#fafafa]">
+      <div className="py-6 border-t border-gray-100 text-center bg-background">
         <p 
           className="text-[5px] font-bold uppercase tracking-widest text-brand-earth/30 leading-normal"
           dangerouslySetInnerHTML={{ __html: formData.franchise_footer_copyright || '&copy; 2026 Pastil ni Liling...' }}

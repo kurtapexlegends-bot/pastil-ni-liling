@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Shift, PayoutLedger } from "./types";
+import { Shift, PayoutLedger } from "@/components/admin/payroll/types";
 
 export function usePayroll() {
   const [shifts, setShifts] = useState<Shift[]>([]);

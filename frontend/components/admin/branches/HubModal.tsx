@@ -1,7 +1,7 @@
 'use client';
 
 import { Hub, FranchiseeUser } from '@/types/admin';
-import Modal from '../../ui/Modal';
+import Modal from '@/components/ui/Modal';
 
 interface HubModalProps {
   isOpen: boolean;
@@ -40,7 +40,7 @@ export default function HubModal({
             }
             required
             placeholder="e.g., Liling Manila North Hub"
-            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
           />
         </div>
 
@@ -55,7 +55,7 @@ export default function HubModal({
               setHubForm((prev) => ({ ...prev, franchisee_id: e.target.value }))
             }
             required
-            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
           >
             <option value="" disabled>
               Select a Franchisee
@@ -81,7 +81,7 @@ export default function HubModal({
             }
             required
             placeholder="e.g., 102 Taft Avenue, Manila City"
-            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
           />
         </div>
 
@@ -95,7 +95,7 @@ export default function HubModal({
             onChange={(e) =>
               setHubForm((prev) => ({ ...prev, status: e.target.value }))
             }
-            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -107,13 +107,13 @@ export default function HubModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
+            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-earth/10"
+            className="flex-1 bg-brand-earth hover:bg-brand-earth/95 text-white font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all shadow-xl shadow-brand-earth/10 cursor-pointer"
           >
             Save Branch
           </button>

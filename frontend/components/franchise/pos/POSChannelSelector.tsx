@@ -40,7 +40,7 @@ export default function POSChannelSelector({
                 key={ch.value}
                 type="button"
                 onClick={() => setPosChannel(ch.value)}
-                className={`py-3 rounded-full border text-[9px] font-bold uppercase tracking-widest transition-all active:scale-[0.95] ${
+                className={`min-h-[44px] py-3 px-3 rounded-full border text-[10px] font-bold uppercase tracking-widest transition-all active:scale-[0.95] flex items-center justify-center cursor-pointer ${
                   isSelected 
                     ? activeClass 
                     : 'bg-white border-gray-100 text-brand-earth/40 hover:border-brand-green hover:text-brand-green'
@@ -76,7 +76,7 @@ export default function POSChannelSelector({
                 key={ch.value}
                 type="button"
                 onClick={() => setPosPaymentMethod(ch.value)}
-                className={`py-2.5 rounded-full border text-[9px] font-bold uppercase tracking-widest transition-all active:scale-[0.95] ${
+                className={`min-h-[44px] py-3 px-3 rounded-full border text-[10px] font-bold uppercase tracking-widest transition-all active:scale-[0.95] flex items-center justify-center cursor-pointer ${
                   isSelected 
                     ? activeClass 
                     : 'bg-white border-gray-100 text-brand-earth/40 hover:border-brand-green hover:text-brand-green'

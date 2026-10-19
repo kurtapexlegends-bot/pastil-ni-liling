@@ -70,7 +70,7 @@ export default function UserDashboard() {
 
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
+    <div className="min-h-screen bg-background font-sans text-brand-earth flex flex-col">
       <Navbar variant="dashboard" onLogout={handleLogout} />
 
       <main className="max-w-6xl mx-auto w-full px-4 md:px-8 pt-28 pb-12 flex-1 grid lg:grid-cols-3 gap-8 md:gap-12">

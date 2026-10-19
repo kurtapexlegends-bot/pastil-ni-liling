@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Hub, FranchiseeUser } from "@/types/admin";
 import { Storefront, Plus } from "@phosphor-icons/react";
 import HubModal from "./HubModal";
-import { useConfirm } from "../../../hooks/useConfirm";
+import { useConfirm } from "@/hooks/useConfirm";
 import { toast } from "sonner";
 import EmptyState from "@/components/ui/EmptyState";
 

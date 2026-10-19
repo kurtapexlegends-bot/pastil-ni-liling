@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Toaster } from 'sonner';
-import { ConfirmProvider } from '../hooks/useConfirm';
+import { ConfirmProvider } from '@/hooks/useConfirm';
 
 export default function GlobalProviders({ children }: { children: React.ReactNode }) {
   return (

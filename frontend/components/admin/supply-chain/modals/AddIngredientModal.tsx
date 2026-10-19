@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Modal from "../../../ui/Modal";
+import Modal from "@/components/ui/Modal";
 
 interface AddIngredientModalProps {
   isOpen: boolean;
@@ -46,7 +46,7 @@ export default function AddIngredientModal({
             placeholder="e.g. Fresh Chicken Breast"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
           />
         </div>
 
@@ -59,7 +59,7 @@ export default function AddIngredientModal({
               placeholder="e.g. kg, liters, units"
               value={form.unit}
               onChange={(e) => setForm({ ...form, unit: e.target.value })}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
             />
           </div>
           <div className="space-y-1.5">
@@ -70,7 +70,7 @@ export default function AddIngredientModal({
               required
               value={form.stock}
               onChange={(e) => setForm({ ...form, stock: parseFloat(e.target.value) || 0 })}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
             />
           </div>
         </div>
@@ -84,7 +84,7 @@ export default function AddIngredientModal({
               required
               value={form.min_stock}
               onChange={(e) => setForm({ ...form, min_stock: parseFloat(e.target.value) || 0 })}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
             />
           </div>
           <div className="space-y-1.5">
@@ -95,7 +95,7 @@ export default function AddIngredientModal({
               required
               value={form.unit_cost}
               onChange={(e) => setForm({ ...form, unit_cost: parseFloat(e.target.value) || 0 })}
-              className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
+              className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm"
             />
           </div>
         </div>
@@ -104,14 +104,14 @@ export default function AddIngredientModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all"
+            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-green/10 disabled:opacity-50"
+            className="flex-1 bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all shadow-xl shadow-brand-green/10 disabled:opacity-50 cursor-pointer"
           >
             Save Ingredient
           </button>

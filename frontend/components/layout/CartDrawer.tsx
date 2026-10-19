@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, Package } from "@phosphor-icons/react";
+import { ShoppingBag, Package, X, Minus, Plus } from "@phosphor-icons/react";
 import { CartItem } from "@/types";
 import { formatCurrency } from "@/lib/format";
 
@@ -55,10 +55,12 @@ export default function CartDrawer({
             <p className="text-[10px] font-medium text-brand-earth/40">{items.length} items selected</p>
           </div>
           <button 
+            type="button"
             onClick={onClose}
-            className="w-11 h-11 bg-gray-50 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors text-xs text-brand-earth/70"
+            aria-label="Close basket"
+            className="w-11 h-11 min-w-[44px] min-h-[44px] bg-gray-50 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors text-brand-earth/70 cursor-pointer"
           >
-            ✕
+            <X size={18} weight="bold" />
           </button>
         </header>
 
@@ -98,20 +100,30 @@ export default function CartDrawer({
                     <p className="text-[10px] font-semibold text-brand-green mt-0.5">{formatCurrency(item.price)}</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5 bg-gray-50 rounded-lg px-2.5 py-0.5 border border-gray-100">
+                    <div className="flex items-center gap-1.5 bg-gray-50 rounded-xl p-1 border border-gray-100">
                       <button 
+                        type="button"
                         onClick={() => onUpdateQuantity(item.id, -1)}
-                        className="text-xs font-bold text-brand-earth/60 hover:text-brand-green"
-                      >-</button>
-                      <span className="text-[11px] font-semibold text-brand-earth">{item.quantity}</span>
+                        aria-label="Decrease quantity"
+                        className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-earth/60 hover:text-brand-green hover:bg-white rounded-lg transition-all active:scale-90 cursor-pointer"
+                      >
+                        <Minus size={14} weight="bold" />
+                      </button>
+                      <span className="text-xs font-bold text-brand-earth min-w-[20px] text-center select-none">{item.quantity}</span>
                       <button 
+                        type="button"
                         onClick={() => onUpdateQuantity(item.id, 1)}
-                        className="text-xs font-bold text-brand-earth/60 hover:text-brand-green"
-                      >+</button>
+                        aria-label="Increase quantity"
+                        className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-earth/60 hover:text-brand-green hover:bg-white rounded-lg transition-all active:scale-90 cursor-pointer"
+                      >
+                        <Plus size={14} weight="bold" />
+                      </button>
                     </div>
                     <button 
+                      type="button"
                       onClick={() => onRemove(item.id)}
-                      className="text-[9px] font-semibold uppercase tracking-wider text-red-500 hover:text-red-600 opacity-60 group-hover:opacity-100 transition-opacity"
+                      aria-label="Remove item"
+                      className="min-h-[44px] min-w-[44px] px-2.5 flex items-center justify-center text-[9px] font-semibold uppercase tracking-wider text-red-500 hover:text-red-600 opacity-60 hover:opacity-100 transition-opacity cursor-pointer active:scale-95"
                     >
                       Remove
                     </button>
@@ -130,16 +142,17 @@ export default function CartDrawer({
           
           {onCheckout ? (
             <button
+              type="button"
               onClick={onCheckout}
               disabled={items.length === 0 || isCheckingOut}
-              className={`block w-full text-center bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-sm flex items-center justify-center gap-2 ${(items.length === 0 || isCheckingOut) ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
+              className={`w-full text-center bg-brand-earth hover:bg-brand-green text-white min-h-[44px] py-3 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-sm flex items-center justify-center gap-2 ${(items.length === 0 || isCheckingOut) ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
             >
               {isCheckingOut ? "Processing..." : (checkoutText || "Place Bulk Order")}
             </button>
           ) : (
             <Link 
               href="/checkout"
-              className={`block w-full text-center bg-brand-earth hover:bg-brand-green text-white py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-sm ${items.length === 0 ? 'opacity-30 pointer-events-none' : ''}`}
+              className={`w-full text-center bg-brand-earth hover:bg-brand-green text-white min-h-[44px] py-3 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-sm flex items-center justify-center ${items.length === 0 ? 'opacity-30 pointer-events-none' : ''}`}
             >
               {checkoutText || "Proceed to Checkout"}
             </Link>

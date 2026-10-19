@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Modal from "../../components/ui/Modal";
+import Modal from "@/components/ui/Modal";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeSlash, Envelope, CircleNotch } from "@phosphor-icons/react";
+import { Eye, EyeSlash, Envelope, CircleNotch, X } from "@phosphor-icons/react";
 import { setCookie } from "@/lib/cookies";
 
 export default function LoginPage() {
@@ -98,9 +98,10 @@ export default function LoginPage() {
       {/* Floating Close Button */}
       <Link 
         href="/" 
+        aria-label="Return home"
         className="absolute top-8 left-8 z-[100] w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-xl border border-gray-100 hover:scale-110 transition-transform text-xl lg:bg-brand-earth lg:text-white lg:border-brand-earth/20"
       >
-        ✕
+        <X size={20} weight="bold" />
       </Link>
 
       {/* Visual Side (Desktop) */}
@@ -138,7 +139,7 @@ export default function LoginPage() {
       </div>
 
       {/* Form Side */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-20 lg:px-24 py-12 bg-[#fafafa]">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-20 lg:px-24 py-12 bg-background">
         <div className="max-w-md w-full mx-auto space-y-10 animate-in slide-in-from-bottom fade-in duration-1000 fill-mode-both">
           <div className="space-y-4">
              <Link href="/" className="lg:hidden inline-block mb-4">
@@ -211,7 +212,7 @@ export default function LoginPage() {
 
           <div className="text-center">
             <p className="text-[10px] font-bold uppercase tracking-widest text-brand-earth/40">
-              Don't have an account? <Link href="/register" className="text-brand-green hover:underline">Register</Link>
+              Don&apos;t have an account? <Link href="/register" className="text-brand-green hover:underline">Register</Link>
             </p>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { Eye, EyeSlash, X } from "@phosphor-icons/react";
 import { setCookie } from "@/lib/cookies";
 
 export default function RegisterPage() {
@@ -56,9 +56,10 @@ export default function RegisterPage() {
       {/* Floating Close Button */}
       <Link 
         href="/" 
+        aria-label="Return home"
         className="absolute top-8 left-8 z-[100] w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-xl border border-gray-100 hover:scale-110 transition-transform text-xl lg:bg-brand-earth lg:text-white lg:border-brand-earth/20"
       >
-        ✕
+        <X size={20} weight="bold" />
       </Link>
 
       {/* Visual Side (Desktop) */}
@@ -78,7 +79,7 @@ export default function RegisterPage() {
               <span className="text-brand-yellow">Liling Family.</span>
             </h2>
             <p className="text-white/60 font-medium leading-relaxed">
-              Start your journey with Mindanao's finest pastil. Freshly made, authentically served, and now just a click away.
+              Start your journey with Mindanao&apos;s finest pastil. Freshly made, authentically served, and now just a click away.
             </p>
           </div>
           
@@ -96,7 +97,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Form Side */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-20 lg:px-24 py-12 bg-[#fafafa]">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-20 lg:px-24 py-12 bg-background">
         <div className="max-w-md w-full mx-auto space-y-10 animate-in slide-in-from-bottom fade-in duration-1000 fill-mode-both">
           <div className="space-y-4">
              <Link href="/" className="lg:hidden inline-block mb-4">

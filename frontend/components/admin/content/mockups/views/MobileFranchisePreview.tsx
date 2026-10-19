@@ -1,5 +1,6 @@
 import React from 'react';
-import { SiteSettings } from '../types';
+import { CaretDown } from '@phosphor-icons/react';
+import { SiteSettings } from '@/components/admin/content/mockups/types';
 
 interface MobileFranchisePreviewProps {
   formData: SiteSettings;
@@ -24,7 +25,7 @@ export default function MobileFranchisePreview({ formData, mockStep, setMockStep
         </p>
       </div>
 
-      <div className="p-4 bg-[#fafafa] space-y-3">
+      <div className="p-4 bg-background space-y-3">
         {[
           { 
             title: formData.franchise_benefit1_title || 'Low Capital', 
@@ -141,7 +142,7 @@ export default function MobileFranchisePreview({ formData, mockStep, setMockStep
               </div>
               <div className="h-5 bg-gray-50 border border-gray-100 rounded-lg px-2 flex items-center justify-between">
                 <span className="text-[5px] font-bold text-brand-earth/30">Select Capacity Range</span>
-                <span className="text-[4.5px] text-brand-earth/40">▼</span>
+                <CaretDown size={6} weight="bold" className="text-brand-earth/40" />
               </div>
             </div>
             <div className="flex gap-2">

@@ -4,7 +4,7 @@ import { Product } from "@/types/admin";
 import { Package, Plus } from "@phosphor-icons/react";
 import { formatCurrency, formatThousands } from "@/lib/format";
 import ProductModal from "./ProductModal";
-import { useConfirm } from "../../../hooks/useConfirm";
+import { useConfirm } from "@/hooks/useConfirm";
 import { toast } from "sonner";
 import EmptyState from "@/components/ui/EmptyState";
 

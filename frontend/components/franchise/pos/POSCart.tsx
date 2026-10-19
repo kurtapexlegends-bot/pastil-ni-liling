@@ -1,5 +1,6 @@
 import React from "react";
 import { formatCurrency } from "@/lib/format";
+import { Plus, Minus, Trash } from "@phosphor-icons/react";
 import { POSCartItem } from "./types";
 
 interface POSCartProps {
@@ -30,7 +31,7 @@ export default function POSCart({
               <select
                 value={item.flavor_modifier || "Original"}
                 onChange={(e) => updatePOSCartFlavor(item.id, e.target.value)}
-                className="text-[9px] font-bold text-brand-green bg-transparent border-none outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green p-0 cursor-pointer rounded"
+                className="text-xs sm:text-sm font-bold text-brand-green bg-transparent border-none outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green py-1 px-1 cursor-pointer rounded"
               >
                 <option value="Original">Original</option>
                 <option value="Spicy">Spicy</option>
@@ -48,18 +49,20 @@ export default function POSCart({
               <button 
                 type="button" 
                 onClick={() => updatePOSCartQuantity(item.id, -1)}
-                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 text-brand-earth/60 font-bold transition-colors active:scale-[0.9]"
+                aria-label="Decrease quantity"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-gray-100 text-brand-earth/60 font-bold transition-colors active:scale-[0.9] cursor-pointer"
               >
-                -
+                <Minus size={14} weight="bold" />
               </button>
-              <span className="px-2.5 text-[10px] font-bold text-brand-earth">{item.quantity}</span>
+              <span className="px-3 text-xs font-bold text-brand-earth">{item.quantity}</span>
               <button 
                 type="button" 
                 onClick={() => updatePOSCartQuantity(item.id, 1)}
                 disabled={item.quantity >= item.maxStock}
-                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 text-brand-earth/60 font-bold transition-colors disabled:opacity-30 disabled:cursor-not-allowed active:scale-[0.9]"
+                aria-label="Increase quantity"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-gray-100 text-brand-earth/60 font-bold transition-colors disabled:opacity-30 disabled:cursor-not-allowed active:scale-[0.9] cursor-pointer"
               >
-                +
+                <Plus size={14} weight="bold" />
               </button>
             </div>
             
@@ -68,9 +71,10 @@ export default function POSCart({
             <button 
               type="button" 
               onClick={() => removeFromPOSCart(item.id)}
-              className="w-8 h-8 flex items-center justify-center text-rose-400 hover:text-rose-600 font-bold text-sm transition-colors rounded-full hover:bg-rose-50"
+              aria-label="Remove item"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-rose-400 hover:text-rose-600 font-bold transition-colors rounded-full hover:bg-rose-50 cursor-pointer"
             >
-              ×
+              <Trash size={18} />
             </button>
           </div>
         </div>

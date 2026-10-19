@@ -18,7 +18,7 @@ export default function SuccessPage() {
         <div className="space-y-4">
           <h1 className="text-5xl font-black tracking-tighter">Salamat!</h1>
           <p className="text-brand-earth/60 font-medium">
-            Your order has been placed successfully. We're starting to prepare your authentic Mindanao feast right now!
+            Your order has been placed successfully. We&apos;re starting to prepare your authentic Mindanao feast right now!
           </p>
         </div>
 

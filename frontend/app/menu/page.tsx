@@ -78,7 +78,7 @@ export default function MenuPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans text-brand-earth flex flex-col">
+    <div className="min-h-screen bg-background font-sans text-brand-earth flex flex-col">
       {/* Cart Drawer */}
       <CartDrawer 
         isOpen={isCartOpen} 

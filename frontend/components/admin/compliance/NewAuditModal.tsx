@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Modal from '../../ui/Modal';
+import Modal from '@/components/ui/Modal';
 import { Hub } from './types';
 
 interface NewAuditModalProps {
@@ -109,7 +109,7 @@ export default function NewAuditModal({ isOpen, onClose, hubs, onSubmitAudit, er
             required
             value={hubId}
             onChange={(e) => setHubId(e.target.value)}
-            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm cursor-pointer"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-bold text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all shadow-sm cursor-pointer"
           >
             {hubs.map((h) => (
               <option key={h.id} value={h.id}>{h.name}</option>
@@ -138,7 +138,7 @@ export default function NewAuditModal({ isOpen, onClose, hubs, onSubmitAudit, er
                       const val = e.target.value === "" ? 0 : parseInt(e.target.value);
                       setHygiene(Math.max(0, Math.min(100, val)));
                     }}
-                    className="w-12 border border-gray-100/85 rounded-xl py-0.5 text-[10px] font-black text-brand-earth bg-white focus:border-brand-earth/30 outline-none text-center shadow-sm select-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-12 border border-gray-100/85 rounded-xl py-0.5 text-xs font-black text-brand-earth bg-white focus:border-brand-earth/30 outline-none text-center shadow-sm select-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="text-[9px] font-normal text-brand-earth/30">/100</span>
                 </div>
@@ -177,7 +177,7 @@ export default function NewAuditModal({ isOpen, onClose, hubs, onSubmitAudit, er
                       const val = e.target.value === "" ? 0 : parseInt(e.target.value);
                       setRecipe(Math.max(0, Math.min(100, val)));
                     }}
-                    className="w-12 border border-gray-100/85 rounded-xl py-0.5 text-[10px] font-black text-brand-earth bg-white focus:border-brand-earth/30 outline-none text-center shadow-sm select-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-12 border border-gray-100/85 rounded-xl py-0.5 text-xs font-black text-brand-earth bg-white focus:border-brand-earth/30 outline-none text-center shadow-sm select-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="text-[9px] font-normal text-brand-earth/30">/100</span>
                 </div>
@@ -252,7 +252,7 @@ export default function NewAuditModal({ isOpen, onClose, hubs, onSubmitAudit, er
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-[10px] font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all h-20 resize-none shadow-sm"
+            className="w-full border border-gray-100 rounded-2xl px-4 py-3 font-medium text-brand-earth bg-white focus:border-brand-earth/30 outline-none transition-all h-20 resize-none shadow-sm"
             placeholder="Describe recipe taste checks, cleanliness parameters, and standard checklist details..."
           />
         </div>
@@ -262,14 +262,14 @@ export default function NewAuditModal({ isOpen, onClose, hubs, onSubmitAudit, er
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all disabled:opacity-50"
+            className="flex-1 border border-gray-100 hover:bg-gray-50 text-brand-earth/70 font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all disabled:opacity-50 cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="flex-1 bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[9px] py-2.5 rounded-xl transition-all shadow-xl shadow-brand-green/10 disabled:opacity-50"
+            className="flex-1 bg-brand-green hover:bg-brand-green/90 text-white font-bold uppercase tracking-wider text-[9px] py-3 min-h-[44px] rounded-xl transition-all shadow-xl shadow-brand-green/10 disabled:opacity-50 cursor-pointer"
           >
             {submitting ? "Submitting..." : "Submit Log"}
           </button>

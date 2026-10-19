@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import CountdownTimer from '../../../ui/CountdownTimer';
+import { MegaphoneSimple, Sparkle, Gift, Flame } from '@phosphor-icons/react';
+import CountdownTimer from '@/components/ui/CountdownTimer';
 import { getBgStyle, getTextStyle } from './mockupHelpers';
 import { SiteSettings, Product } from './types';
 import MobileLandingPreview from './views/MobileLandingPreview';
@@ -61,11 +62,19 @@ export default function MobileMockup({ formData, products, activeSubTab }: Mobil
     setIsTimerExpired(false);
   }, [announcement.timer_target, announcement.timer_enabled]);
 
-  const iconEmoji = announcement.icon === 'megaphone' ? '📢' 
-    : announcement.icon === 'sparkle' ? '✨'
-    : announcement.icon === 'gift' ? '🎁'
-    : announcement.icon === 'warning' ? '🔥'
-    : '📢';
+  const renderAnnouncementIcon = (iconName?: string) => {
+    switch (iconName) {
+      case 'sparkle':
+        return <Sparkle size={8} weight="fill" className="shrink-0" />;
+      case 'gift':
+        return <Gift size={8} weight="fill" className="shrink-0" />;
+      case 'warning':
+        return <Flame size={8} weight="fill" className="shrink-0" />;
+      case 'megaphone':
+      default:
+        return <MegaphoneSimple size={8} weight="fill" className="shrink-0" />;
+    }
+  };
 
   return (
     <div className="relative w-[280px] h-[560px] bg-brand-earth rounded-[2.5rem] border-8 border-brand-earth shadow-2xl overflow-hidden flex flex-col ring-4 ring-white/30 transition-all duration-300 animate-in zoom-in-95 duration-200">
@@ -78,7 +87,7 @@ export default function MobileMockup({ formData, products, activeSubTab }: Mobil
           }}
           className="absolute top-12 left-1/2 -translate-x-1/2 z-40 px-2.5 py-1 rounded-full shadow-md border border-black/5 flex items-center justify-between gap-1 max-w-[85%] select-none scale-[0.8] origin-top shrink-0"
         >
-          <span className="text-[7px] shrink-0">{iconEmoji}</span>
+          <span className="shrink-0 flex items-center">{renderAnnouncementIcon(announcement.icon)}</span>
           <span className={`text-[5.5px] font-black tracking-wide leading-none truncate max-w-[90px] ${
             announcement.animate === 'bounce' ? 'animate-bounce inline-block' : 
             announcement.animate === 'pulse' ? 'animate-pulse' : ''
@@ -121,7 +130,7 @@ export default function MobileMockup({ formData, products, activeSubTab }: Mobil
       </div>
 
       {/* Device Mockup Scrollable Web Page View */}
-      <div className="flex-1 bg-[#fafafa] overflow-y-auto scrollbar-hide text-brand-earth text-left select-none relative animate-in fade-in duration-500">
+      <div className="flex-1 bg-background overflow-y-auto scrollbar-hide text-brand-earth text-left select-none relative animate-in fade-in duration-500">
         {activeSubTab === 'franchise' ? (
           <MobileFranchisePreview 
             formData={formData} 

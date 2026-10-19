@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { X } from '@phosphor-icons/react';
 import { Product } from '@/types';
 
 interface ProductDetailModalProps {
@@ -44,10 +45,10 @@ export default function ProductDetailModal({
           />
           <button 
             onClick={onClose}
-            className="absolute top-4 left-4 w-8 h-8 bg-white/95 rounded-full flex items-center justify-center shadow-sm hover:bg-white active:scale-95 transition-all text-xs text-brand-earth/70 cursor-pointer"
+            className="absolute top-4 left-4 w-11 h-11 min-w-[44px] min-h-[44px] bg-white/95 rounded-full flex items-center justify-center shadow-sm hover:bg-white active:scale-95 transition-all text-brand-earth/70 cursor-pointer"
             aria-label="Close details"
           >
-            ✕
+            <X size={20} weight="bold" />
           </button>
         </div>
 
@@ -69,7 +70,7 @@ export default function ProductDetailModal({
               <button
                 type="button"
                 onClick={() => setOrderMethod("direct")}
-                className={`p-3 rounded-xl border text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center text-center gap-1 cursor-pointer active:scale-[0.98] ${
+                className={`p-3 min-h-[44px] rounded-xl border text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center text-center gap-1 cursor-pointer active:scale-[0.98] ${
                   orderMethod === "direct"
                     ? "bg-brand-earth text-white border-brand-earth shadow-sm"
                     : "bg-white border-gray-100 text-brand-earth/50 hover:border-brand-green hover:text-brand-green"
@@ -82,7 +83,7 @@ export default function ProductDetailModal({
               <button
                 type="button"
                 onClick={() => setOrderMethod("apps")}
-                className={`p-3 rounded-xl border text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center text-center gap-1 cursor-pointer active:scale-[0.98] ${
+                className={`p-3 min-h-[44px] rounded-xl border text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center text-center gap-1 cursor-pointer active:scale-[0.98] ${
                   orderMethod === "apps"
                     ? "bg-brand-earth text-white border-brand-earth shadow-sm"
                     : "bg-white border-gray-100 text-brand-earth/50 hover:border-brand-green hover:text-brand-green"
@@ -99,7 +100,7 @@ export default function ProductDetailModal({
             <div className="pt-2 space-y-2">
               <button 
                 onClick={() => onAddToCart(product)}
-                className="w-full bg-brand-green text-white py-3.5 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-brand-green/90 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-green/10 cursor-pointer"
+                className="w-full bg-brand-green text-white min-h-[44px] py-3.5 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-brand-green/90 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-brand-green/10 cursor-pointer"
               >
                 Add to Basket
               </button>
@@ -114,7 +115,7 @@ export default function ProductDetailModal({
                   href="https://www.foodpanda.ph/?query=pastil+ni+liling"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[#D70F64] hover:bg-[#D70F64]/95 text-white py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#D70F64]/10 text-center"
+                  className="bg-[#D70F64] hover:bg-[#D70F64]/95 text-white min-h-[44px] py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#D70F64]/10 text-center"
                 >
                   Foodpanda
                 </a>
@@ -122,7 +123,7 @@ export default function ProductDetailModal({
                   href="https://food.grab.com/ph/en/restaurants?search=Pastil+ni+Liling"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[#00B14F] hover:bg-[#00B14F]/95 text-white py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#00B14F]/10 text-center"
+                  className="bg-[#00B14F] hover:bg-[#00B14F]/95 text-white min-h-[44px] py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#00B14F]/10 text-center"
                 >
                   GrabFood
                 </a>

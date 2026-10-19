@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { CaretUp, CaretDown } from '@phosphor-icons/react';
 
 interface HubPerformance {
   id: number;
@@ -301,7 +302,7 @@ export default function SpokesAndFlavors({ branches, trends }: SpokesAndFlavorsP
                         isPositive ? 'text-brand-green' : 'text-red-500'
                       }`}
                     >
-                      {isPositive ? '▲' : '▼'} {Math.abs(growth)}%
+                      {isPositive ? <CaretUp size={10} weight="bold" /> : <CaretDown size={10} weight="bold" />} {Math.abs(growth)}%
                     </span>
                   </div>
                 </div>

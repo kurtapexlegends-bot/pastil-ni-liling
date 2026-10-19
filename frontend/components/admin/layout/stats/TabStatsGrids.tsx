@@ -285,12 +285,16 @@ interface SupplyChainStatsProps {
   batches: any[];
 }
 
+function calculateDaysRemaining(expiryDate: string): number {
+  return Math.ceil((new Date(expiryDate).getTime() - Date.now()) / (1000 * 3600 * 24));
+}
+
 export function SupplyChainStats({ ingredients, batches }: SupplyChainStatsProps) {
   const totalIngredients = ingredients.length;
   const lowStockIngredients = ingredients.filter(i => Number(i.stock) <= Number(i.min_stock)).length;
   const totalBatches = batches.length;
   const expiringBatches = batches.filter(b => {
-    const daysRemaining = Math.ceil((new Date(b.expiry_date).getTime() - Date.now()) / (1000 * 3600 * 24));
+    const daysRemaining = calculateDaysRemaining(b.expiry_date);
     return daysRemaining <= 3 && daysRemaining >= 0;
   }).length;
 
