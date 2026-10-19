@@ -1,5 +1,6 @@
 # Root-level ignore rules
 .agent/
+.agents/
 scratch/
 .gemini/
 ARCHITECTURE.md
