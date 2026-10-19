@@ -3,24 +3,23 @@
 namespace App\Http\Controllers\Franchise;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Franchise\StoreCommissaryOrderRequest;
+use App\Http\Requests\Franchise\UpdateCommissaryOrderStatusRequest;
 use App\Models\CommissaryOrder;
 use App\Services\CommissaryOrderService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class CommissaryController extends Controller
 {
-    protected CommissaryOrderService $commissaryService;
-
-    public function __construct(CommissaryOrderService $commissaryService)
-    {
-        $this->commissaryService = $commissaryService;
-    }
+    public function __construct(
+        protected CommissaryOrderService $commissaryService
+    ) {}
 
     /**
      * Display a listing of the logged-in franchisee's commissary orders.
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $orders = CommissaryOrder::where('user_id', $request->user()->id)
             ->with(['items.product', 'hub'])
@@ -29,31 +28,15 @@ class CommissaryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $orders
+            'data' => $orders,
         ]);
     }
 
     /**
      * Store a newly created B2B commissary restock order.
      */
-    public function store(Request $request)
+    public function store(StoreCommissaryOrderRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'shipping_address' => 'required|string',
-            'contact_number' => 'required|string',
-            'payment_method' => 'required|string|in:gcash,paymaya,cod',
-            'items' => 'required|array',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         $idempotencyKey = $request->header('X-Idempotency-Key');
         if ($idempotencyKey) {
             $existingOrder = CommissaryOrder::where('idempotency_key', $idempotencyKey)
@@ -64,25 +47,25 @@ class CommissaryController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Commissary restock order was already processed (Idempotency Check).',
-                    'data' => $existingOrder
+                    'data' => $existingOrder,
                 ], 200);
             }
         }
 
         try {
-            $orderData = $request->all();
+            $orderData = $request->validated();
             $orderData['idempotency_key'] = $idempotencyKey;
             $order = $this->commissaryService->createOrder($orderData, $request->user());
 
             return response()->json([
                 'success' => true,
                 'message' => 'Commissary restock order placed successfully!',
-                'data' => $order
+                'data' => $order,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -90,7 +73,7 @@ class CommissaryController extends Controller
     /**
      * Display a global listing of all commissary orders (Admin/HQ only).
      */
-    public function adminIndex()
+    public function adminIndex(): JsonResponse
     {
         $orders = CommissaryOrder::with(['items.product', 'user', 'hub'])
             ->latest()
@@ -98,33 +81,29 @@ class CommissaryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $orders
+            'data' => $orders,
         ]);
     }
 
     /**
      * Update the status of a commissary order (Admin/HQ only).
      */
-    public function adminUpdateStatus(Request $request, int $id)
+    public function adminUpdateStatus(UpdateCommissaryOrderStatusRequest $request, int $id): JsonResponse
     {
-        $request->validate([
-            'status' => 'required|string|in:pending,preparing,out_for_delivery,delivered,cancelled'
-        ]);
-
         $order = CommissaryOrder::with('items.product')->findOrFail($id);
 
         try {
-            $order = $this->commissaryService->fulfillOrder($order, $request->status);
+            $order = $this->commissaryService->fulfillOrder($order, $request->validated('status'));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Commissary restock order status updated successfully!',
-                'data' => $order
+                'data' => $order,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 422);
         }
     }

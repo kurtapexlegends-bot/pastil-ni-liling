@@ -1,17 +1,11 @@
 <?php
+
 namespace App\Services;
 
-use App\Models\Order;
 use App\Models\Hub;
-use App\Models\InventoryBatch;
-use App\Models\ComplianceAudit;
-use App\Models\WorkShift;
-use App\Models\Product;
-use App\Models\Ingredient;
-use App\Models\Payout;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class AnalyticsService
 {
@@ -38,7 +32,7 @@ class AnalyticsService
         // 1. Gross Profit Margins Calculations (Real-Time Sums via DB query builder)
         $revenueRetail = DB::table('orders')->where('status', 'delivered')->where('type', 'retail')->sum('total_amount') ?? 0.0;
         $revenueWholesale = DB::table('orders')->where('status', 'delivered')->where('type', 'wholesale')->sum('total_amount') ?? 0.0;
-        $revenuePOS = DB::table('orders')->where('status', 'delivered')->where('type', 'pos')->sum('total_amount') ?? 0.0;
+        $revenuePOS = DB::table('orders')->where('status', 'completed')->where('type', 'pos')->sum('total_amount') ?? 0.0;
         $totalRevenue = $revenueRetail + $revenueWholesale + $revenuePOS;
 
         // Cost of Goods Sold (COGS) - 100% real-time mathematical recipe matrix calculation:
@@ -46,7 +40,7 @@ class AnalyticsService
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->join('product_ingredients', 'order_items.product_id', '=', 'product_ingredients.product_id')
             ->join('ingredients', 'product_ingredients.ingredient_id', '=', 'ingredients.id')
-            ->where('orders.status', 'delivered')
+            ->whereIn('orders.status', ['delivered', 'completed'])
             ->select(DB::raw('SUM(order_items.quantity * product_ingredients.quantity_required * ingredients.unit_cost) as total_cogs'))
             ->value('total_cogs') ?? 0.0;
 
@@ -57,7 +51,8 @@ class AnalyticsService
             ->get()
             ->reduce(function ($carry, $shift) {
                 $hours = (strtotime($shift->clock_out) - strtotime($shift->clock_in)) / 3600;
-                return $carry + ($hours * (float)$shift->hourly_rate);
+
+                return $carry + ($hours * (float) $shift->hourly_rate);
             }, 0.0);
 
         // Dynamic POS commissions
@@ -92,7 +87,7 @@ class AnalyticsService
 
         foreach ($expiredBatches as $batch) {
             $recipeCost = $productRecipeCosts[$batch->product_id] ?? 0.0;
-            $foodWasteCost += $batch->quantity * (float)$recipeCost;
+            $foodWasteCost += $batch->quantity * (float) $recipeCost;
         }
 
         // Net Gross Profit Calculation (Dynamic Expenses subtraction)
@@ -102,7 +97,7 @@ class AnalyticsService
 
         // 2. Comparative Branch (Hub) Performance (Dynamic Ranks) - pre-fetch via group-by queries to avoid N+1
         $hubRevenues = DB::table('orders')
-            ->where('status', 'delivered')
+            ->whereIn('status', ['delivered', 'completed'])
             ->whereNotNull('hub_id')
             ->groupBy('hub_id')
             ->select('hub_id', DB::raw('SUM(total_amount) as total'))
@@ -144,31 +139,31 @@ class AnalyticsService
             $branchPerformance[] = [
                 'id' => $hub->id,
                 'name' => $hub->name,
-                'revenue' => (float)$hubRevenue,
-                'compliance_score' => round((float)$avgCompliance, 1),
-                'active_stock' => (int)$activeStock,
-                'wasted_stock' => (int)$wastedStock,
+                'revenue' => (float) $hubRevenue,
+                'compliance_score' => round((float) $avgCompliance, 1),
+                'active_stock' => (int) $activeStock,
+                'wasted_stock' => (int) $wastedStock,
             ];
         }
 
         // Sort by revenue descending
-        usort($branchPerformance, fn($a, $b) => $b['revenue'] <=> $a['revenue']);
+        usort($branchPerformance, fn ($a, $b) => $b['revenue'] <=> $a['revenue']);
 
         // 3. Food Waste Metrics
         $totalBatchesQuantity = DB::table('inventory_batches')->sum('initial_quantity') ?? 0;
         $wasteRatePercent = $totalBatchesQuantity > 0 ? ($expiredJarsCount / $totalBatchesQuantity) * 100 : 0.0;
 
         $foodWasteMetrics = [
-            'expired_jars_count' => (int)$expiredJarsCount,
-            'waste_cost_php' => (float)$foodWasteCost,
-            'waste_rate_percent' => round((float)$wasteRatePercent, 2),
-            'total_produced_jars' => (int)$totalBatchesQuantity
+            'expired_jars_count' => (int) $expiredJarsCount,
+            'waste_cost_php' => (float) $foodWasteCost,
+            'waste_rate_percent' => round((float) $wasteRatePercent, 2),
+            'total_produced_jars' => (int) $totalBatchesQuantity,
         ];
 
         // 4. Dynamic 7-Day Sales Timeline Query - run a single group-by query
         $startDate = Carbon::now()->subDays(6)->startOfDay();
         $salesTimelineData = DB::table('orders')
-            ->where('status', 'delivered')
+            ->whereIn('status', ['delivered', 'completed'])
             ->where('created_at', '>=', $startDate)
             ->groupBy(DB::raw('DATE(created_at)'), 'type')
             ->select(DB::raw('DATE(created_at) as date'), 'type', DB::raw('SUM(total_amount) as total'))
@@ -176,7 +171,7 @@ class AnalyticsService
 
         $timelineMap = [];
         foreach ($salesTimelineData as $row) {
-            $timelineMap[$row->date][$row->type] = (float)$row->total;
+            $timelineMap[$row->date][$row->type] = (float) $row->total;
         }
 
         $salesTimeline = [];
@@ -189,7 +184,7 @@ class AnalyticsService
                 'day' => $dayLabel,
                 'retail' => $timelineMap[$dateStr]['retail'] ?? 0.0,
                 'wholesale' => $timelineMap[$dateStr]['wholesale'] ?? 0.0,
-                'pos' => $timelineMap[$dateStr]['pos'] ?? 0.0
+                'pos' => $timelineMap[$dateStr]['pos'] ?? 0.0,
             ];
         }
 
@@ -200,16 +195,16 @@ class AnalyticsService
         foreach ($dbIngredients as $ing) {
             $safetyStockIndex[] = [
                 'ingredient' => $ing->name,
-                'current' => (float)$ing->stock,
-                'safety' => (float)$ing->min_stock,
-                'unit' => $ing->unit
+                'current' => (float) $ing->stock,
+                'safety' => (float) $ing->min_stock,
+                'unit' => $ing->unit,
             ];
         }
 
         // 6. Real Dynamic Flavor Sales Growth Predictions mapped directly from Catalog Products
         $productTotalSales = DB::table('order_items')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->where('orders.status', 'delivered')
+            ->whereIn('orders.status', ['delivered', 'completed'])
             ->groupBy('order_items.product_id')
             ->select('order_items.product_id', DB::raw('SUM(order_items.quantity) as total'))
             ->pluck('total', 'product_id')
@@ -217,7 +212,7 @@ class AnalyticsService
 
         $productCurrentSales = DB::table('order_items')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->where('orders.status', 'delivered')
+            ->whereIn('orders.status', ['delivered', 'completed'])
             ->where('orders.created_at', '>=', Carbon::now()->subDays(7))
             ->groupBy('order_items.product_id')
             ->select('order_items.product_id', DB::raw('SUM(order_items.quantity) as total'))
@@ -226,7 +221,7 @@ class AnalyticsService
 
         $productPreviousSales = DB::table('order_items')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->where('orders.status', 'delivered')
+            ->whereIn('orders.status', ['delivered', 'completed'])
             ->whereBetween('orders.created_at', [Carbon::now()->subDays(14), Carbon::now()->subDays(7)])
             ->groupBy('order_items.product_id')
             ->select('order_items.product_id', DB::raw('SUM(order_items.quantity) as total'))
@@ -242,35 +237,34 @@ class AnalyticsService
             $currentPeriodQty = $productCurrentSales[$prod->id] ?? 0;
             $previousPeriodQty = $productPreviousSales[$prod->id] ?? 0;
 
-            $growthFactor = $previousPeriodQty > 0 
-                ? (($currentPeriodQty - $previousPeriodQty) / $previousPeriodQty) * 100 
+            $growthFactor = $previousPeriodQty > 0
+                ? (($currentPeriodQty - $previousPeriodQty) / $previousPeriodQty) * 100
                 : 0.0;
 
             $predictiveTrends[] = [
                 'flavor' => $prod->name,
-                'units_sold' => (int)$qty,
+                'units_sold' => (int) $qty,
                 'share_percent' => $totalFlavorSales > 0 ? round(($qty / $totalFlavorSales) * 100, 1) : 0.0,
                 'projected_weekly_growth' => round($growthFactor, 1),
-                'demand_status' => $growthFactor > 10.0 ? 'High Surge' : ($growthFactor > 0.0 ? 'Stable Growth' : 'Plateauing')
+                'demand_status' => $growthFactor > 10.0 ? 'High Surge' : ($growthFactor > 0.0 ? 'Stable Growth' : 'Plateauing'),
             ];
         }
 
         return [
             'gross_margins' => [
-                'total_revenue' => (float)$totalRevenue,
-                'cogs' => (float)$cogs,
-                'labor_cost' => (float)$totalLaborCost,
-                'waste_cost' => (float)$foodWasteCost,
-                'expenses_cost' => (float)$expensesCost,
-                'gross_profit' => (float)$grossProfit,
-                'margin_percent' => round((float)$profitMarginPercent, 2)
+                'total_revenue' => (float) $totalRevenue,
+                'cogs' => (float) $cogs,
+                'labor_cost' => (float) $totalLaborCost,
+                'waste_cost' => (float) $foodWasteCost,
+                'expenses_cost' => (float) $expensesCost,
+                'gross_profit' => (float) $grossProfit,
+                'margin_percent' => round((float) $profitMarginPercent, 2),
             ],
             'branches' => $branchPerformance,
             'food_waste' => $foodWasteMetrics,
             'sales_timeline' => $salesTimeline,
             'ingredients_safety' => $safetyStockIndex,
-            'trends' => $predictiveTrends
+            'trends' => $predictiveTrends,
         ];
     }
 }
-

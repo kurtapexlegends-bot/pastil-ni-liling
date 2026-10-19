@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Http\Request;
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -47,15 +47,15 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid login details'
+                'message' => 'Invalid login details',
             ], 401);
         }
 
         $user = User::where('email', $request['email'])->firstOrFail();
-        
+
         // Include roles in the response
         $user->load('roles');
 
@@ -78,7 +78,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Logged out successfully'
+            'message' => 'Logged out successfully',
         ]);
     }
 
@@ -89,7 +89,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => $request->user()->load('roles')
+            'data' => $request->user()->load('roles'),
         ]);
     }
 
@@ -105,19 +105,19 @@ class AuthController extends Controller
             ['email' => $email],
             [
                 'token' => $token,
-                'created_at' => Carbon::now()
+                'created_at' => Carbon::now(),
             ]
         );
 
         $frontendUrl = (string) config('app.frontend_url', 'http://localhost:3000');
-        $resetLink = rtrim($frontendUrl, '/') . "/reset-password?token=" . $token . "&email=" . urlencode((string) $email);
-        \Illuminate\Support\Facades\Log::info("Password reset link requested: " . $resetLink);
+        $resetLink = rtrim($frontendUrl, '/').'/reset-password?token='.$token.'&email='.urlencode((string) $email);
+        Log::info('Password reset link requested: '.$resetLink);
 
         return response()->json([
             'success' => true,
             'message' => 'A password reset instruction has been sent to your registered email address.',
             'token' => $token,
-            'email' => $email
+            'email' => $email,
         ]);
     }
 
@@ -132,10 +132,10 @@ class AuthController extends Controller
             ->where('token', $request->token)
             ->first();
 
-        if (!$record) {
+        if (! $record) {
             return response()->json([
                 'success' => false,
-                'message' => 'This password reset token is invalid.'
+                'message' => 'This password reset token is invalid.',
             ], 400);
         }
 
@@ -143,9 +143,10 @@ class AuthController extends Controller
         $createdAt = Carbon::parse($record->created_at);
         if ($createdAt->addMinutes(60)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
             return response()->json([
                 'success' => false,
-                'message' => 'This password reset token has expired.'
+                'message' => 'This password reset token has expired.',
             ], 400);
         }
 
@@ -159,7 +160,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Your password has been reset successfully!'
+            'message' => 'Your password has been reset successfully!',
         ]);
     }
 }

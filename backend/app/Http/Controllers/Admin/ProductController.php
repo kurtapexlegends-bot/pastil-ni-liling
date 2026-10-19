@@ -3,112 +3,83 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreProductRequest;
+use App\Http\Requests\Admin\UpdateProductRequest;
+use App\Http\Requests\Admin\UploadProductImageRequest;
 use App\Models\Product;
 use App\Services\ProductService;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
-    private ProductService $productService;
-
-    public function __construct(ProductService $productService)
-    {
-        $this->productService = $productService;
-    }
+    public function __construct(
+        protected ProductService $productService
+    ) {}
 
     /**
      * Get all products in catalog.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return response()->json([
             'success' => true,
-            'data' => Product::latest()->get()
+            'data' => Product::latest()->get(),
         ]);
     }
 
     /**
      * Upload product image.
      */
-    public function uploadImage(Request $request)
+    public function uploadImage(UploadProductImageRequest $request): JsonResponse
     {
-        $request->validate([
-            'image' => 'required|image|max:5120' // 5MB max
-        ]);
-
         $path = $request->file('image')->store('products', 'public');
-        
+
         return response()->json([
             'success' => true,
-            'url' => asset('storage/' . $path)
+            'url' => asset('storage/'.$path),
         ]);
     }
 
     /**
      * Store a new product.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'category' => 'required|string|max:255',
-            'stock' => 'required|integer|min:0',
-            'is_active' => 'required|boolean',
-            'is_wholesale' => 'required|boolean',
-            'wholesale_price' => 'nullable|numeric|min:0',
-            'image_url' => 'nullable|string',
-        ]);
-
-        $product = $this->productService->storeProduct($data);
+        $product = $this->productService->storeProduct($request->validated());
 
         return response()->json([
             'success' => true,
             'message' => 'Product created successfully!',
-            'data' => $product
+            'data' => $product,
         ], 201);
     }
 
     /**
      * Update an existing product.
      */
-    public function update(Request $request, int $id)
+    public function update(UpdateProductRequest $request, int $id): JsonResponse
     {
         $product = Product::findOrFail($id);
-        
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'category' => 'required|string|max:255',
-            'stock' => 'required|integer|min:0',
-            'is_active' => 'required|boolean',
-            'is_wholesale' => 'required|boolean',
-            'wholesale_price' => 'nullable|numeric|min:0',
-            'image_url' => 'nullable|string',
-        ]);
-
-        $product = $this->productService->updateProduct($product, $data);
+        $product = $this->productService->updateProduct($product, $request->validated());
 
         return response()->json([
             'success' => true,
             'message' => 'Product updated successfully!',
-            'data' => $product
+            'data' => $product,
         ]);
     }
 
     /**
      * Delete a product.
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         $product = Product::findOrFail($id);
         $product->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Product deleted successfully!'
+            'message' => 'Product deleted successfully!',
         ]);
     }
 }

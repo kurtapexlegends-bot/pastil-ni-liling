@@ -2,163 +2,99 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Expense\StoreExpenseRequest;
+use App\Http\Requests\Expense\UpdateExpenseRequest;
 use App\Models\Expense;
-use App\Models\Hub;
-use App\Models\WorkShift;
+use App\Services\ExpenseService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreExpenseRequest;
 
 class ExpenseController extends Controller
 {
+    public function __construct(
+        protected ExpenseService $expenseService
+    ) {}
+
     /**
      * Display a listing of expenses.
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $query = Expense::query()->with('hub');
-
-        if ($user->hasRole('Admin') || $user->hasRole('HQ operations')) {
-            if ($request->has('hub_id')) {
-                $query->where('hub_id', $request->query('hub_id'));
-            }
-        } elseif ($user->hasRole('Franchisee')) {
-            $hub = Hub::where('franchisee_id', $user->id)->first();
-            if (!$hub) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No active franchise branch associated with this account.'
-                ], 404);
-            }
-            $query->where('hub_id', $hub->id);
-        } elseif ($user->hasRole('Branch Cashier')) {
-            // Retrieve active shift to identify branch hub
-            $shift = WorkShift::where('user_id', $user->id)
-                ->where('status', 'active')
-                ->first();
-            
-            if (!$shift) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No active clocked-in work shift session found.'
-                ], 400);
-            }
-            $query->where('hub_id', $shift->hub_id);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Access denied.'
-            ], 403);
-        }
-
-        $expenses = $query->orderBy('date', 'desc')->latest()->get();
+        $expenses = $this->expenseService->getExpenses(
+            $request->user(),
+            $request->query('hub_id') ? (int) $request->query('hub_id') : null,
+            $request->query('category'),
+            $request->query('start_date'),
+            $request->query('end_date')
+        );
 
         return response()->json([
             'success' => true,
-            'data' => $expenses
+            'data' => $expenses,
         ]);
     }
 
     /**
      * Store a newly created expense in storage.
      */
-    public function store(StoreExpenseRequest $request)
+    public function store(StoreExpenseRequest $request): JsonResponse
     {
-        $user = $request->user();
-        $hubId = null;
-
-        if ($user->hasRole('Admin') || $user->hasRole('HQ operations')) {
-            $hubId = $request->input('hub_id');
-        } else {
-            if ($user->hasRole('Franchisee')) {
-                $hub = Hub::where('franchisee_id', $user->id)->first();
-                if (!$hub) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'No active franchise branch associated with this account.'
-                    ], 404);
-                }
-                $hubId = $hub->id;
-            } elseif ($user->hasRole('Branch Cashier')) {
-                $shift = WorkShift::where('user_id', $user->id)
-                    ->where('status', 'active')
-                    ->first();
-                if (!$shift) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'You must clock in to register daily expenses.'
-                    ], 400);
-                }
-                $hubId = $shift->hub_id;
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied.'
-                ], 403);
-            }
-        }
-
-        $expense = Expense::create([
-            'hub_id' => $hubId,
-            'category' => $request->category,
-            'amount' => $request->amount,
-            'date' => $request->date,
-            'description' => $request->description,
-        ]);
+        $expense = $this->expenseService->createExpense(
+            $request->validated(),
+            $request->user()
+        );
 
         return response()->json([
             'success' => true,
             'message' => 'Operational expense logged successfully.',
-            'data' => $expense->load('hub')
+            'data' => $expense,
         ], 201);
+    }
+
+    /**
+     * Update the specified expense in storage.
+     */
+    public function update(UpdateExpenseRequest $request, int $id): JsonResponse
+    {
+        $expense = Expense::find($id);
+        if (! $expense) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Expense record not found.',
+            ], 404);
+        }
+
+        $updated = $this->expenseService->updateExpense(
+            $expense,
+            $request->validated(),
+            $request->user()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Operational expense updated successfully.',
+            'data' => $updated,
+        ]);
     }
 
     /**
      * Remove the specified expense from storage.
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, int $id): JsonResponse
     {
-        $user = $request->user();
         $expense = Expense::find($id);
-
-        if (!$expense) {
+        if (! $expense) {
             return response()->json([
                 'success' => false,
-                'message' => 'Expense record not found.'
+                'message' => 'Expense record not found.',
             ], 404);
         }
 
-        // Authorization checks (Only HQ Admin, or Franchise owner/cashier of the same hub can delete mistakes)
-        if ($user->hasRole('Admin') || $user->hasRole('HQ operations')) {
-            // Permitted
-        } elseif ($user->hasRole('Franchisee')) {
-            $hub = Hub::where('franchisee_id', $user->id)->first();
-            if (!$hub || $expense->hub_id !== $hub->id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied.'
-                ], 403);
-            }
-        } elseif ($user->hasRole('Branch Cashier')) {
-            $shift = WorkShift::where('user_id', $user->id)->where('status', 'active')->first();
-            if (!$shift || $expense->hub_id !== $shift->hub_id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied.'
-                ], 403);
-            }
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Access denied.'
-            ], 403);
-        }
-
-        $expense->delete();
+        $this->expenseService->deleteExpense($expense, $request->user());
 
         return response()->json([
             'success' => true,
-            'message' => 'Expense record deleted successfully.'
+            'message' => 'Expense record deleted successfully.',
         ]);
     }
 }

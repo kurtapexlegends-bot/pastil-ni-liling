@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCustomerOrderRequest;
+use App\Http\Requests\SyncPOSOrdersRequest;
 use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreCustomerOrderRequest;
-use App\Http\Requests\SyncPOSOrdersRequest;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OrderController extends Controller
 {
@@ -29,7 +30,7 @@ class OrderController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $orders
+            'data' => $orders,
         ]);
     }
 
@@ -46,7 +47,7 @@ class OrderController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Order was already processed (Idempotency Check).',
-                    'data' => $existingOrder
+                    'data' => $existingOrder,
                 ], 200); // 200 OK since it's already created
             }
         }
@@ -59,13 +60,13 @@ class OrderController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Order placed successfully!',
-                'data' => $order
+                'data' => $order,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to place order.',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -75,20 +76,24 @@ class OrderController extends Controller
      */
     public function syncPOSOrders(SyncPOSOrdersRequest $request)
     {
-
         try {
             $syncedOrders = $this->orderService->syncPOSOrders($request->orders, $request->user());
 
             return response()->json([
                 'success' => true,
                 'message' => 'POS orders synchronized successfully.',
-                'synced' => $syncedOrders
+                'synced' => $syncedOrders,
             ], 200);
+        } catch (HttpException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], $e->getStatusCode());
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to sync offline POS orders.',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

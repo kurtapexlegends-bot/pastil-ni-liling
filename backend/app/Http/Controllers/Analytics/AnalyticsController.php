@@ -24,17 +24,17 @@ class AnalyticsController extends Controller
     {
         // Fail-Fast: Verify session user existence and high-tier RBAC authorization
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized access credentials.'
+                'message' => 'Unauthorized access credentials.',
             ], 401);
         }
 
-        if (!$user->hasRole('Admin') && !$user->hasRole('HQ operations')) {
+        if (! $user->hasRole('Admin') && ! $user->hasRole('HQ operations')) {
             return response()->json([
                 'success' => false,
-                'message' => 'Restricted personnel access locks triggered.'
+                'message' => 'Restricted personnel access locks triggered.',
             ], 403);
         }
 
@@ -43,14 +43,14 @@ class AnalyticsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'data' => $data,
             ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Analytics processing execution faulted.',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Payroll;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Payroll\CalculatePayoutRequest;
+use App\Http\Requests\Payroll\ClockInRequest;
+use App\Http\Requests\Payroll\StorePayoutRequest;
 use App\Models\Hub;
-use App\Models\Order;
 use App\Models\Payout;
 use App\Models\User;
 use App\Models\WorkShift;
+use App\Services\PayrollService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Requests\Payroll\ClockInRequest;
-use App\Http\Requests\Payroll\CalculatePayoutRequest;
-use App\Http\Requests\Payroll\StorePayoutRequest;
 
 class PayrollController extends Controller
 {
@@ -24,10 +24,18 @@ class PayrollController extends Controller
         $user = $request->user();
 
         // Fail-Fast: Only Cashiers can clock in shifts
-        if (!$user->hasRole('Branch Cashier')) {
+        if (! $user->hasRole('Branch Cashier')) {
             return response()->json([
                 'success' => false,
-                'message' => 'Only branch cashiers can open shift sessions.'
+                'message' => 'Only branch cashiers can open shift sessions.',
+            ], 403);
+        }
+
+        // Fail-Fast: Enforce branch assignment scoping
+        if (! $user->hub_id || (int) $user->hub_id !== (int) $request->hub_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. You are not assigned to this branch.',
             ], 403);
         }
 
@@ -35,11 +43,11 @@ class PayrollController extends Controller
         $activeShift = WorkShift::where('user_id', $user->id)
             ->where('status', 'active')
             ->first();
-            
+
         if ($activeShift) {
             return response()->json([
                 'success' => false,
-                'message' => 'You already have an active shift session open.'
+                'message' => 'You already have an active shift session open.',
             ], 400);
         }
 
@@ -48,13 +56,13 @@ class PayrollController extends Controller
             'hub_id' => $request->hub_id,
             'clock_in' => now(),
             'hourly_rate' => 60.00, // 60 PHP/hour standard cashier rate
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Clock-in recorded. Welcome to your shift!',
-            'data' => $shift
+            'data' => $shift,
         ]);
     }
 
@@ -71,10 +79,10 @@ class PayrollController extends Controller
             ->first();
 
         // Fail-Fast: Ensure active shift exists
-        if (!$shift) {
+        if (! $shift) {
             return response()->json([
                 'success' => false,
-                'message' => 'No active shift session found to clock out from.'
+                'message' => 'No active shift session found to clock out from.',
             ], 404);
         }
 
@@ -91,7 +99,7 @@ class PayrollController extends Controller
         $shift->save();
 
         // Calculate hours worked (using centralized service)
-        $payrollService = app(\App\Services\PayrollService::class);
+        $payrollService = app(PayrollService::class);
         $hours = $payrollService->calculateShiftHours($shift);
 
         return response()->json([
@@ -100,8 +108,8 @@ class PayrollController extends Controller
             'data' => [
                 'shift' => $shift,
                 'hours_worked' => round($hours, 2),
-                'earnings' => round($hours * floatval($shift->hourly_rate), 2)
-            ]
+                'earnings' => round($hours * floatval($shift->hourly_rate), 2),
+            ],
         ]);
     }
 
@@ -113,10 +121,10 @@ class PayrollController extends Controller
         $user = $request->user();
 
         // Fail-Fast: Only cashiers can take breaks
-        if (!$user->hasRole('Branch Cashier')) {
+        if (! $user->hasRole('Branch Cashier')) {
             return response()->json([
                 'success' => false,
-                'message' => 'Only branch cashiers can control shift breaks.'
+                'message' => 'Only branch cashiers can control shift breaks.',
             ], 403);
         }
 
@@ -125,10 +133,10 @@ class PayrollController extends Controller
             ->first();
 
         // Fail-Fast: Ensure cashier has an active work session
-        if (!$shift) {
+        if (! $shift) {
             return response()->json([
                 'success' => false,
-                'message' => 'No active work shift found to start break.'
+                'message' => 'No active work shift found to start break.',
             ], 400);
         }
 
@@ -139,7 +147,7 @@ class PayrollController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Break session started. Take a good rest!',
-            'data' => $shift
+            'data' => $shift,
         ]);
     }
 
@@ -151,10 +159,10 @@ class PayrollController extends Controller
         $user = $request->user();
 
         // Fail-Fast: Only cashiers can control breaks
-        if (!$user->hasRole('Branch Cashier')) {
+        if (! $user->hasRole('Branch Cashier')) {
             return response()->json([
                 'success' => false,
-                'message' => 'Only branch cashiers can control shift breaks.'
+                'message' => 'Only branch cashiers can control shift breaks.',
             ], 403);
         }
 
@@ -163,10 +171,10 @@ class PayrollController extends Controller
             ->first();
 
         // Fail-Fast: Ensure shift is currently on break
-        if (!$shift || !$shift->current_break_start) {
+        if (! $shift || ! $shift->current_break_start) {
             return response()->json([
                 'success' => false,
-                'message' => 'You are not currently on a break session.'
+                'message' => 'You are not currently on a break session.',
             ], 400);
         }
 
@@ -182,7 +190,7 @@ class PayrollController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Break ended. Welcome back to active duty!',
-            'data' => $shift
+            'data' => $shift,
         ]);
     }
 
@@ -195,9 +203,10 @@ class PayrollController extends Controller
 
         if ($user->hasRole('Admin') || $user->hasRole('HQ operations')) {
             $shifts = WorkShift::with(['user', 'hub'])->latest()->get();
+
             return response()->json([
                 'success' => true,
-                'data' => $shifts
+                'data' => $shifts,
             ]);
         }
 
@@ -207,9 +216,10 @@ class PayrollController extends Controller
                 ->with(['user', 'hub'])
                 ->latest()
                 ->get();
+
             return response()->json([
                 'success' => true,
-                'data' => $shifts
+                'data' => $shifts,
             ]);
         }
 
@@ -221,7 +231,7 @@ class PayrollController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $shifts
+            'data' => $shifts,
         ]);
     }
 
@@ -232,54 +242,96 @@ class PayrollController extends Controller
     {
         $user = $request->user();
 
+        $isAuthorized = $user->hasRole('Admin') || $user->hasRole('HQ operations') || $user->hasRole('Franchisee');
+        if (! $isAuthorized) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized payout action.',
+            ], 403);
+        }
+
         $targetUserId = $request->query('user_id');
+        $targetUser = User::find($targetUserId);
+        if (! $targetUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Personnel profile not found.',
+            ], 404);
+        }
+
+        if ($user->hasRole('Franchisee')) {
+            $franchiseeHubIds = Hub::where('franchisee_id', $user->id)->pluck('id');
+            $belongsToHub = ($targetUser->hub_id && $franchiseeHubIds->contains($targetUser->hub_id))
+                || WorkShift::where('user_id', $targetUserId)->whereIn('hub_id', $franchiseeHubIds)->exists();
+
+            if (! $belongsToHub) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. Employee does not belong to your branch.',
+                ], 403);
+            }
+        }
+
         $startDate = Carbon::parse($request->query('start_date'))->startOfDay();
         $endDate = Carbon::parse($request->query('end_date'))->endOfDay();
 
-        $payrollService = new \App\Services\PayrollService();
+        $payrollService = new PayrollService;
         $payoutData = $payrollService->calculateUserPayout($targetUserId, $startDate, $endDate);
 
-        // Preserve original exact query string format in response
         $payoutData['start_date'] = $request->query('start_date');
         $payoutData['end_date'] = $request->query('end_date');
 
         return response()->json([
             'success' => true,
-            'data' => $payoutData
+            'data' => $payoutData,
         ]);
     }
 
     /**
      * Record a direct payout transaction.
      */
-    public function storePayout(StorePayoutRequest $request)
+    public function storePayout(StorePayoutRequest $request, PayrollService $payrollService)
     {
         $user = $request->user();
 
-        // Fail-Fast: Only Super Admin or Franchise Partner can issue payroll disbursements
-        $isAuthorized = $user->hasRole('Admin') || $user->hasRole('Franchisee');
-        if (!$isAuthorized) {
+        $isAuthorized = $user->hasRole('Admin') || $user->hasRole('HQ operations') || $user->hasRole('Franchisee');
+        if (! $isAuthorized) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized payout action.'
+                'message' => 'Unauthorized payout action.',
             ], 403);
         }
 
-        $payout = Payout::create([
-            'user_id' => $request->user_id,
-            'hub_id' => $request->hub_id,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'base_pay' => $request->base_pay,
-            'commission_pay' => $request->commission_pay,
-            'total_pay' => $request->total_pay,
-            'status' => 'paid'
-        ]);
+        if ($user->hasRole('Franchisee')) {
+            $ownsHub = Hub::where('id', $request->hub_id)
+                ->where('franchisee_id', $user->id)
+                ->exists();
+
+            if (! $ownsHub) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized payout action for this franchise hub.',
+                ], 403);
+            }
+
+            $targetUser = User::findOrFail($request->user_id);
+            $belongsToHub = ($targetUser->hub_id && (int) $targetUser->hub_id === (int) $request->hub_id)
+                || WorkShift::where('user_id', $targetUser->id)->where('hub_id', $request->hub_id)->exists();
+
+            if (! $belongsToHub) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. Employee does not belong to your branch.',
+                ], 403);
+            }
+        }
+
+        $payout = $payrollService->recordPayout($request->validated());
 
         return response()->json([
             'success' => true,
             'message' => 'Payroll direct payout recorded as disbursed.',
-            'data' => $payout->load(['user', 'hub'])
+            'data' => $payout->load(['user', 'hub']),
         ], 201);
     }
 
@@ -292,9 +344,10 @@ class PayrollController extends Controller
 
         if ($user->hasRole('Admin') || $user->hasRole('HQ operations')) {
             $payouts = Payout::with(['user', 'hub'])->latest()->get();
+
             return response()->json([
                 'success' => true,
-                'data' => $payouts
+                'data' => $payouts,
             ]);
         }
 
@@ -304,9 +357,10 @@ class PayrollController extends Controller
                 ->with(['user', 'hub'])
                 ->latest()
                 ->get();
+
             return response()->json([
                 'success' => true,
-                'data' => $payouts
+                'data' => $payouts,
             ]);
         }
 
@@ -318,7 +372,7 @@ class PayrollController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $payouts
+            'data' => $payouts,
         ]);
     }
 }

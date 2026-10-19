@@ -2,30 +2,27 @@
 
 namespace App\Services;
 
-use App\Models\InventoryBatch;
-use App\Models\Ingredient;
-use App\Models\ProductIngredient;
-use App\Models\Product;
 use App\Models\HubInventory;
-use Illuminate\Support\Facades\DB;
+use App\Models\InventoryBatch;
+use App\Models\Product;
+use App\Models\ProductIngredient;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class InventoryBatchService
 {
     /**
      * Deducts stock from unexpired batches utilizing FIFO (First In, First Out).
      *
-     * @param int $productId
-     * @param int|null $hubId Null means HQ Commissary stock
-     * @param int $quantityToDeduct
-     * @param bool $allowOverdraft
-     * @return void
+     * @param  int|null  $hubId  Null means HQ Commissary stock
+     *
      * @throws Exception
      */
     public function deductStockFIFO(int $productId, ?int $hubId, int $quantityToDeduct, bool $allowOverdraft = false): void
     {
         DB::transaction(function () use ($productId, $hubId, $quantityToDeduct, $allowOverdraft) {
-            /** @var \Illuminate\Database\Eloquent\Collection<\App\Models\InventoryBatch> $batches */
+            /** @var Collection<InventoryBatch> $batches */
             $batches = InventoryBatch::where('product_id', $productId)
                 ->where('hub_id', $hubId)
                 ->where('quantity', '>', 0)
@@ -36,7 +33,7 @@ class InventoryBatchService
 
             $totalAvailable = $batches->sum('quantity');
 
-            if ($totalAvailable < $quantityToDeduct && !$allowOverdraft) {
+            if ($totalAvailable < $quantityToDeduct && ! $allowOverdraft) {
                 throw new Exception("Insufficient stock in unexpired FIFO batches. Requested: {$quantityToDeduct}, Available: {$totalAvailable}");
             }
 
@@ -44,7 +41,9 @@ class InventoryBatchService
 
             /** @var InventoryBatch $batch */
             foreach ($batches as $batch) {
-                if ($remaining <= 0) break;
+                if ($remaining <= 0) {
+                    break;
+                }
 
                 if ($batch->quantity >= $remaining) {
                     $batch->quantity -= $remaining;
@@ -88,9 +87,6 @@ class InventoryBatchService
     /**
      * Depletes raw ingredients at the HQ commissary based on product recipes.
      *
-     * @param int $productId
-     * @param int $quantityManufactured
-     * @return void
      * @throws Exception
      */
     public function depleteIngredients(int $productId, int $quantityManufactured): void
@@ -102,7 +98,9 @@ class InventoryBatchService
 
             foreach ($recipes as $recipe) {
                 $ingredient = $recipe->ingredient;
-                if (!$ingredient) continue;
+                if (! $ingredient) {
+                    continue;
+                }
 
                 $totalNeeded = $recipe->quantity_required * $quantityManufactured;
 
@@ -120,15 +118,12 @@ class InventoryBatchService
 
     /**
      * Receives/creates a new production batch, auto-depleting ingredients at HQ.
-     *
-     * @param array $data
-     * @return InventoryBatch
      */
     public function createBatch(array $data): InventoryBatch
     {
         return DB::transaction(function () use ($data) {
             // Deplete ingredients if manufacturing at HQ (hub_id === null)
-            if (!isset($data['hub_id']) || $data['hub_id'] === null) {
+            if (! isset($data['hub_id']) || $data['hub_id'] === null) {
                 $this->depleteIngredients($data['product_id'], $data['initial_quantity']);
             }
 
@@ -136,7 +131,7 @@ class InventoryBatchService
             $batch = InventoryBatch::create($data);
 
             // Update product stock at HQ
-            if (!isset($data['hub_id']) || $data['hub_id'] === null) {
+            if (! isset($data['hub_id']) || $data['hub_id'] === null) {
                 $product = Product::find($data['product_id']);
                 if ($product) {
                     $product->stock += $data['initial_quantity'];
@@ -164,7 +159,7 @@ class InventoryBatchService
     public function triggerCloseToExpiryDiscounts(): int
     {
         return DB::transaction(function () {
-            /** @var \Illuminate\Database\Eloquent\Collection<\App\Models\InventoryBatch> $batches */
+            /** @var Collection<InventoryBatch> $batches */
             $batches = InventoryBatch::where('quantity', '>', 0)
                 ->where('expiry_date', '<=', now()->addDays(3)->toDateString())
                 ->where('expiry_date', '>=', now()->toDateString())
@@ -184,11 +179,6 @@ class InventoryBatchService
 
     /**
      * Gets the dynamic active price for a product, accounting for close-to-expiration flash discounts.
-     *
-     * @param Product $product
-     * @param int|null $hubId
-     * @param bool $isWholesale
-     * @return float
      */
     public function getActiveProductPrice(Product $product, ?int $hubId, bool $isWholesale = false): float
     {

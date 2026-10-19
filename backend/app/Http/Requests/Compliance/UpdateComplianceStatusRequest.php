@@ -24,7 +24,7 @@ class UpdateComplianceStatusRequest extends FormRequest
     {
         return [
             'status' => 'required|string|in:approved,flagged',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ];
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
@@ -13,7 +12,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Cache::rememberForever('active_catalog', function() {
+        $products = Cache::rememberForever('active_catalog', function () {
             return Product::where('is_active', true)
                 ->orderBy('category')
                 ->orderBy('name')
@@ -23,7 +22,7 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $products
+            'data' => $products,
         ]);
     }
 
@@ -34,7 +33,7 @@ class ProductController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => $product
+            'data' => $product,
         ]);
     }
 }

@@ -6,8 +6,9 @@ use App\Models\CommissaryOrder;
 use App\Models\CommissaryOrderItem;
 use App\Models\Hub;
 use App\Models\HubInventory;
-use App\Models\Product;
 use App\Models\InventoryBatch;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class CommissaryOrderService
@@ -26,20 +27,17 @@ class CommissaryOrderService
     /**
      * Create a new B2B Commissary Order within an ACID transaction.
      *
-     * @param array $data
-     * @param \App\Models\User $user
-     * @return CommissaryOrder
      * @throws \Exception
      */
-    public function createOrder(array $data, \App\Models\User $user): CommissaryOrder
+    public function createOrder(array $data, User $user): CommissaryOrder
     {
         return DB::transaction(function () use ($data, $user) {
-            if (!$user || !$user->hasRole('Franchisee')) {
+            if (! $user || ! $user->hasRole('Franchisee')) {
                 throw new \Exception('Access denied. Commissary restock orders are restricted to registered Franchise partners.');
             }
 
             $hub = Hub::where('franchisee_id', $user->id)->first();
-            if (!$hub) {
+            if (! $hub) {
                 throw new \Exception('No active franchise branch associated with this franchisee account.');
             }
 
@@ -49,7 +47,7 @@ class CommissaryOrderService
 
             foreach ($data['items'] as $item) {
                 $product = Product::findOrFail($item['product_id']);
-                if (!$product->is_wholesale) {
+                if (! $product->is_wholesale) {
                     throw new \Exception("Product '{$product->name}' is not marked for wholesale B2B restock.");
                 }
 
@@ -108,7 +106,7 @@ class CommissaryOrderService
             }
 
             // Strict transition matrix check
-            if (!isset($this->validTransitions[$oldStatus]) || !in_array($newStatus, $this->validTransitions[$oldStatus])) {
+            if (! isset($this->validTransitions[$oldStatus]) || ! in_array($newStatus, $this->validTransitions[$oldStatus])) {
                 throw new \Exception("Illogical B2B order transition: Cannot transition from '{$oldStatus}' directly to '{$newStatus}'.");
             }
 
@@ -140,9 +138,11 @@ class CommissaryOrderService
                     $remaining = $quantityToDeduct;
 
                     // 2. Loop & deduct stock from HQ batches, then instantiate corresponding batches at Spoke Hub
-                    /** @var \App\Models\InventoryBatch $batch */
+                    /** @var InventoryBatch $batch */
                     foreach ($batches as $batch) {
-                        if ($remaining <= 0) break;
+                        if ($remaining <= 0) {
+                            break;
+                        }
 
                         $deducted = 0;
                         if ($batch->quantity >= $remaining) {
@@ -157,7 +157,7 @@ class CommissaryOrderService
                         $batch->save();
 
                         // Create a corresponding InventoryBatch record at the franchisee spoke hub
-                        $b2bBatchNumber = "B2B-H{$hubId}-" . $batch->batch_number . "-" . uniqid();
+                        $b2bBatchNumber = "B2B-H{$hubId}-".$batch->batch_number.'-'.uniqid();
 
                         InventoryBatch::create([
                             'batch_number' => $b2bBatchNumber,

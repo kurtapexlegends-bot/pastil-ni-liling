@@ -3,41 +3,38 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateFranchiseApplicationStatusRequest;
 use App\Models\FranchiseApplication;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class FranchiseApplicationController extends Controller
 {
     /**
      * Get all franchise applications.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return response()->json([
             'success' => true,
-            'data' => FranchiseApplication::latest()->get()
+            'data' => FranchiseApplication::latest()->get(),
         ]);
     }
 
     /**
      * Update the status of a franchise application.
      */
-    public function updateStatus(Request $request, int $id)
+    public function updateStatus(UpdateFranchiseApplicationStatusRequest $request, int $id): JsonResponse
     {
         $application = FranchiseApplication::findOrFail($id);
-        
-        $request->validate([
-            'status' => 'required|string|in:pending,reviewed,approved,rejected'
-        ]);
 
         $application->update([
-            'status' => $request->status
+            'status' => $request->validated('status'),
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Status updated successfully',
-            'data' => $application
+            'data' => $application,
         ]);
     }
 }

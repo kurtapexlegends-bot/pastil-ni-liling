@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class AdminFranchiseeController extends Controller
 {
@@ -14,9 +13,10 @@ class AdminFranchiseeController extends Controller
     public function index()
     {
         $franchisees = User::role('Franchisee')->get();
+
         return response()->json([
             'success' => true,
-            'data' => $franchisees
+            'data' => $franchisees,
         ]);
     }
 }

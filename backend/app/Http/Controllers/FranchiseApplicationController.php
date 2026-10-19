@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FranchiseApplication;
-use Illuminate\Http\Request;
 use App\Http\Requests\SubmitFranchiseApplicationRequest;
+use App\Models\FranchiseApplication;
 
 class FranchiseApplicationController extends Controller
 {
@@ -16,13 +15,13 @@ class FranchiseApplicationController extends Controller
         // Anti-spam & Deduplication logic
         $exists = FranchiseApplication::where(function ($query) use ($request) {
             $query->where('email', $request->email)
-                  ->orWhere('phone', $request->phone);
+                ->orWhere('phone', $request->phone);
         })->whereIn('status', ['Pending', 'Under Review'])->exists();
 
         if ($exists) {
             return response()->json([
                 'success' => false,
-                'message' => 'An application is already being processed for this contact information.'
+                'message' => 'An application is already being processed for this contact information.',
             ], 429); // Too Many Requests
         }
 
@@ -31,7 +30,7 @@ class FranchiseApplicationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Application submitted successfully!',
-            'data' => $application
+            'data' => $application,
         ], 201);
     }
 }

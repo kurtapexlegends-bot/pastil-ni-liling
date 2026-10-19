@@ -1,8 +1,21 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminFranchiseeController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\WebsiteSettingController;
+use App\Http\Controllers\Analytics\AnalyticsController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Compliance\ComplianceController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\Franchise\CommissaryController;
+use App\Http\Controllers\Franchise\FranchiseController;
+use App\Http\Controllers\FranchiseApplicationController;
+use App\Http\Controllers\HubController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Payroll\PayrollController;
 use App\Http\Controllers\ProductController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Auth Routes (Rate Limited against Brute Force & Credential Stuffing)
@@ -16,98 +29,99 @@ Route::middleware('throttle:5,1')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    
+
     // User Order History
-    Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index']);
+    Route::get('/orders', [OrderController::class, 'index']);
 
     // Franchisee Branch Inventory and B2C Orders
     Route::middleware('role:Franchisee|Branch Cashier')->group(function () {
-        Route::get('/franchise/inventory', [\App\Http\Controllers\Franchise\FranchiseController::class, 'getInventory']);
-        Route::get('/franchise/orders', [\App\Http\Controllers\Franchise\FranchiseController::class, 'getHubOrders']);
-        Route::patch('/franchise/orders/{id}', [\App\Http\Controllers\Franchise\FranchiseController::class, 'updateHubOrderStatus']);
-        Route::post('/pos/sync', [\App\Http\Controllers\OrderController::class, 'syncPOSOrders']);
-        Route::post('/franchise/commissary-orders', [\App\Http\Controllers\Franchise\CommissaryController::class, 'store']);
-        Route::get('/franchise/commissary-orders', [\App\Http\Controllers\Franchise\CommissaryController::class, 'index']);
+        Route::get('/franchise/inventory', [FranchiseController::class, 'getInventory']);
+        Route::get('/franchise/orders', [FranchiseController::class, 'getHubOrders']);
+        Route::patch('/franchise/orders/{id}', [FranchiseController::class, 'updateHubOrderStatus']);
+        Route::post('/pos/sync', [OrderController::class, 'syncPOSOrders']);
+        Route::post('/franchise/commissary-orders', [CommissaryController::class, 'store']);
+        Route::get('/franchise/commissary-orders', [CommissaryController::class, 'index']);
     });
 
     // Order Placement (Authenticated)
-    Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store']);
+    Route::post('/orders', [OrderController::class, 'store']);
 
     // Admin Routes
     Route::middleware('role:Admin|HQ operations')->prefix('admin')->group(function () {
-        Route::get('/applications', [\App\Http\Controllers\Admin\FranchiseApplicationController::class, 'index']);
-        Route::patch('/applications/{id}', [\App\Http\Controllers\Admin\FranchiseApplicationController::class, 'updateStatus']);
-        
+        Route::get('/applications', [App\Http\Controllers\Admin\FranchiseApplicationController::class, 'index']);
+        Route::patch('/applications/{id}', [App\Http\Controllers\Admin\FranchiseApplicationController::class, 'updateStatus']);
+
         // Admin Order Management
-        Route::get('/orders', [\App\Http\Controllers\Admin\AdminOrderController::class, 'index']);
-        Route::patch('/orders/{id}', [\App\Http\Controllers\Admin\AdminOrderController::class, 'updateStatus']);
+        Route::get('/orders', [AdminOrderController::class, 'index']);
+        Route::patch('/orders/{id}', [AdminOrderController::class, 'updateStatus']);
 
         // Admin B2B Commissary Restocks
-        Route::get('/commissary-orders', [\App\Http\Controllers\Franchise\CommissaryController::class, 'adminIndex']);
-        Route::patch('/commissary-orders/{id}', [\App\Http\Controllers\Franchise\CommissaryController::class, 'adminUpdateStatus']);
+        Route::get('/commissary-orders', [CommissaryController::class, 'adminIndex']);
+        Route::patch('/commissary-orders/{id}', [CommissaryController::class, 'adminUpdateStatus']);
 
         // Product Catalog Management
-        Route::get('/products', [\App\Http\Controllers\Admin\ProductController::class, 'index']);
-        Route::post('/products/upload-image', [\App\Http\Controllers\Admin\ProductController::class, 'uploadImage']);
-        Route::post('/products', [\App\Http\Controllers\Admin\ProductController::class, 'store']);
-        Route::put('/products/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'update']);
-        Route::delete('/products/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'destroy']);
+        Route::get('/products', [App\Http\Controllers\Admin\ProductController::class, 'index']);
+        Route::post('/products/upload-image', [App\Http\Controllers\Admin\ProductController::class, 'uploadImage']);
+        Route::post('/products', [App\Http\Controllers\Admin\ProductController::class, 'store']);
+        Route::put('/products/{id}', [App\Http\Controllers\Admin\ProductController::class, 'update']);
+        Route::delete('/products/{id}', [App\Http\Controllers\Admin\ProductController::class, 'destroy']);
 
         // Franchise Branch Management
-        Route::post('/hubs', [\App\Http\Controllers\Admin\HubController::class, 'store']);
-        Route::put('/hubs/{id}', [\App\Http\Controllers\Admin\HubController::class, 'update']);
-        Route::delete('/hubs/{id}', [\App\Http\Controllers\Admin\HubController::class, 'destroy']);
-        Route::get('/franchisees', [\App\Http\Controllers\Admin\AdminFranchiseeController::class, 'index']);
+        Route::post('/hubs', [App\Http\Controllers\Admin\HubController::class, 'store']);
+        Route::put('/hubs/{id}', [App\Http\Controllers\Admin\HubController::class, 'update']);
+        Route::delete('/hubs/{id}', [App\Http\Controllers\Admin\HubController::class, 'destroy']);
+        Route::get('/franchisees', [AdminFranchiseeController::class, 'index']);
 
         // Supply Chain & Batch Integrity Management
-        Route::get('/inventory/batches', [\App\Http\Controllers\Admin\InventoryController::class, 'getBatches']);
-        Route::post('/inventory/batches', [\App\Http\Controllers\Admin\InventoryController::class, 'storeBatch']);
-        Route::post('/inventory/batches/markdown', [\App\Http\Controllers\Admin\InventoryController::class, 'triggerMarkdown']);
-        Route::get('/inventory/ingredients', [\App\Http\Controllers\Admin\InventoryController::class, 'getIngredients']);
-        Route::post('/inventory/ingredients', [\App\Http\Controllers\Admin\InventoryController::class, 'storeIngredient']);
-        Route::post('/inventory/ingredients/{id}/restock', [\App\Http\Controllers\Admin\InventoryController::class, 'restockIngredient']);
-        Route::get('/inventory/recipes', [\App\Http\Controllers\Admin\InventoryController::class, 'getRecipes']);
-        Route::post('/inventory/recipes', [\App\Http\Controllers\Admin\InventoryController::class, 'storeRecipe']);
+        Route::get('/inventory/batches', [InventoryController::class, 'getBatches']);
+        Route::post('/inventory/batches', [InventoryController::class, 'storeBatch']);
+        Route::post('/inventory/batches/markdown', [InventoryController::class, 'triggerMarkdown']);
+        Route::get('/inventory/ingredients', [InventoryController::class, 'getIngredients']);
+        Route::post('/inventory/ingredients', [InventoryController::class, 'storeIngredient']);
+        Route::post('/inventory/ingredients/{id}/restock', [InventoryController::class, 'restockIngredient']);
+        Route::get('/inventory/recipes', [InventoryController::class, 'getRecipes']);
+        Route::post('/inventory/recipes', [InventoryController::class, 'storeRecipe']);
 
         // Phase 4: Employee Personnel Controls (Multi-Tier RBAC)
-        Route::post('/employees', [\App\Http\Controllers\Admin\EmployeeController::class, 'store']);
-        Route::put('/employees/{id}', [\App\Http\Controllers\Admin\EmployeeController::class, 'update']);
-        Route::delete('/employees/{id}', [\App\Http\Controllers\Admin\EmployeeController::class, 'destroy']);
+        Route::post('/employees', [EmployeeController::class, 'store']);
+        Route::put('/employees/{id}', [EmployeeController::class, 'update']);
+        Route::delete('/employees/{id}', [EmployeeController::class, 'destroy']);
 
         // Website Settings Content Management
-        Route::put('/website-settings', [\App\Http\Controllers\Admin\WebsiteSettingController::class, 'update']);
+        Route::put('/website-settings', [WebsiteSettingController::class, 'update']);
     });
 
     // Routes shared by Admin, HQ operations, and Franchisee
     Route::middleware('role:Admin|HQ operations|Franchisee')->prefix('admin')->group(function () {
-        Route::get('/employees', [\App\Http\Controllers\Admin\EmployeeController::class, 'index']);
-        Route::get('/hubs', [\App\Http\Controllers\Admin\HubController::class, 'index']);
+        Route::get('/employees', [EmployeeController::class, 'index']);
+        Route::get('/hubs', [App\Http\Controllers\Admin\HubController::class, 'index']);
     });
 
     // Phase 4: Digital Compliance & QC Audits
-    Route::get('/compliance/audits', [\App\Http\Controllers\Compliance\ComplianceController::class, 'index']);
-    Route::post('/compliance/audits', [\App\Http\Controllers\Compliance\ComplianceController::class, 'store']);
-    Route::patch('/compliance/audits/{id}', [\App\Http\Controllers\Compliance\ComplianceController::class, 'updateStatus']);
-    Route::get('/compliance/anomalies', [\App\Http\Controllers\Compliance\ComplianceController::class, 'getAnomalies']);
-    Route::patch('/compliance/anomalies/{id}/resolve', [\App\Http\Controllers\Compliance\ComplianceController::class, 'resolveAnomaly']);
- 
+    Route::get('/compliance/audits', [ComplianceController::class, 'index']);
+    Route::post('/compliance/audits', [ComplianceController::class, 'store']);
+    Route::patch('/compliance/audits/{id}', [ComplianceController::class, 'updateStatus']);
+    Route::get('/compliance/anomalies', [ComplianceController::class, 'getAnomalies']);
+    Route::patch('/compliance/anomalies/{id}/resolve', [ComplianceController::class, 'resolveAnomaly']);
+
     // Phase 4: Cashier Shift Sessions and Direct Payout Commission Ledger
-    Route::post('/payroll/shifts/clock-in', [\App\Http\Controllers\Payroll\PayrollController::class, 'clockIn']);
-    Route::post('/payroll/shifts/clock-out', [\App\Http\Controllers\Payroll\PayrollController::class, 'clockOut']);
-    Route::post('/payroll/shifts/break-start', [\App\Http\Controllers\Payroll\PayrollController::class, 'startBreak']);
-    Route::post('/payroll/shifts/break-end', [\App\Http\Controllers\Payroll\PayrollController::class, 'endBreak']);
-    Route::get('/payroll/shifts', [\App\Http\Controllers\Payroll\PayrollController::class, 'getShifts']);
-    Route::get('/payroll/payouts/calculate', [\App\Http\Controllers\Payroll\PayrollController::class, 'calculatePayout']);
-    Route::post('/payroll/payouts', [\App\Http\Controllers\Payroll\PayrollController::class, 'storePayout']);
-    Route::get('/payroll/payouts', [\App\Http\Controllers\Payroll\PayrollController::class, 'getPayouts']);
+    Route::post('/payroll/shifts/clock-in', [PayrollController::class, 'clockIn']);
+    Route::post('/payroll/shifts/clock-out', [PayrollController::class, 'clockOut']);
+    Route::post('/payroll/shifts/break-start', [PayrollController::class, 'startBreak']);
+    Route::post('/payroll/shifts/break-end', [PayrollController::class, 'endBreak']);
+    Route::get('/payroll/shifts', [PayrollController::class, 'getShifts']);
+    Route::get('/payroll/payouts/calculate', [PayrollController::class, 'calculatePayout']);
+    Route::post('/payroll/payouts', [PayrollController::class, 'storePayout']);
+    Route::get('/payroll/payouts', [PayrollController::class, 'getPayouts']);
 
     // Branch Operational Expenses
-    Route::get('/expenses', [\App\Http\Controllers\ExpenseController::class, 'index']);
-    Route::post('/expenses', [\App\Http\Controllers\ExpenseController::class, 'store']);
-    Route::delete('/expenses/{id}', [\App\Http\Controllers\ExpenseController::class, 'destroy']);
+    Route::get('/expenses', [ExpenseController::class, 'index']);
+    Route::post('/expenses', [ExpenseController::class, 'store']);
+    Route::put('/expenses/{id}', [ExpenseController::class, 'update']);
+    Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy']);
 
     // Phase 5: Business Intelligence & Predictive Analytics Engine
-    Route::get('/analytics/summary', [\App\Http\Controllers\Analytics\AnalyticsController::class, 'getSummary']);
+    Route::get('/analytics/summary', [AnalyticsController::class, 'getSummary']);
 });
 
 // Product Routes
@@ -115,10 +129,10 @@ Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{product:slug}', [ProductController::class, 'show']);
 
 // Franchise Routes
-Route::post('/franchise/apply', [\App\Http\Controllers\FranchiseApplicationController::class, 'store']);
+Route::post('/franchise/apply', [FranchiseApplicationController::class, 'store']);
 
 // Hub Public Routes
-Route::get('/hubs', [\App\Http\Controllers\HubController::class, 'index']);
+Route::get('/hubs', [HubController::class, 'index']);
 
 // Website Settings Public Route
-Route::get('/website-settings', [\App\Http\Controllers\Admin\WebsiteSettingController::class, 'index']);
+Route::get('/website-settings', [WebsiteSettingController::class, 'index']);

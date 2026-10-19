@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Compliance;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Compliance\ResolveAnomalyRequest;
+use App\Http\Requests\Compliance\StoreComplianceAuditRequest;
+use App\Http\Requests\Compliance\UpdateComplianceStatusRequest;
 use App\Models\ComplianceAudit;
 use App\Models\Hub;
 use App\Models\PosSyncAnomaly;
 use Illuminate\Http\Request;
-use App\Http\Requests\Compliance\StoreComplianceAuditRequest;
-use App\Http\Requests\Compliance\UpdateComplianceStatusRequest;
-use App\Http\Requests\Compliance\ResolveAnomalyRequest;
 
 class ComplianceController extends Controller
 {
@@ -23,9 +23,10 @@ class ComplianceController extends Controller
         // Fail-Fast: HQ officers get global view
         if ($user->hasRole('Admin') || $user->hasRole('HQ operations')) {
             $audits = ComplianceAudit::with(['hub', 'auditor'])->latest()->get();
+
             return response()->json([
                 'success' => true,
-                'data' => $audits
+                'data' => $audits,
             ]);
         }
 
@@ -39,13 +40,13 @@ class ComplianceController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $audits
+                'data' => $audits,
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Access denied.'
+            'message' => 'Access denied.',
         ], 403);
     }
 
@@ -58,11 +59,25 @@ class ComplianceController extends Controller
 
         // Fail-Fast: Only HQ operations, Super Admin, or Franchisee themselves can register audits
         $isAuthorized = $user->hasRole('Admin') || $user->hasRole('HQ operations') || $user->hasRole('Franchisee');
-        if (!$isAuthorized) {
+        if (! $isAuthorized) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized compliance action.'
+                'message' => 'Unauthorized compliance action.',
             ], 403);
+        }
+
+        // Verify hub ownership for Franchisee
+        if ($user->hasRole('Franchisee')) {
+            $ownsHub = Hub::where('id', $request->hub_id)
+                ->where('franchisee_id', $user->id)
+                ->exists();
+
+            if (! $ownsHub) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. You do not own this franchise branch.',
+                ], 403);
+            }
         }
 
         // Set default status. If Franchisee submits, must be pending reviewer approval.
@@ -85,7 +100,7 @@ class ComplianceController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Hygiene and QC compliance audit registered successfully.',
-            'data' => $audit->load(['hub', 'auditor'])
+            'data' => $audit->load(['hub', 'auditor']),
         ], 201);
     }
 
@@ -98,31 +113,31 @@ class ComplianceController extends Controller
 
         // Fail-Fast: Only HQ auditors / Super Admins can issue status changes
         $isHQ = $user->hasRole('Admin') || $user->hasRole('HQ operations');
-        if (!$isHQ) {
+        if (! $isHQ) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized audit governance access.'
+                'message' => 'Unauthorized audit governance access.',
             ], 403);
         }
 
         $audit = ComplianceAudit::find($id);
-        if (!$audit) {
+        if (! $audit) {
             return response()->json([
                 'success' => false,
-                'message' => 'Compliance audit record not found.'
+                'message' => 'Compliance audit record not found.',
             ], 404);
         }
 
         $audit->status = $request->status;
         if ($request->has('notes')) {
-            $audit->notes = ($audit->notes ? $audit->notes . "\n" : '') . "HQ Audit Review: " . $request->notes;
+            $audit->notes = ($audit->notes ? $audit->notes."\n" : '').'HQ Audit Review: '.$request->notes;
         }
         $audit->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'QC compliance status updated to: ' . $request->status,
-            'data' => $audit->load(['hub', 'auditor'])
+            'message' => 'QC compliance status updated to: '.$request->status,
+            'data' => $audit->load(['hub', 'auditor']),
         ]);
     }
 
@@ -133,10 +148,10 @@ class ComplianceController extends Controller
     {
         $user = $request->user();
 
-        if (!$user->hasRole('Admin') && !$user->hasRole('HQ operations') && !$user->hasRole('Franchisee')) {
+        if (! $user->hasRole('Admin') && ! $user->hasRole('HQ operations') && ! $user->hasRole('Franchisee')) {
             return response()->json([
                 'success' => false,
-                'message' => 'Access denied.'
+                'message' => 'Access denied.',
             ], 403);
         }
 
@@ -148,12 +163,13 @@ class ComplianceController extends Controller
                 // Map to maintain backward compatibility with frontend
                 $anomaly->hub_name = $anomaly->hub->name ?? 'Unknown';
                 $anomaly->product_name = $anomaly->product->name ?? 'Unknown';
+
                 return $anomaly;
             });
 
         return response()->json([
             'success' => true,
-            'data' => $anomalies
+            'data' => $anomalies,
         ]);
     }
 
@@ -165,31 +181,31 @@ class ComplianceController extends Controller
         $user = $request->user();
 
         // Only HQ Operations or Admins can mark anomalies as resolved
-        if (!$user->hasRole('Admin') && !$user->hasRole('HQ operations')) {
+        if (! $user->hasRole('Admin') && ! $user->hasRole('HQ operations')) {
             return response()->json([
                 'success' => false,
-                'message' => 'Access denied. Only HQ operators can resolve anomalies.'
+                'message' => 'Access denied. Only HQ operators can resolve anomalies.',
             ], 403);
         }
 
         $anomaly = PosSyncAnomaly::find($id);
 
-        if (!$anomaly) {
+        if (! $anomaly) {
             return response()->json([
                 'success' => false,
-                'message' => 'Anomaly not found.'
+                'message' => 'Anomaly not found.',
             ], 404);
         }
 
         $anomaly->update([
             'status' => 'resolved',
-            'notes' => $request->notes ?? 'Reconciled and resolved by HQ Operator.'
+            'notes' => $request->notes ?? 'Reconciled and resolved by HQ Operator.',
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'POS sync anomaly marked as resolved.',
-            'data' => $anomaly
+            'data' => $anomaly,
         ]);
     }
 }

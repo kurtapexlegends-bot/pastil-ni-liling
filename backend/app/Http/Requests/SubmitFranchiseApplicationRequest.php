@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class SubmitFranchiseApplicationRequest extends FormRequest
 {
@@ -37,7 +38,7 @@ class SubmitFranchiseApplicationRequest extends FormRequest
     {
         if ($this->has('email')) {
             $this->merge([
-                'email' => \Illuminate\Support\Str::lower($this->email),
+                'email' => Str::lower($this->email),
             ]);
         }
     }

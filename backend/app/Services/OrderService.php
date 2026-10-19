@@ -2,17 +2,20 @@
 
 namespace App\Services;
 
-use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Hub;
 use App\Models\HubInventory;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\PosSyncAnomaly;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\WorkShift;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
     protected GeoRoutingService $geoRoutingService;
+
     protected InventoryBatchService $inventoryBatchService;
 
     public function __construct(GeoRoutingService $geoRoutingService, InventoryBatchService $inventoryBatchService)
@@ -84,18 +87,35 @@ class OrderService
      */
     public function syncPOSOrders(array $orders, User $user): array
     {
-        $hub = Hub::where('franchisee_id', $user->id)->first();
-        if (!$hub) {
-            throw new \Exception('No active franchise branch associated with this operator account.');
-        }
+        $activeShift = WorkShift::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->first();
 
-        $hubId = $hub->id;
+        $franchiseeHub = Hub::where('franchisee_id', $user->id)->first();
+
+        $hubId = $user->hub_id
+            ?? $activeShift?->hub_id
+            ?? $franchiseeHub?->id
+            ?? abort(403, 'No active shift or assigned branch associated with this operator account.');
+
         $syncedOrders = [];
 
         DB::transaction(function () use ($orders, $user, $hubId, &$syncedOrders) {
             foreach ($orders as $orderData) {
                 // Check if already synchronized
                 if ($this->isPOSOrderAlreadySynced($hubId, $orderData['offline_id'])) {
+                    $existingOrder = Order::withTrashed()
+                        ->where('hub_id', $hubId)
+                        ->where('idempotency_key', $orderData['offline_id'])
+                        ->first();
+
+                    if ($existingOrder) {
+                        $syncedOrders[] = [
+                            'offline_id' => $orderData['offline_id'],
+                            'online_id' => $existingOrder->id,
+                        ];
+                    }
+
                     continue;
                 }
 
@@ -114,7 +134,7 @@ class OrderService
 
                     // If we overdrafted, record an anomaly for reconciliation review
                     if ($available < $item['quantity']) {
-                        DB::table('pos_sync_anomalies')->insert([
+                        PosSyncAnomaly::create([
                             'hub_id' => $hubId,
                             'offline_order_id' => $orderData['offline_id'],
                             'product_id' => $item['product_id'],
@@ -122,8 +142,6 @@ class OrderService
                             'available_quantity' => $available,
                             'status' => 'pending',
                             'notes' => 'Offline POS sync exceeded available digital inventory. Overdraft recorded.',
-                            'created_at' => now(),
-                            'updated_at' => now()
                         ]);
                     }
                 }
@@ -131,7 +149,8 @@ class OrderService
                 // Create the completed POS sale
                 $order = Order::create([
                     'idempotency_key' => $orderData['offline_id'],
-                    'user_id' => $user->id, // Franchisee acting as cashier
+                    'user_id' => $user->id,
+                    'cashier_id' => $user->id,
                     'hub_id' => $hubId,
                     'type' => 'pos',
                     'channel' => $orderData['channel'] ?? 'walk_in',
@@ -155,7 +174,7 @@ class OrderService
 
                 $syncedOrders[] = [
                     'offline_id' => $orderData['offline_id'],
-                    'online_id' => $order->id
+                    'online_id' => $order->id,
                 ];
             }
         });
@@ -170,12 +189,12 @@ class OrderService
      */
     protected function resolveWholesaleHub(?User $user): int
     {
-        if (!$user || !$user->hasRole('Franchisee')) {
+        if (! $user || ! $user->hasRole('Franchisee')) {
             throw new \Exception('Access denied. Wholesale orders are restricted to registered Franchise partners.');
         }
 
         $hub = Hub::where('franchisee_id', $user->id)->first();
-        if (!$hub) {
+        if (! $hub) {
             throw new \Exception('No active franchise branch associated with this account.');
         }
 
@@ -189,19 +208,19 @@ class OrderService
      */
     protected function resolveRetailHub(?float $lat, ?float $lng, array $items, ?int $hubId): int
     {
-        if (!is_null($lat) && !is_null($lng)) {
+        if (! is_null($lat) && ! is_null($lng)) {
             $matchedHub = $this->geoRoutingService->findNearestHubWithStock((float) $lat, (float) $lng, $items);
             if ($matchedHub) {
                 return $matchedHub->id;
             }
         }
 
-        if (!$hubId) {
+        if (! $hubId) {
             throw new \Exception('Could not determine nearest branch hub with sufficient inventory. Please select branch manually.');
         }
 
         $hub = Hub::where('id', $hubId)->where('status', 'active')->first();
-        if (!$hub) {
+        if (! $hub) {
             throw new \Exception('The selected branch is currently unavailable.');
         }
 
@@ -222,7 +241,7 @@ class OrderService
                 ->where('product_id', $item['product_id'])
                 ->first();
 
-            if (!$inventory || $inventory->stock_quantity < $item['quantity']) {
+            if (! $inventory || $inventory->stock_quantity < $item['quantity']) {
                 $available = $inventory ? $inventory->stock_quantity : 0;
                 throw new \Exception("Sorry, {$product->name} is out of stock at this branch. (Available: {$available} units)");
             }
@@ -235,10 +254,14 @@ class OrderService
     }
 
     /**
-     * Check if a POS order has already been synchronized via its Idempotency Key.
+     * Check if a POS order has already been synchronized via its Idempotency Key within the specific hub.
+     * Uses withTrashed() to ensure compatibility with soft-deleted rows and DB composite unique indexes.
      */
     protected function isPOSOrderAlreadySynced(int $hubId, string $offlineId): bool
     {
-        return Order::where('idempotency_key', $offlineId)->exists();
+        return Order::withTrashed()
+            ->where('hub_id', $hubId)
+            ->where('idempotency_key', $offlineId)
+            ->exists();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class ForgotPasswordRequest extends FormRequest
 {
@@ -41,7 +42,7 @@ class ForgotPasswordRequest extends FormRequest
     {
         if ($this->has('email')) {
             $this->merge([
-                'email' => \Illuminate\Support\Str::lower($this->email),
+                'email' => Str::lower($this->email),
             ]);
         }
     }

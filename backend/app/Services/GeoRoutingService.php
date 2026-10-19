@@ -11,10 +11,7 @@ class GeoRoutingService
      * Finds the nearest active hub with sufficient inventory for all items in the request.
      * Uses the Haversine formula to compute great-circle distance in kilometers.
      *
-     * @param float $customerLat
-     * @param float $customerLng
-     * @param array $items Array of ['product_id' => int, 'quantity' => int]
-     * @return Hub|null
+     * @param  array  $items  Array of ['product_id' => int, 'quantity' => int]
      */
     public function findNearestHubWithStock(float $customerLat, float $customerLng, array $items): ?Hub
     {
@@ -29,7 +26,7 @@ class GeoRoutingService
             }
 
             // Verify inventory first to see if this hub has enough stock for all requested items
-            if (!$this->hubHasSufficientInventory($hub->id, $items)) {
+            if (! $this->hubHasSufficientInventory($hub->id, $items)) {
                 continue;
             }
 
@@ -53,7 +50,7 @@ class GeoRoutingService
             $productId = $item['product_id'] ?? null;
             $qty = $item['quantity'] ?? 0;
 
-            if (!$productId || $qty <= 0) {
+            if (! $productId || $qty <= 0) {
                 continue;
             }
 
@@ -62,7 +59,7 @@ class GeoRoutingService
                 ->where('product_id', $productId)
                 ->first();
 
-            if (!$inventory || $inventory->stock_quantity < $qty) {
+            if (! $inventory || $inventory->stock_quantity < $qty) {
                 return false;
             }
         }

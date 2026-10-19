@@ -3,38 +3,53 @@
 namespace App\Http\Controllers\Franchise;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Franchise\UpdateHubOrderStatusRequest;
 use App\Models\Hub;
 use App\Models\HubInventory;
+use App\Models\Order;
+use App\Models\WorkShift;
+use App\Services\OrderFulfillmentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class FranchiseController extends Controller
 {
     /**
-     * Get the active franchisee's hub details and current stock levels.
+     * Resolve the operational hub for the authenticated user (Franchisee or Cashier).
      */
-    public function getInventory(Request $request)
+    protected function resolveHub(Request $request): Hub
     {
         $user = $request->user();
+
         if ($user->hasRole('Branch Cashier')) {
-            $shift = \App\Models\WorkShift::where('user_id', $user->id)
+            $shift = WorkShift::where('user_id', $user->id)
                 ->where('status', 'active')
                 ->first();
-            if (!$shift) {
-                $shift = \App\Models\WorkShift::where('user_id', $user->id)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
+
+            $hubId = $shift?->hub_id ?? $user->hub_id;
+
+            if (! $hubId) {
+                abort(403, 'No active shift or assigned branch.');
             }
-            $hub = $shift ? Hub::find($shift->hub_id) : Hub::first();
+
+            $hub = Hub::find($hubId);
         } else {
             $hub = Hub::where('franchisee_id', $user->id)->first();
         }
 
-        if (!$hub) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No active franchise branch associated with this account.'
-            ], 404);
+        if (! $hub) {
+            abort(404, 'No active franchise branch associated with this account.');
         }
+
+        return $hub;
+    }
+
+    /**
+     * Get the active franchisee's hub details and current stock levels.
+     */
+    public function getInventory(Request $request): JsonResponse
+    {
+        $hub = $this->resolveHub($request);
 
         $inventory = HubInventory::where('hub_id', $hub->id)
             ->with('product')
@@ -43,38 +58,18 @@ class FranchiseController extends Controller
         return response()->json([
             'success' => true,
             'hub' => $hub,
-            'data' => $inventory
+            'data' => $inventory,
         ]);
     }
 
     /**
      * Get retail orders routed to the franchisee's hub.
      */
-    public function getHubOrders(Request $request)
+    public function getHubOrders(Request $request): JsonResponse
     {
-        $user = $request->user();
-        if ($user->hasRole('Branch Cashier')) {
-            $shift = \App\Models\WorkShift::where('user_id', $user->id)
-                ->where('status', 'active')
-                ->first();
-            if (!$shift) {
-                $shift = \App\Models\WorkShift::where('user_id', $user->id)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-            }
-            $hub = $shift ? Hub::find($shift->hub_id) : Hub::first();
-        } else {
-            $hub = Hub::where('franchisee_id', $user->id)->first();
-        }
+        $hub = $this->resolveHub($request);
 
-        if (!$hub) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No active franchise branch associated with this account.'
-            ], 404);
-        }
-
-        $orders = \App\Models\Order::where('hub_id', $hub->id)
+        $orders = Order::where('hub_id', $hub->id)
             ->where('type', 'retail')
             ->with(['items.product', 'user'])
             ->orderBy('created_at', 'desc')
@@ -82,66 +77,42 @@ class FranchiseController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $orders
+            'data' => $orders,
         ]);
     }
 
     /**
      * Update status of a retail order routed to the franchisee's hub.
      */
-    public function updateHubOrderStatus(Request $request, int $id)
+    public function updateHubOrderStatus(UpdateHubOrderStatusRequest $request, int $id): JsonResponse
     {
-        $user = $request->user();
-        if ($user->hasRole('Branch Cashier')) {
-            $shift = \App\Models\WorkShift::where('user_id', $user->id)
-                ->where('status', 'active')
-                ->first();
-            if (!$shift) {
-                $shift = \App\Models\WorkShift::where('user_id', $user->id)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-            }
-            $hub = $shift ? Hub::find($shift->hub_id) : Hub::first();
-        } else {
-            $hub = Hub::where('franchisee_id', $user->id)->first();
-        }
+        $hub = $this->resolveHub($request);
 
-        if (!$hub) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No active franchise branch associated with this account.'
-            ], 404);
-        }
-
-        $order = \App\Models\Order::where('id', $id)
+        $order = Order::where('id', $id)
             ->where('hub_id', $hub->id)
             ->where('type', 'retail')
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             return response()->json([
                 'success' => false,
-                'message' => 'Order not found or not routed to your branch.'
+                'message' => 'Order not found or not routed to your branch.',
             ], 404);
         }
 
-        $request->validate([
-            'status' => 'required|in:pending,preparing,out_for_delivery,delivered,cancelled'
-        ]);
-
         try {
-            $fulfillmentService = app(\App\Services\OrderFulfillmentService::class);
-            $order = $fulfillmentService->fulfillOrder($order, $request->input('status'));
+            $fulfillmentService = app(OrderFulfillmentService::class);
+            $order = $fulfillmentService->fulfillOrder($order, $request->validated('status'));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Order status updated successfully.',
-                'data' => $order->load(['items.product', 'user'])
+                'data' => $order->load(['items.product', 'user']),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 422);
         }
     }
