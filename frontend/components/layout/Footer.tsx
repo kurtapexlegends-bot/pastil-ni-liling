@@ -18,14 +18,14 @@ interface SiteSettings {
 }
 
 const defaults: SiteSettings = {
-  footer_desc: 'Bringing authentic Mindanao flavors to the mainstream. Quality you can trust, prices you can afford.',
-  footer_copyright: '&copy; 2026 Pastil ni Liling. Swak sa Bulsa, Sarap na Babalik-balikan.',
-  footer_social_fb: 'https://facebook.com',
+  footer_desc: 'Authentic Mindanao-style Chicken & Beef Pastil wrapped in fresh banana leaves. Mura, masarap, at babalik-balikan!',
+  footer_copyright: '&copy; 2026 Pastil ni Liling. Mura, Masarap, at Babalik-balikan.',
+  footer_social_fb: 'https://www.facebook.com/PastilNiLiling',
   footer_social_ig: 'https://instagram.com',
   footer_social_tw: 'https://twitter.com',
-  footer_contact_phone: '+63 917 123 4567',
-  footer_contact_email: 'hello@pastilnililing.com',
-  footer_contact_address: 'General Santos City, Philippines'
+  footer_contact_phone: '+63 966 142 3992 / 0927 572 3661',
+  footer_contact_email: 'pastilnililing@gmail.com',
+  footer_contact_address: 'Cubao (Arayat Market, QC) & Bagong Silang (Langit Road, Caloocan)'
 };
 
 export default function Footer() {

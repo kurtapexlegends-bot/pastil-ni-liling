@@ -42,25 +42,43 @@ class RolesAndPermissionsSeeder extends Seeder
         );
         $hqOps->assignRole($hqOpsRole);
 
-        // Create initial Franchisee user
-        $franchisee = User::updateOrCreate(
+        // Create initial Franchisee users (Official Branches from Facebook)
+        $franchiseeCubao = User::updateOrCreate(
             ['email' => 'franchise@pnl.com'],
             [
-                'name' => 'Liling Manila Franchisee',
+                'name' => 'Liling Cubao Franchise Partner (Joan)',
                 'password' => Hash::make('password'),
             ]
         );
-        $franchisee->assignRole($franchiseeRole);
+        $franchiseeCubao->assignRole($franchiseeRole);
 
-        // Create initial Branch Cashier user
+        $franchiseeCaloocan = User::updateOrCreate(
+            ['email' => 'franchise_caloocan@pnl.com'],
+            [
+                'name' => 'Liling Bagong Silang Franchise Partner (Lyka)',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $franchiseeCaloocan->assignRole($franchiseeRole);
+
+        // Create initial Branch Cashier users
         $cashier = User::updateOrCreate(
             ['email' => 'cashier@pnl.com'],
             [
-                'name' => 'Liling Diliman Cashier',
+                'name' => 'Liling Cubao Cashier',
                 'password' => Hash::make('password'),
             ]
         );
         $cashier->assignRole($cashierRole);
+
+        $cashierCaloocan = User::updateOrCreate(
+            ['email' => 'cashier_caloocan@pnl.com'],
+            [
+                'name' => 'Liling Bagong Silang Cashier',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $cashierCaloocan->assignRole($cashierRole);
 
         // Create initial Customer user
         $customer = User::updateOrCreate(

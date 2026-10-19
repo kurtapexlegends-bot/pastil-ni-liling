@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import { CartItem } from "@/types";
-import { MapPin, Compass, CircleNotch } from "@phosphor-icons/react";
+import { MapPin, Compass, CircleNotch, Sparkle, CheckCircle } from "@phosphor-icons/react";
 import { formatCurrency } from "@/lib/format";
 
 export default function CheckoutPage() {
@@ -61,7 +61,9 @@ export default function CheckoutPage() {
   }, [hubs, selectedHubId]);
 
   const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-  const deliveryFee = 45; // Flat fee for demo
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+  const isBulkFreeDelivery = totalQuantity >= 100;
+  const deliveryFee = items.length === 0 ? 0 : (isBulkFreeDelivery ? 0 : 45);
   const total = subtotal + deliveryFee;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -255,18 +257,41 @@ export default function CheckoutPage() {
 
           <div className="pt-5 border-t border-gray-100 space-y-2.5">
              <div className="flex justify-between text-[11px] text-brand-earth/40">
-                <span>Subtotal</span>
+                <span>Subtotal ({totalQuantity} {totalQuantity === 1 ? 'pc' : 'pcs'})</span>
                 <span className="font-semibold text-brand-earth/60">{formatCurrency(subtotal)}</span>
              </div>
              <div className="flex justify-between text-[11px] text-brand-earth/40">
                 <span>Delivery Fee</span>
-                <span className="font-semibold text-brand-earth/60">{formatCurrency(deliveryFee)}</span>
+                {isBulkFreeDelivery ? (
+                  <span className="font-bold text-brand-green flex items-center gap-1.5 text-[10px]">
+                    <span className="line-through text-brand-earth/30 font-normal">₱45.00</span>
+                    <span className="bg-brand-green/10 text-brand-green px-1.5 py-0.5 rounded font-black text-[9px]">FREE</span>
+                  </span>
+                ) : (
+                  <span className="font-semibold text-brand-earth/60">{formatCurrency(deliveryFee)}</span>
+                )}
              </div>
              <div className="flex justify-between pt-3 border-t border-gray-50 items-center">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-earth/50">Total</span>
                 <span className="text-lg font-bold text-brand-earth">{formatCurrency(total)}</span>
              </div>
           </div>
+
+          {isBulkFreeDelivery ? (
+            <div className="p-3.5 bg-brand-green/10 rounded-xl border border-brand-green/20 flex gap-2.5 items-center">
+              <CheckCircle size={16} weight="bold" className="text-brand-green shrink-0" />
+              <p className="text-[10px] font-semibold text-brand-green">
+                Bulk Catering Promo Applied: Free delivery for 100+ pcs!
+              </p>
+            </div>
+          ) : totalQuantity > 0 && totalQuantity < 100 ? (
+            <div className="p-3 bg-brand-yellow/10 rounded-xl border border-brand-yellow/20 flex gap-2.5 items-center">
+              <Sparkle size={15} weight="bold" className="text-brand-yellow shrink-0" />
+              <p className="text-[10px] text-brand-earth/70">
+                Ordering for catering? Add <strong className="text-brand-earth">{100 - totalQuantity} more pcs</strong> for <strong>Free Delivery</strong>!
+              </p>
+            </div>
+          ) : null}
 
           <div className="p-4 bg-brand-yellow/10 rounded-xl border border-brand-yellow/20 flex gap-3 items-start">
             <MapPin size={16} className="text-brand-yellow shrink-0 mt-0.5" />
