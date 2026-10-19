@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Product;
 use App\Models\Ingredient;
-use App\Models\ProductIngredient;
 use App\Models\InventoryBatch;
+use App\Models\Product;
+use App\Models\ProductIngredient;
+use App\Models\User;
 use App\Services\InventoryBatchService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
@@ -17,7 +17,9 @@ class InventoryBatchTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected Product $product;
+
     protected InventoryBatchService $batchService;
 
     protected function setUp(): void
@@ -28,7 +30,7 @@ class InventoryBatchTest extends TestCase
         Role::create(['name' => 'Admin']);
         $this->admin = User::factory()->create([
             'email' => 'admin@pnl.com',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
         ]);
         $this->admin->assignRole('Admin');
 
@@ -41,10 +43,10 @@ class InventoryBatchTest extends TestCase
             'category' => 'pastil',
             'stock' => 0,
             'is_active' => true,
-            'is_wholesale' => false
+            'is_wholesale' => false,
         ]);
 
-        $this->batchService = new InventoryBatchService();
+        $this->batchService = new InventoryBatchService;
     }
 
     /** @test */
@@ -55,40 +57,40 @@ class InventoryBatchTest extends TestCase
             'name' => 'Chicken Breast',
             'unit' => 'kg',
             'stock' => 50.00, // 50kg
-            'min_stock' => 5.00
+            'min_stock' => 5.00,
         ]);
 
         $rice = Ingredient::create([
             'name' => 'Premium Rice',
             'unit' => 'kg',
             'stock' => 100.00,
-            'min_stock' => 10.00
+            'min_stock' => 10.00,
         ]);
 
         // 2. Establish Recipe (0.1kg chicken and 0.2kg rice per jar of pastil)
         ProductIngredient::create([
             'product_id' => $this->product->id,
             'ingredient_id' => $chicken->id,
-            'quantity_required' => 0.1000
+            'quantity_required' => 0.1000,
         ]);
 
         ProductIngredient::create([
             'product_id' => $this->product->id,
             'ingredient_id' => $rice->id,
-            'quantity_required' => 0.2000
+            'quantity_required' => 0.2000,
         ]);
 
         // 3. Post manufacturing batch request to API
         $token = $this->admin->createToken('auth_token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => "Bearer {$token}"
+            'Authorization' => "Bearer {$token}",
         ])->postJson('/api/admin/inventory/batches', [
             'batch_number' => 'BATCH-2026-0517-A',
             'product_id' => $this->product->id,
             'initial_quantity' => 100, // Make 100 pastil units
             'manufacture_date' => now()->toDateString(),
-            'expiry_date' => now()->addDays(14)->toDateString()
+            'expiry_date' => now()->addDays(14)->toDateString(),
         ]);
 
         $response->assertStatus(201);
@@ -103,7 +105,7 @@ class InventoryBatchTest extends TestCase
         // Assert Batch is stored correctly and product stock increased at HQ
         $this->assertDatabaseHas('inventory_batches', [
             'batch_number' => 'BATCH-2026-0517-A',
-            'quantity' => 100
+            'quantity' => 100,
         ]);
         $this->assertEquals(100, Product::find($this->product->id)->stock);
     }
@@ -116,31 +118,31 @@ class InventoryBatchTest extends TestCase
             'name' => 'Chicken Breast',
             'unit' => 'kg',
             'stock' => 5.00,
-            'min_stock' => 5.00
+            'min_stock' => 5.00,
         ]);
 
         ProductIngredient::create([
             'product_id' => $this->product->id,
             'ingredient_id' => $chicken->id,
-            'quantity_required' => 0.1000 // 100 units will require 10kg
+            'quantity_required' => 0.1000, // 100 units will require 10kg
         ]);
 
         $token = $this->admin->createToken('auth_token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => "Bearer {$token}"
+            'Authorization' => "Bearer {$token}",
         ])->postJson('/api/admin/inventory/batches', [
             'batch_number' => 'BATCH-FAILED',
             'product_id' => $this->product->id,
             'initial_quantity' => 100, // Requires 10kg, only 5kg available
             'manufacture_date' => now()->toDateString(),
-            'expiry_date' => now()->addDays(14)->toDateString()
+            'expiry_date' => now()->addDays(14)->toDateString(),
         ]);
 
         $response->assertStatus(422);
         $response->assertJsonPath('success', false);
         $response->assertJsonFragment([
-            'message' => 'Insufficient raw ingredient stock: Chicken Breast. Required: 10kg, Available: 5kg'
+            'message' => 'Insufficient raw ingredient stock: Chicken Breast. Required: 10kg, Available: 5kg',
         ]);
     }
 
@@ -156,7 +158,7 @@ class InventoryBatchTest extends TestCase
             'quantity' => 40,
             'initial_quantity' => 40,
             'manufacture_date' => now()->toDateString(),
-            'expiry_date' => now()->addDays(5)->toDateString()
+            'expiry_date' => now()->addDays(5)->toDateString(),
         ]);
 
         // Batch B expires in 10 days
@@ -167,7 +169,7 @@ class InventoryBatchTest extends TestCase
             'quantity' => 50,
             'initial_quantity' => 50,
             'manufacture_date' => now()->toDateString(),
-            'expiry_date' => now()->addDays(10)->toDateString()
+            'expiry_date' => now()->addDays(10)->toDateString(),
         ]);
 
         // Deduct 50 units (should empty Batch A [40 units] and take 10 units from Batch B)
@@ -189,13 +191,13 @@ class InventoryBatchTest extends TestCase
             'initial_quantity' => 10,
             'manufacture_date' => now()->toDateString(),
             'expiry_date' => now()->addDays(2)->toDateString(),
-            'discount_triggered' => false
+            'discount_triggered' => false,
         ]);
 
         // Trigger discounts
         $token = $this->admin->createToken('auth_token')->plainTextToken;
         $response = $this->withHeaders([
-            'Authorization' => "Bearer {$token}"
+            'Authorization' => "Bearer {$token}",
         ])->postJson('/api/admin/inventory/batches/markdown');
 
         $response->assertStatus(200);
@@ -203,7 +205,7 @@ class InventoryBatchTest extends TestCase
         $response->assertJsonPath('data.discounted_count', 1);
 
         $this->assertTrue(InventoryBatch::find($closeBatch->id)->discount_triggered);
-        
+
         // Price should be dynamically discounted: 25.00 * 0.70 = 17.50
         $activePrice = $this->batchService->getActiveProductPrice($this->product, null, false);
         $this->assertEquals(17.50, $activePrice);

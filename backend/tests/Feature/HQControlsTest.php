@@ -15,9 +15,13 @@ class HQControlsTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $hqOps;
+
     protected User $franchisee;
+
     protected User $cashier;
+
     protected Hub $hub;
 
     protected function setUp(): void
@@ -48,8 +52,10 @@ class HQControlsTest extends TestCase
             'franchisee_id' => $this->franchisee->id,
             'name' => 'Diliman Hub Spoke',
             'address' => 'UP Diliman, Quezon City',
-            'status' => 'active'
+            'status' => 'active',
         ]);
+
+        $this->cashier->update(['hub_id' => $this->hub->id]);
     }
 
     /** @test */
@@ -65,7 +71,7 @@ class HQControlsTest extends TestCase
             'name' => 'Undercover Cashier',
             'email' => 'undercover@liling.com',
             'password' => 'password123',
-            'role' => 'Branch Cashier'
+            'role' => 'Branch Cashier',
         ]);
         $response->assertStatus(403);
 
@@ -74,7 +80,7 @@ class HQControlsTest extends TestCase
             'name' => 'New Regional Cashier',
             'email' => 'newcashier@liling.com',
             'password' => 'password123',
-            'role' => 'Branch Cashier'
+            'role' => 'Branch Cashier',
         ]);
         $response->assertStatus(201)
             ->assertJsonPath('success', true);
@@ -89,7 +95,7 @@ class HQControlsTest extends TestCase
             'hygiene_score' => 95,
             'recipe_adherence_score' => 100,
             'notes' => 'Weekly deep kitchen hygiene scan completed successfully.',
-            'kitchen_photo' => '/photos/kitchen_diliman.jpg'
+            'kitchen_photo' => '/photos/kitchen_diliman.jpg',
         ]);
 
         $response->assertStatus(201)
@@ -101,7 +107,7 @@ class HQControlsTest extends TestCase
         // 2. HQ Ops reviews and flags the audit as approved or rejected/flagged
         $response = $this->actingAs($this->hqOps, 'sanctum')->patchJson("/api/compliance/audits/{$auditId}", [
             'status' => 'approved',
-            'notes' => 'Passed kitchen validation with high scores.'
+            'notes' => 'Passed kitchen validation with high scores.',
         ]);
 
         $response->assertStatus(200)
@@ -113,7 +119,7 @@ class HQControlsTest extends TestCase
     {
         // 1. Clock in cashier shift
         $response = $this->actingAs($this->cashier, 'sanctum')->postJson('/api/payroll/shifts/clock-in', [
-            'hub_id' => $this->hub->id
+            'hub_id' => $this->hub->id,
         ]);
         $response->assertStatus(200)
             ->assertJsonPath('success', true);
@@ -136,7 +142,7 @@ class HQControlsTest extends TestCase
         $activeShift = WorkShift::where('user_id', $this->cashier->id)
             ->where('status', 'active')
             ->first();
-        
+
         $activeShift->clock_in = now()->subHours(4);
         $activeShift->save();
 
@@ -149,7 +155,7 @@ class HQControlsTest extends TestCase
         // Base Pay = 4 hours * 60 PHP = 240 PHP
         // Commissions = 5,000 PHP sales * 5% = 250 PHP
         // Total Payout = 490 PHP
-        $response = $this->actingAs($this->admin, 'sanctum')->getJson('/api/payroll/payouts/calculate?' . http_build_query([
+        $response = $this->actingAs($this->admin, 'sanctum')->getJson('/api/payroll/payouts/calculate?'.http_build_query([
             'user_id' => $this->cashier->id,
             'start_date' => now()->subDay()->toDateString(),
             'end_date' => now()->addDay()->toDateString(),
@@ -181,14 +187,14 @@ class HQControlsTest extends TestCase
     {
         // 1. Forgot password with existing email
         $response = $this->postJson('/api/forgot-password', [
-            'email' => $this->admin->email
+            'email' => $this->admin->email,
         ]);
         $response->assertStatus(200)
             ->assertJsonPath('success', true);
 
         // 2. Forgot password with non-existing email
         $response = $this->postJson('/api/forgot-password', [
-            'email' => 'doesnotexist@liling.com'
+            'email' => 'doesnotexist@liling.com',
         ]);
         $response->assertStatus(422)
             ->assertJsonPath('success', false);
@@ -207,8 +213,8 @@ class HQControlsTest extends TestCase
                     'gross_margins',
                     'branches',
                     'food_waste',
-                    'trends'
-                ]
+                    'trends',
+                ],
             ]);
 
         // 2. Lead Cashier attempts to access corporate financial intelligence (Forbidden)

@@ -4,10 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Hub;
 use App\Models\HubInventory;
+use App\Models\InventoryBatch;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class FranchiseB2CTest extends TestCase
@@ -25,7 +27,7 @@ class FranchiseB2CTest extends TestCase
             'description' => 'Test Description',
             'price' => '25.00',
             'category' => 'pastil',
-            'stock' => 100
+            'stock' => 100,
         ]);
 
         $response = $this->postJson('/api/orders', [
@@ -38,16 +40,16 @@ class FranchiseB2CTest extends TestCase
                 [
                     'product_id' => $product->id,
                     'quantity' => 1,
-                    'price' => 25.00
-                ]
-            ]
+                    'price' => 25.00,
+                ],
+            ],
         ]);
 
         $response->assertStatus(500);
         $response->assertJson([
             'success' => false,
             'message' => 'Failed to place order.',
-            'error' => 'Could not determine nearest branch hub with sufficient inventory. Please select branch manually.'
+            'error' => 'Could not determine nearest branch hub with sufficient inventory. Please select branch manually.',
         ]);
     }
 
@@ -55,14 +57,14 @@ class FranchiseB2CTest extends TestCase
     {
         $user = User::factory()->create();
         $franchisee = User::factory()->create();
-        
+
         Sanctum::actingAs($user);
 
         $hub = Hub::create([
             'franchisee_id' => $franchisee->id,
             'name' => 'Test Hub',
             'address' => 'Test Hub Addr',
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $product = Product::create([
@@ -71,7 +73,7 @@ class FranchiseB2CTest extends TestCase
             'description' => 'Test Description',
             'price' => '25.00',
             'category' => 'pastil',
-            'stock' => 100
+            'stock' => 100,
         ]);
 
         // Place retail order when hub has 0 stock
@@ -86,14 +88,14 @@ class FranchiseB2CTest extends TestCase
                 [
                     'product_id' => $product->id,
                     'quantity' => 1,
-                    'price' => 25.00
-                ]
-            ]
+                    'price' => 25.00,
+                ],
+            ],
         ]);
 
         $response->assertStatus(500);
         $response->assertJsonFragment([
-            'error' => 'Sorry, Original Chicken Pastil is out of stock at this branch. (Available: 0 units)'
+            'error' => 'Sorry, Original Chicken Pastil is out of stock at this branch. (Available: 0 units)',
         ]);
     }
 
@@ -101,14 +103,14 @@ class FranchiseB2CTest extends TestCase
     {
         $user = User::factory()->create();
         $franchisee = User::factory()->create();
-        
+
         Sanctum::actingAs($user);
 
         $hub = Hub::create([
             'franchisee_id' => $franchisee->id,
             'name' => 'Test Hub',
             'address' => 'Test Hub Addr',
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $product = Product::create([
@@ -117,24 +119,24 @@ class FranchiseB2CTest extends TestCase
             'description' => 'Test Description',
             'price' => '25.00',
             'category' => 'pastil',
-            'stock' => 100
+            'stock' => 100,
         ]);
 
         // Seed some stock to the branch
         HubInventory::create([
             'hub_id' => $hub->id,
             'product_id' => $product->id,
-            'stock_quantity' => 10
+            'stock_quantity' => 10,
         ]);
 
-        \App\Models\InventoryBatch::create([
+        InventoryBatch::create([
             'batch_number' => 'BATCH-TEST-CHECKOUT',
             'product_id' => $product->id,
             'hub_id' => $hub->id,
             'quantity' => 10,
             'initial_quantity' => 10,
             'manufacture_date' => now()->toDateString(),
-            'expiry_date' => now()->addDays(30)->toDateString()
+            'expiry_date' => now()->addDays(30)->toDateString(),
         ]);
 
         $response = $this->postJson('/api/orders', [
@@ -148,9 +150,9 @@ class FranchiseB2CTest extends TestCase
                 [
                     'product_id' => $product->id,
                     'quantity' => 2,
-                    'price' => 25.00
-                ]
-            ]
+                    'price' => 25.00,
+                ],
+            ],
         ]);
 
         $response->assertStatus(201);
@@ -160,13 +162,13 @@ class FranchiseB2CTest extends TestCase
         $inventory = HubInventory::where('hub_id', $hub->id)
             ->where('product_id', $product->id)
             ->first();
-            
+
         $this->assertEquals(8, $inventory->stock_quantity);
     }
 
     public function test_pos_sync_success_with_sufficient_stock()
     {
-        $franchiseeRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Franchisee']);
+        $franchiseeRole = Role::firstOrCreate(['name' => 'Franchisee']);
         $franchisee = User::factory()->create();
         $franchisee->assignRole($franchiseeRole);
         Sanctum::actingAs($franchisee);
@@ -175,7 +177,7 @@ class FranchiseB2CTest extends TestCase
             'franchisee_id' => $franchisee->id,
             'name' => 'Franchise Branch',
             'address' => 'Avenue 1',
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $product = Product::create([
@@ -184,23 +186,23 @@ class FranchiseB2CTest extends TestCase
             'description' => 'Rich peanut sauce',
             'price' => '30.00',
             'category' => 'pastil',
-            'stock' => 100
+            'stock' => 100,
         ]);
 
         HubInventory::create([
             'hub_id' => $hub->id,
             'product_id' => $product->id,
-            'stock_quantity' => 15
+            'stock_quantity' => 15,
         ]);
 
-        \App\Models\InventoryBatch::create([
+        InventoryBatch::create([
             'batch_number' => 'BATCH-POS-SYNC-S',
             'product_id' => $product->id,
             'hub_id' => $hub->id,
             'quantity' => 15,
             'initial_quantity' => 15,
             'manufacture_date' => now()->toDateString(),
-            'expiry_date' => now()->addDays(15)->toDateString()
+            'expiry_date' => now()->addDays(15)->toDateString(),
         ]);
 
         $response = $this->postJson('/api/pos/sync', [
@@ -214,11 +216,11 @@ class FranchiseB2CTest extends TestCase
                         [
                             'product_id' => $product->id,
                             'quantity' => 3,
-                            'price' => 30.00
-                        ]
-                    ]
-                ]
-            ]
+                            'price' => 30.00,
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $response->assertStatus(200);
@@ -236,7 +238,7 @@ class FranchiseB2CTest extends TestCase
 
     public function test_pos_sync_overdraft_creates_anomaly()
     {
-        $franchiseeRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Franchisee']);
+        $franchiseeRole = Role::firstOrCreate(['name' => 'Franchisee']);
         $franchisee = User::factory()->create();
         $franchisee->assignRole($franchiseeRole);
         Sanctum::actingAs($franchisee);
@@ -245,7 +247,7 @@ class FranchiseB2CTest extends TestCase
             'franchisee_id' => $franchisee->id,
             'name' => 'Franchise Branch B',
             'address' => 'Avenue 2',
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $product = Product::create([
@@ -254,24 +256,24 @@ class FranchiseB2CTest extends TestCase
             'description' => 'Soy vinegar flavor',
             'price' => '25.00',
             'category' => 'pastil',
-            'stock' => 100
+            'stock' => 100,
         ]);
 
         // Initialize with very low stock (1 available)
         HubInventory::create([
             'hub_id' => $hub->id,
             'product_id' => $product->id,
-            'stock_quantity' => 1
+            'stock_quantity' => 1,
         ]);
 
-        \App\Models\InventoryBatch::create([
+        InventoryBatch::create([
             'batch_number' => 'BATCH-POS-SYNC-O',
             'product_id' => $product->id,
             'hub_id' => $hub->id,
             'quantity' => 1,
             'initial_quantity' => 1,
             'manufacture_date' => now()->toDateString(),
-            'expiry_date' => now()->addDays(15)->toDateString()
+            'expiry_date' => now()->addDays(15)->toDateString(),
         ]);
 
         // Sync POS order of quantity 5 (exceeding stock of 1)
@@ -286,11 +288,11 @@ class FranchiseB2CTest extends TestCase
                         [
                             'product_id' => $product->id,
                             'quantity' => 5,
-                            'price' => 25.00
-                        ]
-                    ]
-                ]
-            ]
+                            'price' => 25.00,
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $response->assertStatus(200);
@@ -309,7 +311,7 @@ class FranchiseB2CTest extends TestCase
             'product_id' => $product->id,
             'requested_quantity' => 5,
             'available_quantity' => 1,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
     }
 }

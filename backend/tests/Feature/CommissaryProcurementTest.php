@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\Hub;
-use App\Models\HubInventory;
-use App\Models\Product;
-use App\Models\User;
-use App\Models\InventoryBatch;
 use App\Models\CommissaryOrder;
 use App\Models\CommissaryOrderItem;
+use App\Models\Hub;
+use App\Models\HubInventory;
+use App\Models\InventoryBatch;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -18,10 +18,15 @@ class CommissaryProcurementTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $franchisee;
+
     protected User $customer;
+
     protected Hub $hub;
+
     protected Product $productWholesale;
+
     protected Product $productRetailOnly;
 
     protected function setUp(): void
@@ -46,7 +51,7 @@ class CommissaryProcurementTest extends TestCase
             'franchisee_id' => $this->franchisee->id,
             'name' => 'Quezon City Spoke Hub',
             'address' => 'Katipunan Avenue, Quezon City',
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         // 4. Create products
@@ -59,7 +64,7 @@ class CommissaryProcurementTest extends TestCase
             'category' => 'pastil',
             'stock' => 100,
             'is_active' => true,
-            'is_wholesale' => true
+            'is_wholesale' => true,
         ]);
 
         $this->productRetailOnly = Product::create([
@@ -70,7 +75,7 @@ class CommissaryProcurementTest extends TestCase
             'category' => 'pastil',
             'stock' => 50,
             'is_active' => true,
-            'is_wholesale' => false
+            'is_wholesale' => false,
         ]);
     }
 
@@ -87,9 +92,9 @@ class CommissaryProcurementTest extends TestCase
             'items' => [
                 [
                     'product_id' => $this->productWholesale->id,
-                    'quantity' => 10
-                ]
-            ]
+                    'quantity' => 10,
+                ],
+            ],
         ]);
 
         $response->assertStatus(201);
@@ -103,14 +108,14 @@ class CommissaryProcurementTest extends TestCase
             'total_amount' => 180.00, // 18.00 * 10
             'shipping_address' => 'Katipunan Ave Delivery Point',
             'contact_number' => '09171234567',
-            'payment_method' => 'cod'
+            'payment_method' => 'cod',
         ]);
 
         $this->assertDatabaseHas('commissary_order_items', [
             'product_id' => $this->productWholesale->id,
             'quantity' => 10,
             'wholesale_price' => 18.00,
-            'subtotal' => 180.00
+            'subtotal' => 180.00,
         ]);
     }
 
@@ -124,9 +129,9 @@ class CommissaryProcurementTest extends TestCase
             'items' => [
                 [
                     'product_id' => $this->productWholesale->id,
-                    'quantity' => 5
-                ]
-            ]
+                    'quantity' => 5,
+                ],
+            ],
         ]);
 
         $response->assertStatus(403);
@@ -142,15 +147,15 @@ class CommissaryProcurementTest extends TestCase
             'items' => [
                 [
                     'product_id' => $this->productRetailOnly->id,
-                    'quantity' => 5
-                ]
-            ]
+                    'quantity' => 5,
+                ],
+            ],
         ]);
 
         $response->assertStatus(500);
         $response->assertJsonPath('success', false);
         $response->assertJsonFragment([
-            'message' => "Product 'Spicy Beef Pastil (Retail Only)' is not marked for wholesale B2B restock."
+            'message' => "Product 'Spicy Beef Pastil (Retail Only)' is not marked for wholesale B2B restock.",
         ]);
     }
 
@@ -169,9 +174,9 @@ class CommissaryProcurementTest extends TestCase
                 'items' => [
                     [
                         'product_id' => $this->productWholesale->id,
-                        'quantity' => 5
-                    ]
-                ]
+                        'quantity' => 5,
+                    ],
+                ],
             ]);
 
         $response1->assertStatus(201);
@@ -187,9 +192,9 @@ class CommissaryProcurementTest extends TestCase
                 'items' => [
                     [
                         'product_id' => $this->productWholesale->id,
-                        'quantity' => 5
-                    ]
-                ]
+                        'quantity' => 5,
+                    ],
+                ],
             ]);
 
         $response2->assertStatus(200);
@@ -212,7 +217,7 @@ class CommissaryProcurementTest extends TestCase
             'status' => 'pending',
             'shipping_address' => 'QC Spoke Hub Address',
             'contact_number' => '09171234567',
-            'payment_method' => 'cod'
+            'payment_method' => 'cod',
         ]);
 
         CommissaryOrderItem::create([
@@ -220,7 +225,7 @@ class CommissaryProcurementTest extends TestCase
             'product_id' => $this->productWholesale->id,
             'quantity' => 10,
             'wholesale_price' => 18.00,
-            'subtotal' => 180.00
+            'subtotal' => 180.00,
         ]);
 
         // Create HQ batches to prevent delivery failure
@@ -231,7 +236,7 @@ class CommissaryProcurementTest extends TestCase
             'quantity' => 20,
             'initial_quantity' => 20,
             'manufacture_date' => now()->toDateString(),
-            'expiry_date' => now()->addDays(15)->toDateString()
+            'expiry_date' => now()->addDays(15)->toDateString(),
         ]);
 
         // 1. Transition pending -> preparing (Allowed)
@@ -263,17 +268,17 @@ class CommissaryProcurementTest extends TestCase
             'status' => 'pending',
             'shipping_address' => 'QC Spoke Hub Address',
             'contact_number' => '09171234567',
-            'payment_method' => 'cod'
+            'payment_method' => 'cod',
         ]);
 
         // Try transitioning directly from pending -> delivered (Forbidden in matrix)
         $response = $this->actingAs($this->admin, 'sanctum')
             ->patchJson("/api/admin/commissary-orders/{$order->id}", ['status' => 'delivered']);
-        
+
         $response->assertStatus(422);
         $response->assertJsonPath('success', false);
         $response->assertJsonFragment([
-            'message' => "Illogical B2B order transition: Cannot transition from 'pending' directly to 'delivered'."
+            'message' => "Illogical B2B order transition: Cannot transition from 'pending' directly to 'delivered'.",
         ]);
     }
 
@@ -290,7 +295,7 @@ class CommissaryProcurementTest extends TestCase
             'quantity' => 15,
             'initial_quantity' => 15,
             'manufacture_date' => now()->subDays(5)->toDateString(),
-            'expiry_date' => now()->addDays(5)->toDateString() // Expires first
+            'expiry_date' => now()->addDays(5)->toDateString(), // Expires first
         ]);
 
         $batch2 = InventoryBatch::create([
@@ -300,7 +305,7 @@ class CommissaryProcurementTest extends TestCase
             'quantity' => 30,
             'initial_quantity' => 30,
             'manufacture_date' => now()->subDays(2)->toDateString(),
-            'expiry_date' => now()->addDays(10)->toDateString() // Expires second
+            'expiry_date' => now()->addDays(10)->toDateString(), // Expires second
         ]);
 
         // Total HQ stock: 45
@@ -313,7 +318,7 @@ class CommissaryProcurementTest extends TestCase
             'status' => 'pending',
             'shipping_address' => 'QC Spoke Hub Address',
             'contact_number' => '09171234567',
-            'payment_method' => 'cod'
+            'payment_method' => 'cod',
         ]);
 
         CommissaryOrderItem::create([
@@ -321,7 +326,7 @@ class CommissaryProcurementTest extends TestCase
             'product_id' => $this->productWholesale->id,
             'quantity' => 25,
             'wholesale_price' => 18.00,
-            'subtotal' => 450.00
+            'subtotal' => 450.00,
         ]);
 
         // 3. Setup initial product stock
@@ -334,11 +339,11 @@ class CommissaryProcurementTest extends TestCase
         // 4. Run the transition path to delivered
         $this->actingAs($this->admin, 'sanctum')->patchJson("/api/admin/commissary-orders/{$order->id}", ['status' => 'preparing']);
         $this->actingAs($this->admin, 'sanctum')->patchJson("/api/admin/commissary-orders/{$order->id}", ['status' => 'out_for_delivery']);
-        
+
         // Deliver! This triggers the depletion and transfers
         $response = $this->actingAs($this->admin, 'sanctum')
             ->patchJson("/api/admin/commissary-orders/{$order->id}", ['status' => 'delivered']);
-        
+
         $response->assertStatus(200);
         $response->assertJsonPath('data.status', 'delivered');
 
@@ -355,7 +360,7 @@ class CommissaryProcurementTest extends TestCase
         $inventory = HubInventory::where('hub_id', $this->hub->id)
             ->where('product_id', $this->productWholesale->id)
             ->first();
-        
+
         $this->assertNotNull($inventory);
         $this->assertEquals(25, $inventory->stock_quantity);
 
