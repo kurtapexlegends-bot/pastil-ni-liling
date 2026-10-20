@@ -23,7 +23,7 @@ export default function ProductCard({ product, onAddToCart, onClick }: ProductCa
               product.image_url 
                 ? product.image_url.startsWith('http://localhost/storage') 
                   ? product.image_url.replace('http://localhost/storage', 'http://127.0.0.1:8000/storage')
-                  : product.image_url.startsWith('/') 
+                  : product.image_url.startsWith('/storage/') 
                     ? `http://127.0.0.1:8000${product.image_url}` 
                     : product.image_url
                 : "/hero.png"

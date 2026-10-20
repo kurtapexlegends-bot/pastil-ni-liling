@@ -9,86 +9,123 @@ use Illuminate\Support\Str;
 class ProductSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeds with authentic Pastil ni Liling menu & real photography.
      */
     public function run(): void
     {
         $products = [
-            // Traditional Banana Leaf Wrapped Pastil Meals
+            // Traditional Banana Leaf Wrapped Solo Pastil
             [
                 'name' => 'Original Chicken Pastil',
                 'description' => 'Authentic Mindanao-style steamed rice topped with savory shredded chicken adobo wrapped in banana leaf.',
                 'price' => 25.00,
                 'category' => 'pastil',
                 'stock' => 150,
-                'image_url' => 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_4.webp',
             ],
             [
                 'name' => 'Spicy Chicken Pastil',
-                'description' => 'Original shredded chicken pastil spiced with local siling labuyo and aromatic garlic oil.',
+                'description' => 'Original shredded chicken pastil spiced with local siling labuyo and aromatic garlic oil wrapped in banana leaf.',
                 'price' => 30.00,
                 'category' => 'pastil',
                 'stock' => 150,
-                'image_url' => 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_2.webp',
             ],
             [
                 'name' => 'Beef Pastil',
-                'description' => 'Premium tender shredded beef toppings slow-cooked in Mindanao spices on hot steamed rice.',
+                'description' => 'Premium tender shredded beef toppings slow-cooked in Mindanao spices on hot steamed rice wrapped in banana leaf.',
                 'price' => 45.00,
                 'category' => 'pastil',
                 'stock' => 100,
-                'image_url' => 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_4.webp',
             ],
-            // Overload & Combo Meals (FB / Delivery App Best Sellers)
+
+            // Budbod & Pastilog Meals (Served with Eggs & Toasted Garlic)
             [
-                'name' => 'Chicken Pastil Overload',
-                'description' => 'Heavy pastil meal topped with authentic itlog na pula (salted egg), fresh tomatoes, and fried eggplant.',
+                'name' => 'Chicken Budbod Meal',
+                'description' => 'Savory shredded chicken pastil served over warm rice with fluffy scrambled egg and crispy toasted garlic.',
+                'price' => 59.00,
+                'category' => 'pastil',
+                'stock' => 120,
+                'image_url' => '/products/real_dish_4.webp',
+            ],
+            [
+                'name' => 'Beef Budbod Meal',
+                'description' => 'Flavorful beef kagikit served over warm rice with fluffy scrambled egg and crispy toasted garlic.',
+                'price' => 69.00,
+                'category' => 'pastil',
+                'stock' => 100,
+                'image_url' => '/products/real_dish_4.webp',
+            ],
+            [
+                'name' => 'Chicken Pastilog',
+                'description' => 'Classic chicken pastil paired with fried egg and steamed rice.',
                 'price' => 55.00,
                 'category' => 'pastil',
                 'stock' => 100,
-                'image_url' => 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_4.webp',
+            ],
+            [
+                'name' => 'Beef Pastilog',
+                'description' => 'Savory beef pastil paired with fried egg and steamed rice.',
+                'price' => 70.00,
+                'category' => 'pastil',
+                'stock' => 90,
+                'image_url' => '/products/real_dish_4.webp',
+            ],
+
+            // Overload Feasts (All-in-One Best Sellers with Talong, Salted Egg & Sides)
+            [
+                'name' => 'Chicken Pastil Overload',
+                'description' => 'All-in-one feast with chicken kagikit, salted egg (itlog na pula), fried eggplant (talong), scrambled egg, fresh tomatoes, and toasted garlic on banana leaf.',
+                'price' => 80.00,
+                'category' => 'pastil',
+                'stock' => 100,
+                'image_url' => '/products/real_dish_3.webp',
+            ],
+            [
+                'name' => 'Beef Pastil Overload',
+                'description' => 'Heavy feast featuring shredded beef pastil, salted egg, golden fried talong, scrambled egg, fresh tomatoes, and toasted garlic on fresh banana leaf.',
+                'price' => 95.00,
+                'category' => 'pastil',
+                'stock' => 100,
+                'image_url' => '/products/real_dish_3.webp',
             ],
             [
                 'name' => 'Pastil with Fried Eggplant (Talong)',
-                'description' => 'Classic savory chicken pastil served with crispy golden fried talong and spiced chicken oil.',
+                'description' => 'Classic savory chicken pastil served with golden fried talong and spiced chicken oil.',
                 'price' => 40.00,
                 'category' => 'pastil',
                 'stock' => 100,
-                'image_url' => 'https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_3.webp',
             ],
-            [
-                'name' => 'Pastil Combo with Shanghai',
-                'description' => 'Chicken pastil paired with crispy golden lumpiang shanghai and free dipping sauce.',
-                'price' => 50.00,
-                'category' => 'pastil',
-                'stock' => 100,
-                'image_url' => 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=800&auto=format&fit=crop',
-            ],
+
             // Bottled Specialty Jars
             [
-                'name' => 'Bottled Chicken Pastil Flakes (Original)',
-                'description' => '220g sealed glass jar of ready-to-eat shredded chicken pastil flakes in seasoned oil.',
-                'price' => 150.00,
-                'category' => 'pastil_jar',
-                'stock' => 80,
-                'image_url' => 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?q=80&w=800&auto=format&fit=crop',
-            ],
-            [
-                'name' => 'Bottled Chicken Pastil Flakes (Spicy)',
-                'description' => '220g sealed glass jar of toasted spicy chicken pastil flakes infused with chili and toasted garlic.',
+                'name' => 'Bottled Beef Pastil in Corn Oil (220g)',
+                'description' => 'Official 220g sealed glass jar of Pastil ni Liling ready-to-eat shredded beef pastil flakes in seasoned pure corn oil.',
                 'price' => 160.00,
                 'category' => 'pastil_jar',
                 'stock' => 80,
-                'image_url' => 'https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_1.webp',
             ],
-            // Bagoong & Sauces
+            [
+                'name' => 'Bottled Chicken Pastil Flakes (Original)',
+                'description' => '220g sealed glass jar of authentic ready-to-eat shredded chicken pastil flakes in seasoned pure corn oil.',
+                'price' => 150.00,
+                'category' => 'pastil_jar',
+                'stock' => 80,
+                'image_url' => '/products/hero_stall.webp',
+            ],
+
+            // Bagoong & Condiments
             [
                 'name' => 'Premium Shrimp Bagoong (Regular)',
                 'description' => 'Authentic sautéed shrimp paste, slow-cooked for rich umami flavor and balanced sweetness.',
                 'price' => 120.00,
                 'category' => 'bagoong',
                 'stock' => 60,
-                'image_url' => 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_1.webp',
             ],
             [
                 'name' => 'Premium Shrimp Bagoong (Spicy)',
@@ -96,16 +133,15 @@ class ProductSeeder extends Seeder
                 'price' => 130.00,
                 'category' => 'bagoong',
                 'stock' => 60,
-                'image_url' => 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_2.webp',
             ],
-            // Chili Oil
             [
                 'name' => 'Liling\'s Signature Chili Garlic Oil',
                 'description' => 'Toasted crunchy garlic bits and crushed chili flakes in aromatic savory oil infusion.',
-                'price' => 99.00,
+                'price' => 85.00,
                 'category' => 'chili_oil',
                 'stock' => 75,
-                'image_url' => 'https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_2.webp',
             ],
         ];
 
@@ -124,17 +160,17 @@ class ProductSeeder extends Seeder
             );
         }
 
-        // Wholesale Supplies
+        // Wholesale Supplies (Franchisee & Bulk Distribution)
         Product::updateOrCreate(
             ['slug' => 'wholesale-pastil-jar-bulk'],
             [
                 'name' => 'Wholesale Pastil Jar (Bulk 24pcs)',
-                'description' => 'A bulk pack of 24 premium pastil jars for franchisee distribution.',
+                'description' => 'A bulk pack of 24 premium sealed pastil jars for franchisee distribution.',
                 'price' => '3600.00',
                 'wholesale_price' => '2800.00',
                 'category' => 'wholesale',
                 'is_wholesale' => true,
-                'image_url' => 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_1.webp',
                 'is_active' => true,
             ]
         );
@@ -148,7 +184,7 @@ class ProductSeeder extends Seeder
                 'wholesale_price' => '1400.00',
                 'category' => 'wholesale',
                 'is_wholesale' => true,
-                'image_url' => 'https://images.unsplash.com/photo-1618413998877-4c3116df7325?q=80&w=800&auto=format&fit=crop',
+                'image_url' => '/products/real_dish_2.webp',
                 'is_active' => true,
             ]
         );

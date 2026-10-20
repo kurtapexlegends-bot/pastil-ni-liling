@@ -85,7 +85,7 @@ export default function CartDrawer({
                       item.image_url 
                         ? item.image_url.startsWith('http://localhost/storage') 
                           ? item.image_url.replace('http://localhost/storage', 'http://127.0.0.1:8000/storage')
-                          : item.image_url.startsWith('/') 
+                          : item.image_url.startsWith('/storage/') 
                             ? `http://127.0.0.1:8000${item.image_url}` 
                             : item.image_url
                         : "/hero.png"

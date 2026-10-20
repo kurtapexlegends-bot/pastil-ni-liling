@@ -118,7 +118,8 @@ export default function MenuPage() {
           <div className="flex overflow-x-auto gap-2 pt-2 pb-2 -mx-6 px-6 md:mx-0 md:px-0 md:flex-wrap [&::-webkit-scrollbar]:hidden">
             {[
               { id: "all", label: "All Items" },
-              { id: "pastil", label: "Pastil Variants" },
+              { id: "pastil", label: "Pastil & Meals" },
+              { id: "pastil_jar", label: "Bottled Pastil Jars" },
               { id: "bagoong", label: "Bottled Bagoong" },
               { id: "chili_oil", label: "Chili Oil" },
             ].map((cat) => (

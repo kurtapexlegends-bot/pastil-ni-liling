@@ -286,7 +286,7 @@ export default function ProductModal({
                     <img 
                       src={productForm.image_url.startsWith('http://localhost/storage') 
                         ? productForm.image_url.replace('http://localhost/storage', 'http://127.0.0.1:8000/storage')
-                        : productForm.image_url.startsWith('/') 
+                        : productForm.image_url.startsWith('/storage/') 
                           ? `http://127.0.0.1:8000${productForm.image_url}` 
                           : productForm.image_url
                       } 
