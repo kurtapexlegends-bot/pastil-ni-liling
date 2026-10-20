@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Star, CookingPot } from '@phosphor-icons/react';
 
 export interface HeroSectionProps {
   badge?: string;
@@ -58,16 +59,14 @@ export default function HeroSection({
             </Link>
           </div>
 
-          <div className="flex items-center gap-6 pt-10">
-            <div className="flex -space-x-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden grayscale-[0.5] hover:grayscale-0 transition-all">
-                  <Image src={`https://i.pravatar.cc/100?u=${i+20}`} alt="User" width={40} height={40} />
-                </div>
-              ))}
+          <div className="flex items-center gap-4 pt-6">
+            <div className="flex items-center gap-1.5 bg-brand-yellow/15 text-brand-yellow px-3 py-1.5 rounded-xl border border-brand-yellow/30">
+              <Star size={16} weight="fill" />
+              <span className="text-xs font-black text-brand-earth">4.9 / 5.0</span>
             </div>
-            <p className="text-[10px] font-bold text-brand-earth/40 uppercase tracking-widest leading-relaxed">
-              Trusted by <span className="text-brand-earth">10,000+</span> <br />satisfied customers
+            <p className="text-[10px] font-bold text-brand-earth/50 uppercase tracking-wider leading-tight">
+              Trusted by <span className="text-brand-earth font-black">10,000+</span> Customers <br />
+              <span className="text-brand-green font-semibold">Cubao & Caloocan Hubs</span>
             </p>
           </div>
         </div>
@@ -88,12 +87,8 @@ export default function HeroSection({
           
           {/* Subtle Floating Info */}
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:-right-6 bg-white w-[90%] md:w-auto p-4 md:p-5 rounded-2xl shadow-xl border border-gray-100 flex items-center justify-center md:justify-start gap-3 md:gap-4 animate-in slide-in-from-bottom duration-1000 delay-500 z-10">
-            <div className="bg-brand-green/10 w-10 h-10 rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-brand-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 22h20" />
-                <path d="M20 15a8 8 0 0 0-16 0" />
-                <path d="M12 2v3M9 3v2M15 3v2" />
-              </svg>
+            <div className="bg-brand-green/10 w-10 h-10 rounded-xl flex items-center justify-center text-brand-green">
+              <CookingPot size={22} weight="bold" />
             </div>
             <div>
               <p className="text-[9px] font-black uppercase tracking-widest text-brand-earth/40">Freshly Made</p>

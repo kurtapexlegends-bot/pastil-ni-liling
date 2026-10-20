@@ -128,7 +128,7 @@ export default function MenuPage() {
               <button
                 key={cat.id}
                 onClick={() => setFilter(cat.id)}
-                className={`shrink-0 px-4 py-2 rounded-lg text-[9px] font-semibold uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-[0.97] duration-150 ${
+                className={`shrink-0 px-4 py-2 min-h-[44px] rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-[0.97] duration-150 cursor-pointer flex items-center ${
                   filter === cat.id 
                     ? "bg-brand-earth text-white shadow-sm" 
                     : "bg-white border border-gray-100 hover:border-brand-green text-brand-earth/50"

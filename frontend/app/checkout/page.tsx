@@ -231,7 +231,7 @@ export default function CheckoutPage() {
             <button 
               type="submit" 
               disabled={loading || items.length === 0}
-              className="w-full bg-brand-green text-white py-3 rounded-xl text-[10px] font-semibold uppercase tracking-wider hover:bg-brand-green/90 transition-colors shadow-sm disabled:opacity-30 flex items-center justify-center gap-2"
+              className="w-full bg-brand-green text-white min-h-[44px] py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-green/90 active:scale-[0.99] transition-all shadow-md shadow-brand-green/10 disabled:opacity-30 flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? <CircleNotch weight="bold" className="animate-spin text-sm" /> : `Place Order (${formatCurrency(total)})`}
             </button>
