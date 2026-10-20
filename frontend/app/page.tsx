@@ -174,8 +174,8 @@ export default function Home() {
     : [];
 
   const defaultShowcase = [
-    { title: "The Signature", subtitle: "Chicken Adobo Pastil", desc: "Authentic steamed rice topped with premium shredded chicken.", price: "Starts at ₱25", image_url: "/products/real_dish_4.webp" },
-    { title: "Bottled Premium", subtitle: "Pastil ni Liling Beef Pastil Jar", desc: "220g sealed glass jar of authentic shredded beef pastil in pure corn oil.", price: "₱160 per jar", image_url: "/products/real_dish_1.webp" },
+    { title: "The Signature", subtitle: "Chicken Adobo Pastil", desc: "Authentic steamed rice topped with premium shredded chicken.", price: "Starts at ₱25", image_url: "/products/original_chicken_pastil.webp" },
+    { title: "Bottled Premium", subtitle: "Pastil ni Liling Beef Pastil Jar", desc: "220g sealed glass jar of authentic shredded beef pastil in pure corn oil.", price: "₱160 per jar", image_url: "/products/bottled_pastil_jar_crop.webp" },
     { title: "Side Kick", subtitle: "Chili Garlic Oil & Spiced Kagikit", desc: "Crispy garlic bits in spicy toasted chili oil infusion with siling labuyo.", price: "₱85 per jar", image_url: "/products/real_dish_2.webp" },
   ];
 

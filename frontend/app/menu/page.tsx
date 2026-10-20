@@ -46,7 +46,9 @@ export default function MenuPage() {
   const products = (data?.success && Array.isArray(data.data)) ? data.data : [];
 
   const filteredProducts = Array.isArray(products)
-    ? (filter === "all" ? products : products.filter((p: Product) => p.category === filter))
+    ? (filter === "all" 
+        ? products.filter((p: Product) => !p.is_wholesale) 
+        : products.filter((p: Product) => !p.is_wholesale && p.category === filter))
     : [];
 
   const handleAddToCart = (product: Product) => {
@@ -120,8 +122,8 @@ export default function MenuPage() {
               { id: "all", label: "All Items" },
               { id: "pastil", label: "Pastil & Meals" },
               { id: "pastil_jar", label: "Bottled Pastil Jars" },
-              { id: "bagoong", label: "Bottled Bagoong" },
-              { id: "chili_oil", label: "Chili Oil" },
+
+              { id: "chili_oil", label: "Chili Garlic Oil" },
             ].map((cat) => (
               <button
                 key={cat.id}

@@ -41,7 +41,7 @@ class WebsiteSettingSeeder extends Seeder
 
         // 5. Featured Showcase Products Settings
         // Pick the top 3 products from the database to showcase
-        $productIds = Product::where('is_active', true)->take(3)->pluck('id')->toArray();
+        $productIds = Product::where('is_active', true)->where('is_wholesale', false)->take(3)->pluck('id')->toArray();
         WebsiteSetting::setByKey('featured_products', $productIds);
     }
 }

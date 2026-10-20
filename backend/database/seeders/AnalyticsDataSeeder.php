@@ -107,27 +107,31 @@ class AnalyticsDataSeeder extends Seeder
             ['quantity_required' => 0.1000]
         );
 
-        ProductIngredient::updateOrCreate(
-            ['product_id' => $pBagoongRegular->id, 'ingredient_id' => $ingShrimp->id],
-            ['quantity_required' => 0.1200]
-        );
-        ProductIngredient::updateOrCreate(
-            ['product_id' => $pBagoongRegular->id, 'ingredient_id' => $ingGarlic->id],
-            ['quantity_required' => 0.0100]
-        );
+        if ($pBagoongRegular) {
+            ProductIngredient::updateOrCreate(
+                ['product_id' => $pBagoongRegular->id, 'ingredient_id' => $ingShrimp->id],
+                ['quantity_required' => 0.1200]
+            );
+            ProductIngredient::updateOrCreate(
+                ['product_id' => $pBagoongRegular->id, 'ingredient_id' => $ingGarlic->id],
+                ['quantity_required' => 0.0100]
+            );
+        }
 
-        ProductIngredient::updateOrCreate(
-            ['product_id' => $pBagoongSpicy->id, 'ingredient_id' => $ingShrimp->id],
-            ['quantity_required' => 0.1200]
-        );
-        ProductIngredient::updateOrCreate(
-            ['product_id' => $pBagoongSpicy->id, 'ingredient_id' => $ingGarlic->id],
-            ['quantity_required' => 0.0100]
-        );
-        ProductIngredient::updateOrCreate(
-            ['product_id' => $pBagoongSpicy->id, 'ingredient_id' => $ingChili->id],
-            ['quantity_required' => 0.0100]
-        );
+        if ($pBagoongSpicy) {
+            ProductIngredient::updateOrCreate(
+                ['product_id' => $pBagoongSpicy->id, 'ingredient_id' => $ingShrimp->id],
+                ['quantity_required' => 0.1200]
+            );
+            ProductIngredient::updateOrCreate(
+                ['product_id' => $pBagoongSpicy->id, 'ingredient_id' => $ingGarlic->id],
+                ['quantity_required' => 0.0100]
+            );
+            ProductIngredient::updateOrCreate(
+                ['product_id' => $pBagoongSpicy->id, 'ingredient_id' => $ingChili->id],
+                ['quantity_required' => 0.0100]
+            );
+        }
 
         ProductIngredient::updateOrCreate(
             ['product_id' => $pChiliOil->id, 'ingredient_id' => $ingChili->id],
